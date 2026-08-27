@@ -45,10 +45,23 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
     setShowTermsModal(true);
   };
 
-  const handleTermsAccept = () => {
+  const handleTermsAccept = async () => {
     setShowTermsModal(false);
-    // In production this would call the entry API with termsAccepted: true
-    alert(`Entry submitted for ${competition.title}! (${quantity} ticket${quantity > 1 ? 's' : ''})`);
+    try {
+      const response = await fetch(`/api/competitions/${competition.id}/enter`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity, termsAccepted: true }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        alert(`Entry failed: ${data.error || 'Unknown error'}`);
+      } else {
+        alert(`Entry submitted! You have ${data.quantity} ticket${data.quantity > 1 ? 's' : ''} in the draw.`);
+      }
+    } catch {
+      alert('Failed to submit entry. Please check your connection and try again.');
+    }
   };
 
   const handleTermsDecline = () => {

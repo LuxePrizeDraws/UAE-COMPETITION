@@ -96,7 +96,7 @@ const TermsModal = ({
             onClick={onAccept}
             aria-disabled={!canProceed}
           >
-            {canProceed ? `ACCEPT &amp; ENTER — ${totalCost} ${currency}` : 'Please accept terms to continue'}
+            {canProceed ? `ACCEPT & ENTER — ${totalCost} ${currency}` : 'Please accept terms to continue'}
           </button>
           <button className="terms-modal-decline" onClick={onDecline}>
             Cancel

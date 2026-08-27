@@ -106,8 +106,15 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Maximum 100 entries per draw.' });
   }
 
-  // Audit log of terms acceptance
-  console.log(`[COMPLIANCE] Terms accepted — competitionId=${competition.id} quantity=${quantity} ip=${req.ip} timestamp=${new Date().toISOString()}`);
+  // Compliance audit log — in production replace with persistent, append-only store (e.g., database or audit service)
+  const remoteIp = req.socket.remoteAddress ?? 'unknown';
+  console.log(JSON.stringify({
+    event: 'TERMS_ACCEPTED',
+    competitionId: competition.id,
+    quantity,
+    ip: remoteIp,
+    timestamp: new Date().toISOString(),
+  }));
 
   const totalCost = quantity * competition.entryPrice;
   
