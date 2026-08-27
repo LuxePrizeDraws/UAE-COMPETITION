@@ -87,16 +87,27 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
 });
 
 app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
-  const { quantity } = req.body;
+  const { quantity, termsAccepted } = req.body;
   const competition = competitions.find(c => c.id === parseInt(req.params.id));
   
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
   }
 
+  if (termsAccepted !== true) {
+    return res.status(400).json({ error: 'Terms and Conditions must be accepted before entering.' });
+  }
+
   if (!quantity || quantity < 1) {
     return res.status(400).json({ error: 'Invalid quantity' });
   }
+
+  if (quantity > 100) {
+    return res.status(400).json({ error: 'Maximum 100 entries per draw.' });
+  }
+
+  // Audit log of terms acceptance
+  console.log(`[COMPLIANCE] Terms accepted — competitionId=${competition.id} quantity=${quantity} ip=${req.ip} timestamp=${new Date().toISOString()}`);
 
   const totalCost = quantity * competition.entryPrice;
   

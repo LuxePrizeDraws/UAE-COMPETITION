@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './CompetitionCard.css';
+import TermsModal from './TermsModal';
 
 interface Competition {
   id: number;
@@ -27,6 +28,7 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
@@ -39,8 +41,32 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
     }
   };
 
+  const handleEnterClick = () => {
+    setShowTermsModal(true);
+  };
+
+  const handleTermsAccept = () => {
+    setShowTermsModal(false);
+    // In production this would call the entry API with termsAccepted: true
+    alert(`Entry submitted for ${competition.title}! (${quantity} ticket${quantity > 1 ? 's' : ''})`);
+  };
+
+  const handleTermsDecline = () => {
+    setShowTermsModal(false);
+  };
+
   return (
     <div className="competition-card">
+      {showTermsModal && (
+        <TermsModal
+          competitionTitle={competition.title}
+          entryPrice={competition.entryPrice}
+          quantity={quantity}
+          currency={competition.prizeDetails.currency}
+          onAccept={handleTermsAccept}
+          onDecline={handleTermsDecline}
+        />
+      )}
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
       </div>
@@ -127,10 +153,16 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button className="btn-enter-now" onClick={handleEnterClick}>ENTER NOW - {totalCost} AED</button>
 
       <div className="terms-link">
-        <a href="#">View Full Terms & Conditions</a>
+        <a href="/terms" target="_blank" rel="noopener noreferrer">View Full Terms &amp; Conditions</a>
+      </div>
+
+      <div className="compliance-notice">
+        <span className="compliance-badge">18+ UK | 21+ UAE</span>
+        <span className="compliance-badge">Play Responsibly</span>
+        <span className="compliance-badge">Certified Fair Draw</span>
       </div>
     </div>
   );
