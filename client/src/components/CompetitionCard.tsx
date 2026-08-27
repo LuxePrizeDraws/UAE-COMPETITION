@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import './CompetitionCard.css';
 
+interface PrizeAlternative {
+  type: 'cash' | 'physical_prize';
+  amount?: number;
+  description: string;
+}
+
 interface Competition {
   id: number;
   title: string;
@@ -11,6 +17,9 @@ interface Competition {
     currency: string;
     description: string;
     includes?: string[];
+    cashAlternative?: boolean;
+    cashAlternativeAmount?: number;
+    alternatives?: PrizeAlternative[];
   };
   entryPrice: number;
   totalEntries: number;
@@ -39,23 +48,39 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
     }
   };
 
+  const { cashAlternative, cashAlternativeAmount, alternatives } = competition.prizeDetails;
+
   return (
     <div className="competition-card">
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
+        {cashAlternative && (
+          <span className="cash-alt-badge">💰 Cash Alternative Available</span>
+        )}
       </div>
 
       <div className="card-content">
         <div className="prize-section">
           <p className="prize-label">WIN</p>
           <h3 className="prize-amount">
-            {competition.prizeAmount.toLocaleString()} {competition.prizeDetails.currency}
+            £{competition.prizeAmount.toLocaleString()}
           </h3>
           <p className="prize-description">{competition.description}</p>
           {competition.prizeDetails.includes && (
             <div className="prize-includes">
               {competition.prizeDetails.includes.map((item, idx) => (
                 <span key={idx} className="include-item">✓ {item}</span>
+              ))}
+            </div>
+          )}
+          {cashAlternative && cashAlternativeAmount && (
+            <div className="cash-alternative-section">
+              <p className="cash-alt-label">🏆 WINNER'S CHOICE:</p>
+              {alternatives && alternatives.map((alt, idx) => (
+                <div key={idx} className="alt-option">
+                  <span className="alt-icon">{alt.type === 'cash' ? '💷' : '🎁'}</span>
+                  <span className="alt-desc">{alt.description}</span>
+                </div>
               ))}
             </div>
           )}
@@ -69,7 +94,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       <div className="card-stats">
         <div className="stat">
           <span className="stat-label">TICKET PRICE</span>
-          <span className="stat-value">{competition.entryPrice} AED</span>
+          <span className="stat-value">£{competition.entryPrice}</span>
           <span className="stat-sublabel">PER ENTRY</span>
         </div>
         <div className="stat">
@@ -123,11 +148,11 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
         <div className="cost-display">
           <span className="cost-label">Total Cost:</span>
-          <span className="cost-amount">{totalCost} AED</span>
+          <span className="cost-amount">£{totalCost}</span>
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button className="btn-enter-now">ENTER NOW - £{totalCost}</button>
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>

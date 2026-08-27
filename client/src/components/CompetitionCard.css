@@ -356,3 +356,51 @@
     text-align: left;
   }
 }
+
+/* Cash Alternative Styles */
+.cash-alt-badge {
+  background: linear-gradient(135deg, #f7b731, #e55039);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: auto;
+}
+
+.cash-alternative-section {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(247, 183, 49, 0.08);
+  border: 1px solid rgba(247, 183, 49, 0.3);
+  border-radius: 6px;
+}
+
+.cash-alt-label {
+  color: #f7b731;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.alt-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #aaa);
+}
+
+.alt-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.alt-desc {
+  flex: 1;
+}
