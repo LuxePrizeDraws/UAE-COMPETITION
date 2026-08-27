@@ -14,11 +14,16 @@ interface Competition {
   };
   entryPrice: number;
   totalEntries: number;
+  entriesNeededForDraw: number;
   soldEntries: number;
+  entriesRemaining: number;
+  drawReadyProgress: number;
   endsIn: string;
   tags: string[];
   profitMargin: string;
   expectedWinners: number;
+  comingSoon?: boolean;
+  frequency?: string;
 }
 
 interface CompetitionCardProps {
@@ -27,9 +32,10 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
-  const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
+  const progressPercent = competition.drawReadyProgress ?? (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
-  const remainingEntries = competition.totalEntries - competition.soldEntries;
+  const remainingEntries = competition.entriesRemaining ?? (competition.totalEntries - competition.soldEntries);
+  const currencySymbol = competition.prizeDetails.currency === 'GBP' ? '£' : '';
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,15 +47,23 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
 
   return (
     <div className="competition-card">
+      {competition.comingSoon && (
+        <div className="coming-soon-overlay">
+          <span className="coming-soon-label">COMING SOON</span>
+        </div>
+      )}
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
+        {competition.frequency && (
+          <span className="card-frequency">{competition.frequency}</span>
+        )}
       </div>
 
       <div className="card-content">
         <div className="prize-section">
           <p className="prize-label">WIN</p>
           <h3 className="prize-amount">
-            {competition.prizeAmount.toLocaleString()} {competition.prizeDetails.currency}
+            {currencySymbol}{competition.prizeAmount.toLocaleString()} {!currencySymbol && competition.prizeDetails.currency}
           </h3>
           <p className="prize-description">{competition.description}</p>
           {competition.prizeDetails.includes && (
@@ -69,7 +83,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       <div className="card-stats">
         <div className="stat">
           <span className="stat-label">TICKET PRICE</span>
-          <span className="stat-value">{competition.entryPrice} AED</span>
+          <span className="stat-value">{currencySymbol}{competition.entryPrice}</span>
           <span className="stat-sublabel">PER ENTRY</span>
         </div>
         <div className="stat">
@@ -80,20 +94,20 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         <div className="stat">
           <span className="stat-label">ENTRIES AVAILABLE</span>
           <span className="stat-value">{remainingEntries.toLocaleString()}</span>
-          <span className="stat-sublabel">of {competition.totalEntries.toLocaleString()}</span>
+          <span className="stat-sublabel">of {competition.entriesNeededForDraw.toLocaleString()}</span>
         </div>
       </div>
 
       <div className="progress-section">
         <div className="progress-header">
-          <span>Entries Sold</span>
+          <span>Draw Progress</span>
           <span>{progressPercent.toFixed(1)}%</span>
         </div>
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
         </div>
         <div className="progress-detail">
-          {competition.soldEntries.toLocaleString()} / {competition.totalEntries.toLocaleString()} sold
+          {competition.soldEntries.toLocaleString()} / {competition.entriesNeededForDraw.toLocaleString()} entries
         </div>
       </div>
 
@@ -123,11 +137,13 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
         <div className="cost-display">
           <span className="cost-label">Total Cost:</span>
-          <span className="cost-amount">{totalCost} AED</span>
+          <span className="cost-amount">{currencySymbol}{totalCost}</span>
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button className="btn-enter-now" disabled={competition.comingSoon}>
+        {competition.comingSoon ? 'COMING SOON' : `ENTER NOW - ${currencySymbol}${totalCost}`}
+      </button>
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>
