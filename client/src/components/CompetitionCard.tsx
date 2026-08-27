@@ -19,6 +19,7 @@ interface Competition {
   tags: string[];
   profitMargin: string;
   expectedWinners: number;
+  status?: string;
 }
 
 interface CompetitionCardProps {
@@ -27,6 +28,7 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
+  const isComingSoon = competition.status === 'coming_soon';
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
@@ -40,7 +42,12 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   };
 
   return (
-    <div className="competition-card">
+    <div className={`competition-card${isComingSoon ? ' competition-card--coming-soon' : ''}`}>
+      {isComingSoon && (
+        <div className="coming-soon-overlay">
+          <span className="coming-soon-badge">COMING SOON</span>
+        </div>
+      )}
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
       </div>
@@ -127,7 +134,9 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button className="btn-enter-now" disabled={isComingSoon}>
+        {isComingSoon ? 'COMING SOON' : `ENTER NOW - ${totalCost} ${competition.prizeDetails.currency}`}
+      </button>
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>

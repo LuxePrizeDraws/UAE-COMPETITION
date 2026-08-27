@@ -49,6 +49,25 @@ const competitions = [
     expectedWinners: 1,
   },
   {
+    id: 5,
+    title: 'WIN £5,000,000 CASH',
+    description: 'The Biggest Cash Prize Competition - Coming Soon',
+    prizeType: 'CASH COMPETITION',
+    prizeAmount: 5000000,
+    prizeDetails: {
+      currency: 'GBP',
+      description: 'Cash Prize - £5 Million'
+    },
+    entryPrice: 20,
+    totalEntries: 500000, // 2.5x profit threshold = 2M entries at £20/ea needed (500K shown, scaled)
+    soldEntries: 0,
+    endsIn: 'Coming Soon',
+    tags: ['Guaranteed Winner', 'Fair Live Draw', 'Transparent Odds'],
+    profitMargin: '2.5x profit threshold = 2M entries at £20/ea needed',
+    expectedWinners: 1,
+    status: 'coming_soon',
+  },
+  {
     id: 2,
     title: 'WIN THE ULTIMATE UAE DREAM PACKAGE',
     description: 'Luxury Stay, Premium Experiences, Travel & Lifestyle',

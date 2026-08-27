@@ -4,6 +4,7 @@
   border-radius: 8px;
   padding: 2rem;
   transition: all 0.3s ease;
+  position: relative;
   overflow: hidden;
   position: relative;
 }
@@ -355,4 +356,47 @@
   .cost-display {
     text-align: left;
   }
+}
+
+/* Coming Soon state */
+.competition-card--coming-soon {
+  opacity: 0.6;
+  filter: grayscale(75%);
+  position: relative;
+}
+
+.coming-soon-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 10;
+  padding: 1rem;
+}
+
+.coming-soon-badge {
+  background: #ff6b00;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.competition-card--coming-soon .btn-enter-now {
+  background: #555;
+  cursor: not-allowed;
+  color: #aaa;
+  opacity: 0.7;
+}
+
+.competition-card--coming-soon .btn-enter-now:hover {
+  background: #555;
 }
