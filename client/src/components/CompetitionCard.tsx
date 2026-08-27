@@ -36,6 +36,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.entriesRemaining ?? (competition.totalEntries - competition.soldEntries);
   const currencySymbol = competition.prizeDetails.currency === 'GBP' ? '£' : '';
+  const currencyLabel = currencySymbol || competition.prizeDetails.currency;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +64,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         <div className="prize-section">
           <p className="prize-label">WIN</p>
           <h3 className="prize-amount">
-            {currencySymbol}{competition.prizeAmount.toLocaleString()} {!currencySymbol && competition.prizeDetails.currency}
+            {currencyLabel}{competition.prizeAmount.toLocaleString()}
           </h3>
           <p className="prize-description">{competition.description}</p>
           {competition.prizeDetails.includes && (
@@ -83,7 +84,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       <div className="card-stats">
         <div className="stat">
           <span className="stat-label">TICKET PRICE</span>
-          <span className="stat-value">{currencySymbol}{competition.entryPrice}</span>
+          <span className="stat-value">{currencyLabel}{competition.entryPrice}</span>
           <span className="stat-sublabel">PER ENTRY</span>
         </div>
         <div className="stat">
@@ -137,12 +138,12 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
         <div className="cost-display">
           <span className="cost-label">Total Cost:</span>
-          <span className="cost-amount">{currencySymbol}{totalCost}</span>
+          <span className="cost-amount">{currencyLabel}{totalCost}</span>
         </div>
       </div>
 
       <button className="btn-enter-now" disabled={competition.comingSoon}>
-        {competition.comingSoon ? 'COMING SOON' : `ENTER NOW - ${currencySymbol}${totalCost}`}
+        {competition.comingSoon ? 'COMING SOON' : `ENTER NOW - ${currencyLabel}${totalCost}`}
       </button>
 
       <div className="terms-link">
