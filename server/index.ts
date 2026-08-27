@@ -28,8 +28,22 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Mock competitions data - TRANSPARENT STRUCTURE
-const competitions = [
+// Draw-readiness helper
+function calcDrawReady(comp: {
+  soldEntries: number;
+  entriesNeededForDraw: number;
+}) {
+  const progress = Math.min((comp.soldEntries / comp.entriesNeededForDraw) * 100, 100);
+  return {
+    drawReadyProgress: Math.round(progress * 10) / 10,
+    drawReadyStatus: progress >= 100 ? 'READY FOR DRAW' : 'ENTRIES OPEN',
+    entriesNeededForDraw: comp.entriesNeededForDraw,
+    entriesRemaining: Math.max(comp.entriesNeededForDraw - comp.soldEntries, 0),
+  };
+}
+
+// Raw competition definitions
+const competitionsRaw = [
   {
     id: 1,
     title: 'WIN 10,000 AED CASH',
@@ -66,8 +80,51 @@ const competitions = [
     tags: ['Luxury Experience', 'Fair Live Draw', 'Transparent Odds'],
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
-  }
+  },
+  {
+    id: 6,
+    title: 'WIN £10,000 CASH - WEEKLY DRAW',
+    description: 'Win £10,000 - Weekly Draw',
+    prizeType: 'CASH COMPETITION',
+    prizeAmount: 10000,
+    prizeDetails: {
+      currency: 'GBP',
+      description: 'Cash Prize',
+    },
+    entryPrice: 1,
+    frequency: 'Weekly',
+    soldEntries: 2500,
+    entriesNeededForDraw: 4000,
+    tags: ['Weekly Draw', 'Fair Live Draw', 'Transparent Odds'],
+    profitMargin: '2.5x Profit Model (Transparent)',
+    expectedWinners: 1,
+  },
+  {
+    id: 7,
+    title: 'WIN 3 LUXURY SUPERCARS - MONTHLY DRAW',
+    description: 'Win 3 Luxury Supercars - Monthly Draw',
+    prizeType: 'VEHICLE COMPETITION',
+    prizeAmount: 135000,
+    prizeDetails: {
+      currency: 'GBP',
+      description: 'Three Luxury Supercars',
+      vehicles: ['Range Rover Evoque', 'Premium Luxury Sedan', 'Sports Car'],
+    },
+    entryPrice: 10,
+    frequency: 'Monthly',
+    soldEntries: 3375,
+    entriesNeededForDraw: 5400,
+    tags: ['Luxury Cars', 'Premium Draw', 'Fair Live Draw', 'Transparent Odds'],
+    profitMargin: '2.5x Profit Model (Transparent)',
+    expectedWinners: 3,
+  },
 ];
+
+// Attach draw-readiness fields to all competitions
+const competitions = competitionsRaw.map((comp) => {
+  if (!('entriesNeededForDraw' in comp)) return comp;
+  return { ...comp, ...calcDrawReady(comp as { soldEntries: number; entriesNeededForDraw: number }) };
+});
 
 // Routes
 app.get('/api/health', (req: Request, res: Response) => {
