@@ -325,6 +325,152 @@
   color: var(--color-gold);
 }
 
+/* Currency badge */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.currency-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #aaa;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  border-radius: 4px;
+}
+
+/* AED note under converted prize */
+.prize-aed-note {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+/* Prize / Cash Alternative Selector */
+.prize-choice-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prize-choice-label {
+  font-size: 0.75rem;
+  color: #666;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.prize-choice-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.prize-choice-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  background: rgba(212, 175, 55, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.prize-choice-option input[type="radio"] {
+  display: none;
+}
+
+.prize-choice-option.active {
+  border-color: var(--color-gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.option-icon {
+  font-size: 1.25rem;
+}
+
+.option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.option-text strong {
+  font-size: 0.85rem;
+  color: var(--color-text, #fff);
+}
+
+.option-text small {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* Age check */
+.age-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  background: rgba(212, 175, 55, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: #aaa;
+  line-height: 1.5;
+}
+
+.age-check input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-gold);
+  margin-top: 2px;
+}
+
+.age-check a {
+  color: var(--color-gold);
+}
+
+/* Entry error */
+.entry-error {
+  font-size: 0.82rem;
+  color: #e57373;
+  padding: 0.75rem;
+  background: rgba(229, 115, 115, 0.08);
+  border: 1px solid rgba(229, 115, 115, 0.3);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+/* Responsible gambling */
+.responsible-gambling {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(212, 175, 55, 0.03);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.responsible-gambling p {
+  font-size: 0.78rem;
+  color: #666;
+}
+
+.responsible-gambling a {
+  color: var(--color-gold);
+}
+
 @media (max-width: 768px) {
   .competition-card {
     padding: 1.5rem;
@@ -354,5 +500,9 @@
 
   .cost-display {
     text-align: left;
+  }
+
+  .prize-choice-options {
+    grid-template-columns: 1fr;
   }
 }

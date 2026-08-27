@@ -2,6 +2,67 @@
   width: 100%;
 }
 
+/* Currency Bar */
+.currency-bar {
+  background: #111;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 0.875rem 2rem;
+}
+
+.currency-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.currency-selector-label {
+  font-size: 0.85rem;
+  color: #aaa;
+  white-space: nowrap;
+}
+
+.currency-select {
+  padding: 0.5rem 0.75rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #d4af37;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.currency-select option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.currency-note {
+  font-size: 0.75rem;
+  color: #555;
+  font-style: italic;
+}
+
+/* Footer compliance */
+.footer-compliance {
+  padding: 1.5rem 2rem;
+  background: #080808;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  text-align: center;
+}
+
+.footer-compliance p {
+  font-size: 0.78rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 0.25rem;
+}
+
+.footer-compliance a {
+  color: #888;
+  text-decoration: underline;
+}
+
 /* Hero Section */
 .hero {
   position: relative;

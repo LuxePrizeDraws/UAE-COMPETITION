@@ -14,7 +14,17 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow same-origin / server-to-server
+    if (
+      origin.startsWith('http://localhost:') ||
+      origin.endsWith('.app.github.dev') ||
+      origin === (process.env.CLIENT_URL ?? '')
+    ) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 app.use(express.json());
@@ -87,7 +97,7 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
 });
 
 app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
-  const { quantity } = req.body;
+  const { quantity, prizeChoice } = req.body;
   const competition = competitions.find(c => c.id === parseInt(req.params.id));
   
   if (!competition) {
@@ -97,6 +107,9 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
   if (!quantity || quantity < 1) {
     return res.status(400).json({ error: 'Invalid quantity' });
   }
+
+  const validPrizeChoices = ['prize', 'cash'];
+  const selectedPrizeChoice = validPrizeChoices.includes(prizeChoice) ? prizeChoice : 'prize';
 
   const totalCost = quantity * competition.entryPrice;
   
@@ -108,7 +121,8 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     quantity,
     totalCost,
     currency: 'AED',
-    entryNumbers: Array.from({ length: quantity }, (_, i) => `${competition.id}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`),
+    prizeChoice: selectedPrizeChoice,
+    entryNumbers: Array.from({ length: quantity }, () => `${competition.id}-${Math.random().toString(36).substring(2, 11).toUpperCase()}`),
   });
 });
 
