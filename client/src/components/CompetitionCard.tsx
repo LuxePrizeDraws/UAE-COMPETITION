@@ -69,7 +69,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       <div className="card-stats">
         <div className="stat">
           <span className="stat-label">TICKET PRICE</span>
-          <span className="stat-value">{competition.entryPrice} AED</span>
+          <span className="stat-value">{competition.entryPrice} {competition.prizeDetails.currency}</span>
           <span className="stat-sublabel">PER ENTRY</span>
         </div>
         <div className="stat">
@@ -123,11 +123,11 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
         <div className="cost-display">
           <span className="cost-label">Total Cost:</span>
-          <span className="cost-amount">{totalCost} AED</span>
+          <span className="cost-amount">{totalCost} {competition.prizeDetails.currency}</span>
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button className="btn-enter-now">ENTER NOW - {totalCost} {competition.prizeDetails.currency}</button>
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>
