@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import './Dashboard.css';
 
@@ -173,17 +173,7 @@ function getTypeColor(type: Competition['type']) {
 }
 
 function CountdownTimer({ timeRemaining }: { timeRemaining: string }) {
-  const [display, setDisplay] = useState(timeRemaining);
-
-  useEffect(() => {
-    if (timeRemaining === 'Coming Soon') return;
-    const id = setInterval(() => {
-      setDisplay(timeRemaining); // static for demo – would parse/decrement in production
-    }, 1000);
-    return () => clearInterval(id);
-  }, [timeRemaining]);
-
-  return <span className="countdown">{display}</span>;
+  return <span className="countdown">{timeRemaining}</span>;
 }
 
 function CompetitionCard({ comp, onSelect }: { comp: Competition; onSelect: (id: number) => void }) {
