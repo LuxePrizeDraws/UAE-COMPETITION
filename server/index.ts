@@ -1,125 +1,520 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
 
 const app: Express = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT || 5000);
+const JWT_SECRET = process.env.JWT_SECRET || 'development_secret';
 
-// Middleware
-app.use(helmet());
-app.use(morgan('combined'));
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true,
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+interface Competition {
+  id: number;
+  slug: string;
+  title: string;
+  shortTitle: string;
+  description: string;
+  prizeType: string;
+  prizeAmount: number;
+  prizeDetails: {
+    currency: string;
+    description: string;
+    includes?: string[];
+  };
+  entryPrice: number;
+  totalEntries: number;
+  soldEntries: number;
+  endsIn: string;
+  drawDate: string;
+  image: string;
+  location: string;
+  tags: string[];
+  highlights: string[];
+  profitMargin: string;
+  expectedWinners: number;
+  featured?: boolean;
+}
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: 'Too many requests from this IP',
-});
-app.use(limiter);
+interface UserRecord {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  passwordHash: string;
+  role: 'user' | 'admin';
+  createdAt: string;
+}
 
-// Mock competitions data - TRANSPARENT STRUCTURE
-const competitions = [
+interface EntryRecord {
+  id: string;
+  userId: string;
+  competitionId: number;
+  competitionTitle: string;
+  quantity: number;
+  totalCost: number;
+  status: 'confirmed' | 'pending';
+  createdAt: string;
+  entryNumbers: string[];
+  paymentIntentId?: string;
+}
+
+interface AuthRequest extends Request {
+  user?: Pick<UserRecord, 'id' | 'email' | 'role' | 'name'>;
+}
+
+const competitions: Competition[] = [
   {
     id: 1,
+    slug: 'win-10000-aed-cash',
     title: 'WIN 10,000 AED CASH',
-    description: 'Guaranteed Winner - Fair Live Draw',
-    prizeType: 'CASH COMPETITION',
+    shortTitle: '10,000 AED Cash',
+    description: 'A fast-moving cash drop with transparent capped entries and immediate lifestyle appeal.',
+    prizeType: 'Cash Competition',
     prizeAmount: 10000,
-    prizeDetails: {
-      currency: 'AED',
-      description: 'Cash Prize'
-    },
+    prizeDetails: { currency: 'AED', description: 'Direct cash payout', includes: ['10,000 AED transfer', 'Live draw announcement', 'Winner concierge support'] },
     entryPrice: 1,
     totalEntries: 10000,
     soldEntries: 7248,
-    endsIn: '2 days 14 hours 36 minutes 28 seconds',
-    tags: ['Guaranteed Winner', 'Fair Live Draw', 'Transparent Odds'],
-    profitMargin: '40% House, 60% Prize Pool (Transparent)',
+    endsIn: '2 days 14 hours',
+    drawDate: '2026-09-05',
+    image: '💸',
+    location: 'Dubai',
+    tags: ['Low entry price', 'Fast draw', 'Transparent odds'],
+    highlights: ['Perfect entry-level competition', 'High urgency countdown', 'Ideal for rapid conversion campaigns'],
+    profitMargin: 'Transparent model: capped pool, clear sold-entry progress, protected confirmation flow.',
     expectedWinners: 1,
+    featured: true,
   },
   {
     id: 2,
-    title: 'WIN THE ULTIMATE UAE DREAM PACKAGE',
-    description: 'Luxury Stay, Premium Experiences, Travel & Lifestyle',
-    prizeType: 'LIFESTYLE PACKAGE',
+    slug: 'win-luxury-uae-dream-package',
+    title: 'WIN LUXURY UAE DREAM PACKAGE',
+    shortTitle: 'UAE Dream Package',
+    description: 'A curated ultra-premium lifestyle package featuring hospitality, dining, wellness and private access moments.',
+    prizeType: 'Lifestyle Package',
     prizeAmount: 500000,
-    prizeDetails: {
-      currency: 'AED',
-      description: 'Luxury Experience Package',
-      includes: ['5-star luxury stay', 'Premium experiences', 'Travel package', 'Lifestyle experiences']
-    },
+    prizeDetails: { currency: 'AED', description: 'Multi-experience UAE luxury prize', includes: ['Five-star resort stay', 'Private chauffeur itinerary', 'Signature dining experiences'] },
     entryPrice: 1,
     totalEntries: 1000000,
     soldEntries: 856000,
-    endsIn: '5 days 14 hours 36 minutes 28 seconds',
-    tags: ['Luxury Experience', 'Fair Live Draw', 'Transparent Odds'],
-    profitMargin: '40% House, 60% Prize Pool (Transparent)',
+    endsIn: '5 days 9 hours',
+    drawDate: '2026-09-08',
+    image: '🌆',
+    location: 'Abu Dhabi & Dubai',
+    tags: ['Aspirational lifestyle', 'Huge reach', 'Premium brand fit'],
+    highlights: ['Designed for broad market virality', 'Luxury narrative for the GCC audience', 'Strong perceived value at 1 AED entry'],
+    profitMargin: 'Luxury positioning with transparent entry caps and public draw timing.',
     expectedWinners: 1,
-  }
+    featured: true,
+  },
+  {
+    id: 3,
+    slug: 'win-ferrari-f8-tributo',
+    title: 'WIN FERRARI F8 TRIBUTO',
+    shortTitle: 'Ferrari F8 Tributo',
+    description: 'An iconic supercar draw crafted for adrenaline, prestige and high-ticket aspiration.',
+    prizeType: 'Supercar Competition',
+    prizeAmount: 900000,
+    prizeDetails: { currency: 'AED', description: 'Ferrari ownership package', includes: ['Ferrari F8 Tributo', 'Registration support', 'White-glove delivery'] },
+    entryPrice: 5,
+    totalEntries: 500000,
+    soldEntries: 281320,
+    endsIn: '7 days 20 hours',
+    drawDate: '2026-09-12',
+    image: '🏎️',
+    location: 'Dubai',
+    tags: ['Supercar dream', 'High perceived value', 'Collector appeal'],
+    highlights: ['Performance-led visual storytelling', 'Strong social media click-through potential', 'Best suited to premium paid traffic'],
+    profitMargin: 'Premium product draw with audited cap visibility and protected payment stub.',
+    expectedWinners: 1,
+  },
+  {
+    id: 4,
+    slug: 'win-dubai-penthouse',
+    title: 'WIN DUBAI PENTHOUSE',
+    shortTitle: 'Dubai Penthouse',
+    description: 'A skyline-defining property experience that anchors the platform’s most ambitious aspiration tier.',
+    prizeType: 'Real Estate Competition',
+    prizeAmount: 5000000,
+    prizeDetails: { currency: 'AED', description: 'Luxury property grand prize', includes: ['Dubai penthouse ownership', 'Legal transfer support', 'VIP winner onboarding'] },
+    entryPrice: 10,
+    totalEntries: 1000000,
+    soldEntries: 434200,
+    endsIn: '12 days 6 hours',
+    drawDate: '2026-09-18',
+    image: '🏙️',
+    location: 'Palm Jumeirah',
+    tags: ['Flagship campaign', 'Ultra premium', 'Property ownership'],
+    highlights: ['Hero product for PR reach', 'Premium audience acquisition magnet', 'Strong trust-building showcase prize'],
+    profitMargin: 'Flagship inventory with capped supply, milestone reporting and admin visibility.',
+    expectedWinners: 1,
+    featured: true,
+  },
+  {
+    id: 5,
+    slug: 'win-rolex-daytona',
+    title: 'WIN ROLEX DAYTONA',
+    shortTitle: 'Rolex Daytona',
+    description: 'A collector-grade timepiece draw for watch enthusiasts and premium gifting buyers.',
+    prizeType: 'Luxury Watch Competition',
+    prizeAmount: 85000,
+    prizeDetails: { currency: 'AED', description: 'Rolex Daytona prize', includes: ['Authentic Rolex Daytona', 'Certification documents', 'Insured handover'] },
+    entryPrice: 2,
+    totalEntries: 100000,
+    soldEntries: 51230,
+    endsIn: '4 days 13 hours',
+    drawDate: '2026-09-06',
+    image: '⌚',
+    location: 'Dubai',
+    tags: ['Collector item', 'Giftable luxury', 'High repeat appeal'],
+    highlights: ['Smaller-ticket aspirational category', 'Excellent repeat-entry economics', 'Ideal for watch-focused remarketing'],
+    profitMargin: 'Clear availability, capped entry count and secure member tracking.',
+    expectedWinners: 1,
+  },
+  {
+    id: 6,
+    slug: 'win-private-jet-experience',
+    title: 'WIN PRIVATE JET EXPERIENCE',
+    shortTitle: 'Private Jet Experience',
+    description: 'Deliver an elite aviation moment with concierge touches and ultra-premium storytelling.',
+    prizeType: 'Experience Competition',
+    prizeAmount: 150000,
+    prizeDetails: { currency: 'AED', description: 'Private aviation experience', includes: ['Private jet charter day', 'VIP airport handling', 'Luxury ground transfers'] },
+    entryPrice: 3,
+    totalEntries: 200000,
+    soldEntries: 118400,
+    endsIn: '6 days 11 hours',
+    drawDate: '2026-09-10',
+    image: '🛩️',
+    location: 'UAE',
+    tags: ['Experience-led', 'Luxury travel', 'VIP service'],
+    highlights: ['Strong experiential appeal', 'Ideal for content-led storytelling', 'Premium but accessible price point'],
+    profitMargin: 'Protected checkout and visible ticket allocation for confidence at scale.',
+    expectedWinners: 1,
+  },
+  {
+    id: 7,
+    slug: 'win-100000-aed-cash',
+    title: 'WIN 100,000 AED CASH',
+    shortTitle: '100,000 AED Cash',
+    description: 'A bigger cash ladder prize balancing affordability with major payout desirability.',
+    prizeType: 'Cash Competition',
+    prizeAmount: 100000,
+    prizeDetails: { currency: 'AED', description: 'Large cash payout', includes: ['100,000 AED transfer', 'Winner verification support', 'Public results announcement'] },
+    entryPrice: 2,
+    totalEntries: 200000,
+    soldEntries: 149950,
+    endsIn: '3 days 18 hours',
+    drawDate: '2026-09-04',
+    image: '💵',
+    location: 'Sharjah',
+    tags: ['High demand', 'Mass appeal', 'Urgent countdown'],
+    highlights: ['Great for conversion-focused campaigns', 'Compelling value vs entry cost', 'Simple message with broad appeal'],
+    profitMargin: 'Live cap visibility, protected entry creation and structured payout readiness.',
+    expectedWinners: 1,
+  },
+  {
+    id: 8,
+    slug: 'win-business-class-world-tour',
+    title: 'WIN BUSINESS CLASS WORLD TOUR',
+    shortTitle: 'Business Class World Tour',
+    description: 'A global itinerary designed for prestige travellers who value comfort, access and unforgettable moments.',
+    prizeType: 'Travel Competition',
+    prizeAmount: 250000,
+    prizeDetails: { currency: 'AED', description: 'Global luxury travel package', includes: ['Business class multi-city flights', 'Five-star accommodations', 'Luxury travel concierge'] },
+    entryPrice: 5,
+    totalEntries: 100000,
+    soldEntries: 64440,
+    endsIn: '8 days 8 hours',
+    drawDate: '2026-09-14',
+    image: '🌍',
+    location: 'Global departure from Dubai',
+    tags: ['Travel prestige', 'Experience-rich', 'Luxury itinerary'],
+    highlights: ['Perfect for aspirational travel buyers', 'High shareability through destination content', 'Excellent fit for elite loyalty positioning'],
+    profitMargin: 'Luxury travel positioning backed by clear entry pricing and tracked orders.',
+    expectedWinners: 1,
+  },
 ];
 
-// Routes
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', message: 'UAE Competition API is running' });
+const users: UserRecord[] = [
+  {
+    id: uuidv4(),
+    name: 'Platform Admin',
+    email: process.env.ADMIN_EMAIL || 'admin@uaeluxury.ae',
+    phone: '+971500000001',
+    passwordHash: bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'Admin123!', 10),
+    role: 'admin',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: uuidv4(),
+    name: 'Demo Member',
+    email: 'member@uaeluxury.ae',
+    phone: '+971500000002',
+    passwordHash: bcrypt.hashSync('Member123!', 10),
+    role: 'user',
+    createdAt: new Date().toISOString(),
+  },
+];
+
+const entries: EntryRecord[] = [
+  {
+    id: `${users[1].id}_entry_1`,
+    userId: users[1].id,
+    competitionId: 1,
+    competitionTitle: 'WIN 10,000 AED CASH',
+    quantity: 12,
+    totalCost: 12,
+    status: 'confirmed',
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    entryNumbers: Array.from({ length: 12 }, (_, index) => `1-DEMO-${index + 1}`),
+    paymentIntentId: 'pi_demo_member_001',
+  },
+];
+
+const sanitizeUser = (user: UserRecord) => ({
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone,
+  role: user.role,
+  createdAt: user.createdAt,
 });
 
-app.get('/api/competitions', (req: Request, res: Response) => {
+const signToken = (user: UserRecord) =>
+  jwt.sign({ sub: user.id, email: user.email, role: user.role, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
+
+const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  const token = authHeader.slice(7);
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { sub: string; email: string; role: 'user' | 'admin'; name: string };
+    req.user = { id: decoded.sub, email: decoded.email, role: decoded.role, name: decoded.name };
+    return next();
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+};
+
+const adminMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  return next();
+};
+
+app.use(helmet());
+app.use(morgan('combined'));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true,
+  }),
+);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    message: 'Too many requests from this IP',
+  }),
+);
+
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', message: 'UAE Luxury Competition API is running' });
+});
+
+app.post('/api/auth/register', async (req: Request, res: Response) => {
+  const { name, email, password, phone } = req.body as { name?: string; email?: string; password?: string; phone?: string };
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Name, email and password are required' });
+  }
+
+  if (users.some((user) => user.email.toLowerCase() === email.toLowerCase())) {
+    return res.status(409).json({ error: 'An account already exists for this email' });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  const user: UserRecord = {
+    id: uuidv4(),
+    name,
+    email: email.toLowerCase(),
+    phone,
+    passwordHash,
+    role: 'user',
+    createdAt: new Date().toISOString(),
+  };
+
+  users.push(user);
+
+  return res.status(201).json({
+    user: sanitizeUser(user),
+    token: signToken(user),
+    entries: [],
+    wins: 0,
+  });
+});
+
+app.post('/api/auth/login', async (req: Request, res: Response) => {
+  const { email, password } = req.body as { email?: string; password?: string };
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  const user = users.find((record) => record.email.toLowerCase() === email.toLowerCase());
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid email or password' });
+  }
+
+  const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+  if (!passwordMatches) {
+    return res.status(401).json({ error: 'Invalid email or password' });
+  }
+
+  const userEntries = entries.filter((entry) => entry.userId === user.id);
+  return res.json({
+    user: sanitizeUser(user),
+    token: signToken(user),
+    entries: userEntries,
+    wins: 0,
+  });
+});
+
+app.get('/api/auth/me', authMiddleware, (req: AuthRequest, res: Response) => {
+  const user = users.find((record) => record.id === req.user?.id);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  return res.json({
+    user: sanitizeUser(user),
+    entries: entries.filter((entry) => entry.userId === user.id),
+    wins: 0,
+  });
+});
+
+app.get('/api/competitions', (_req: Request, res: Response) => {
   res.json(competitions);
 });
 
 app.get('/api/competitions/:id', (req: Request, res: Response) => {
-  const competition = competitions.find(c => c.id === parseInt(req.params.id));
+  const competition = competitions.find((item) => item.id === Number(req.params.id));
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
   }
-  res.json(competition);
+  return res.json(competition);
 });
 
-app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
-  const { quantity } = req.body;
-  const competition = competitions.find(c => c.id === parseInt(req.params.id));
-  
+app.post('/api/competitions/:id/enter', authMiddleware, (req: AuthRequest, res: Response) => {
+  const competition = competitions.find((item) => item.id === Number(req.params.id));
+  const { quantity, paymentIntentId } = req.body as { quantity?: number; paymentIntentId?: string };
+
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
   }
 
-  if (!quantity || quantity < 1) {
-    return res.status(400).json({ error: 'Invalid quantity' });
+  if (!quantity || quantity < 1 || quantity > 100) {
+    return res.status(400).json({ error: 'Quantity must be between 1 and 100' });
   }
 
-  const totalCost = quantity * competition.entryPrice;
-  
-  // Mock response - in production this would process payment
-  res.json({
-    success: true,
-    message: 'Entry processed (mock)',
+  const remainingEntries = competition.totalEntries - competition.soldEntries;
+  if (quantity > remainingEntries) {
+    return res.status(400).json({ error: 'Not enough entries remaining for this competition' });
+  }
+
+  const user = users.find((record) => record.id === req.user?.id);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  competition.soldEntries += quantity;
+  const entry: EntryRecord = {
+    id: `${user.id}_${uuidv4()}`,
+    userId: user.id,
     competitionId: competition.id,
+    competitionTitle: competition.title,
     quantity,
-    totalCost,
-    currency: 'AED',
-    entryNumbers: Array.from({ length: quantity }, (_, i) => `${competition.id}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`),
+    totalCost: quantity * competition.entryPrice,
+    status: 'confirmed',
+    createdAt: new Date().toISOString(),
+    entryNumbers: Array.from({ length: quantity }, () => `${competition.id}-${Math.random().toString(36).slice(2, 10).toUpperCase()}`),
+    paymentIntentId,
+  };
+
+  entries.unshift(entry);
+
+  return res.status(201).json({
+    success: true,
+    message: 'Entries confirmed successfully',
+    ...entry,
   });
 });
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
+app.post('/api/payment/create-intent', (req: Request, res: Response) => {
+  const { competitionId, quantity, amount } = req.body as { competitionId?: number; quantity?: number; amount?: number };
+
+  if (!competitionId || !quantity || !amount) {
+    return res.status(400).json({ error: 'competitionId, quantity and amount are required' });
+  }
+
+  return res.status(201).json({
+    paymentIntentId: `pi_${uuidv4().replace(/-/g, '').slice(0, 18)}`,
+    clientSecret: `pi_${uuidv4().replace(/-/g, '').slice(0, 18)}_secret_demo`,
+    amount,
+    currency: 'aed',
+    provider: 'stripe',
+    status: 'requires_confirmation',
+  });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
-  console.log(`📡 CORS enabled for http://localhost:5173`);
-  console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);
+app.get('/api/admin/stats', authMiddleware, adminMiddleware, (_req: AuthRequest, res: Response) => {
+  const totalRevenue = entries.reduce((sum, entry) => sum + entry.totalCost, 0);
+  res.json({
+    totalUsers: users.length,
+    totalEntries: entries.length,
+    totalRevenue,
+    activeCompetitions: competitions.length,
+  });
 });
+
+app.get('/api/admin/users', authMiddleware, adminMiddleware, (_req: AuthRequest, res: Response) => {
+  res.json(users.map(sanitizeUser));
+});
+
+app.get('/api/admin/entries', authMiddleware, adminMiddleware, (_req: AuthRequest, res: Response) => {
+  res.json(
+    entries.map((entry) => {
+      const user = users.find((record) => record.id === entry.userId);
+      return {
+        ...entry,
+        userName: user?.name,
+        userEmail: user?.email,
+      };
+    }),
+  );
+});
+
+app.get('/', (_req: Request, res: Response) => {
+  res.json({ message: 'UAE Luxury Competition Platform API', version: '2.0.0' });
+});
+
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`UAE Competition API running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
