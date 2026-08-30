@@ -1,5 +1,6 @@
-import { useState, useEffect, type CSSProperties } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import EntryModal from '../components/EntryModal';
 import './Dashboard.css';
 
 interface Competition {
@@ -176,7 +177,12 @@ function CountdownTimer({ timeRemaining }: { timeRemaining: string }) {
   return <span className="countdown">{timeRemaining}</span>;
 }
 
-function CompetitionCard({ comp, onSelect }: { comp: Competition; onSelect: (id: number) => void }) {
+function parsePound(str: string): number {
+  const match = str.replace(/,/g, '').match(/[\d.]+/);
+  return match ? parseInt(match[0], 10) : 0;
+}
+
+function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSelect: (id: number) => void; onEnter: (id: number) => void }) {
   const [cashMode, setCashMode] = useState(false);
   const drawStatus = getDrawStatus(comp.drawReadyPercent);
   const statusInfo = getStatusLabel(drawStatus);
@@ -247,7 +253,7 @@ function CompetitionCard({ comp, onSelect }: { comp: Competition; onSelect: (id:
       <button
         className="dash-card__cta"
         disabled={comp.status === 'coming-soon'}
-        onClick={(e) => { e.stopPropagation(); }}
+        onClick={(e) => { e.stopPropagation(); onEnter(comp.id); }}
       >
         {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}
       </button>
@@ -258,6 +264,7 @@ function CompetitionCard({ comp, onSelect }: { comp: Competition; onSelect: (id:
 export default function Dashboard() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [entryCompId, setEntryCompId] = useState<number | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 800);
@@ -266,6 +273,28 @@ export default function Dashboard() {
 
   const liveCount = COMPETITIONS.filter(c => c.status === 'live').length;
   const comingSoonCount = COMPETITIONS.filter(c => c.status === 'coming-soon').length;
+
+  const entryComp = entryCompId !== null
+    ? (() => {
+        const c = COMPETITIONS.find(x => x.id === entryCompId)!;
+        const cashAmt = parsePound(c.cashAlternative);
+        return {
+          id: c.id,
+          title: c.title,
+          prizeType: c.type.toUpperCase(),
+          prizeAmount: parsePound(c.prizeAmount),
+          currency: 'GBP',
+          cashAlternative: true,
+          cashAlternativeAmount: cashAmt,
+          entryPrice: parsePound(c.entryPrice),
+          totalEntries: c.entriesNeeded,
+          soldEntries: c.entriesSold,
+          endsIn: c.timeRemaining,
+          status: c.status,
+          prizeIncludes: c.details,
+        };
+      })()
+    : null;
 
   return (
     <div className="dashboard">
@@ -322,6 +351,7 @@ export default function Dashboard() {
               key={comp.id}
               comp={comp}
               onSelect={(id) => setSelectedId(selectedId === id ? null : id)}
+              onEnter={(id) => setEntryCompId(id)}
             />
           ))}
         </div>
@@ -353,6 +383,7 @@ export default function Dashboard() {
               <button
                 className="dash-card__cta detail-cta"
                 disabled={comp.status === 'coming-soon'}
+                onClick={() => { setSelectedId(null); setEntryCompId(comp.id); }}
               >
                 {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}
               </button>
@@ -360,6 +391,10 @@ export default function Dashboard() {
           </div>
         );
       })()}
+
+      {entryComp && (
+        <EntryModal competition={entryComp} onClose={() => setEntryCompId(null)} />
+      )}
     </div>
   );
 }
