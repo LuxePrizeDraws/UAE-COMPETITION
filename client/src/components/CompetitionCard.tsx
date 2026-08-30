@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './CompetitionCard.css';
+import CheckoutModal from './CheckoutModal';
 
 interface Competition {
   id: number;
@@ -27,6 +28,7 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
+  const [showCheckout, setShowCheckout] = useState(false);
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
@@ -127,11 +129,22 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button className="btn-enter-now" onClick={() => setShowCheckout(true)}>ENTER NOW - {totalCost} AED</button>
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>
       </div>
+
+      {showCheckout && (
+        <CheckoutModal
+          competitionId={competition.id}
+          competitionTitle={competition.title}
+          entryPrice={competition.entryPrice}
+          currency={competition.prizeDetails.currency}
+          quantity={quantity}
+          onClose={() => setShowCheckout(false)}
+        />
+      )}
     </div>
   );
 };

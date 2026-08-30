@@ -4,11 +4,47 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import Stripe from 'stripe';
 
 dotenv.config();
 
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error('❌ STRIPE_SECRET_KEY is not set. Stripe payments will not work.');
+}
+
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+  apiVersion: '2023-10-16',
+});
+
+// Stripe webhook must be registered BEFORE global JSON body parser
+// so it receives the raw request body required for signature verification
+app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), (req: Request, res: Response) => {
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!webhookSecret || !sig) {
+    return res.status(400).json({ error: 'Missing webhook configuration' });
+  }
+
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+  } catch (err: any) {
+    console.error('Webhook signature failed:', err.message);
+    return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as Stripe.Checkout.Session;
+    console.log(`✅ Payment successful for competition ${session.metadata?.competitionId}, qty ${session.metadata?.quantity}`);
+    // TODO: record payment in database
+  }
+
+  res.json({ received: true });
+});
 
 // Middleware
 app.use(helmet());
@@ -267,6 +303,52 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
+});
+
+// Stripe checkout session route
+app.post('/api/payment/create-checkout-session', async (req: Request, res: Response) => {
+  const { competitionId, quantity, userEmail } = req.body;
+  const competition = competitions.find(c => c.id === parseInt(competitionId));
+
+  if (!competition) {
+    return res.status(404).json({ error: 'Competition not found' });
+  }
+  if (competition.status === 'coming-soon') {
+    return res.status(400).json({ error: 'Competition not yet open.' });
+  }
+  const qty = Math.max(1, Math.min(1000, parseInt(quantity) || 1));
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      customer_email: userEmail || undefined,
+      line_items: [
+        {
+          price_data: {
+            currency: competition.currency.toLowerCase(),
+            product_data: {
+              name: `${competition.title} – Entry Ticket`,
+              description: competition.description,
+            },
+            unit_amount: Math.round(competition.entryPrice * 100),
+          },
+          quantity: qty,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/?payment=cancelled`,
+      metadata: {
+        competitionId: String(competition.id),
+        quantity: String(qty),
+      },
+    });
+
+    res.json({ sessionId: session.id, url: session.url });
+  } catch (err: any) {
+    console.error('Stripe error:', err.message);
+    res.status(500).json({ error: 'Failed to create checkout session' });
+  }
 });
 
 // Start server
