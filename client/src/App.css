@@ -92,6 +92,14 @@ nav {
   letter-spacing: 0.4px;
 }
 
+.trust-banner {
+  max-width: 1400px;
+  margin: 0.7rem auto 0;
+  font-size: 0.82rem;
+  color: #d6c28a;
+  letter-spacing: 0.35px;
+}
+
 @keyframes mascot-bounce {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   25% { transform: translateY(-4px) rotate(-6deg); }

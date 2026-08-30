@@ -114,6 +114,9 @@ function App() {
           <span className="mascot-figure" aria-hidden="true">🕺</span>
           <p className="mascot-speech">welcome to a luxury poundland</p>
         </div>
+        <p className="trust-banner">
+          Trusted launch mode: secure checkout, transparent draw maths, and a no-purchase route for fair participation.
+        </p>
       </header>
 
       <main className="competitions-grid">
