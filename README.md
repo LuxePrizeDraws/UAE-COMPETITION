@@ -60,6 +60,8 @@ cp .env.example .env
 npm run dev
 ```
 
+If your environment skips dev dependencies by default, run `npm install --include=dev` first.
+
 You should see:
 ```
 ✨ UK Luxe Prize Draw API running on http://localhost:5000
