@@ -390,9 +390,6 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
   if ('error' in validation) {
     return res.status(validation.error.status).json({ error: validation.error.message });
   }
-  if (!competition) {
-    return res.status(404).json({ error: 'Competition not found' });
-  }
 
   const qty = validation.qty;
   const totalCost = qty * competition.entryPrice;
@@ -421,9 +418,6 @@ app.post('/api/competitions/:id/checkout-session', async (req: Request, res: Res
     const validation = validateEntryInput(competition, quantity, termsAccepted);
     if ('error' in validation) {
       return res.status(validation.error.status).json({ error: validation.error.message });
-    }
-    if (!competition) {
-      return res.status(404).json({ error: 'Competition not found' });
     }
 
     const validPrizeOptions = ['physical', 'cash'];
