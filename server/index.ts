@@ -424,7 +424,7 @@ const registerDrawEntries = (input: {
   const scan = runEntryRiskScan(input);
   const entryNumbers = generateEntryNumbers(input.competitionId, input.quantity);
   const record: DrawEntryRecord = {
-    id: `DRAW-${input.competitionId}-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+    id: `DRAW-${input.competitionId}-${randomUUID().toUpperCase()}`,
     competitionId: input.competitionId,
     method: input.method,
     quantity: input.quantity,
