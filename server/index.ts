@@ -538,8 +538,11 @@ app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'fullName, email, and postalAddress are required.' });
   }
 
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (typeof email !== 'string' || !emailPattern.test(email)) {
+  const normalizedEmail = typeof email === 'string' ? email.trim() : '';
+  const atIndex = normalizedEmail.indexOf('@');
+  const dotIndex = normalizedEmail.lastIndexOf('.');
+  const hasValidEmailShape = atIndex > 0 && dotIndex > atIndex + 1 && dotIndex < normalizedEmail.length - 1 && !normalizedEmail.includes(' ');
+  if (!hasValidEmailShape) {
     return res.status(400).json({ error: 'A valid email address is required.' });
   }
 
@@ -558,7 +561,17 @@ app.get('/api/payments/stripe/session/:sessionId/verify', async (req: Request, r
       return res.status(503).json({ error: 'Stripe is not configured.' });
     }
 
-    const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${req.params.sessionId}`, {
+    const sessionId = req.params.sessionId;
+    const isSafeSessionId = typeof sessionId === 'string'
+      && sessionId.length > 6
+      && sessionId.length < 200
+      && sessionId.startsWith('cs_')
+      && [...sessionId].every((char) => /[A-Za-z0-9_]/.test(char));
+    if (!isSafeSessionId) {
+      return res.status(400).json({ error: 'Invalid Stripe session id.' });
+    }
+
+    const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`, {
       headers: {
         Authorization: 'Bearer ' + STRIPE_SECRET_KEY,
       },
@@ -584,9 +597,15 @@ app.post('/api/payments/paypal/capture', async (req: Request, res: Response) => 
     if (!orderId || typeof orderId !== 'string') {
       return res.status(400).json({ error: 'orderId is required.' });
     }
+    const isSafeOrderId = orderId.length > 6
+      && orderId.length < 80
+      && [...orderId].every((char) => /[A-Z0-9]/.test(char));
+    if (!isSafeOrderId) {
+      return res.status(400).json({ error: 'Invalid PayPal order id.' });
+    }
 
     const accessToken = await getPayPalAccessToken();
-    const response = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders/${orderId}/capture`, {
+    const response = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + accessToken,
