@@ -49,7 +49,7 @@ const COMPETITIONS: Competition[] = [
     type: 'experience',
     icon: '✈️',
     status: 'live',
-    details: ['5-star Dubai resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
+    details: ['5-star London hotel stay', 'Business class flights', 'Luxury yacht experience', 'Fine dining package'],
   },
   {
     id: 3,
@@ -272,7 +272,7 @@ export default function Dashboard() {
       <header className="dash-header">
         <div className="dash-header__inner">
           <div>
-            <h1 className="dash-title">🏆 Competition Dashboard</h1>
+            <h1 className="dash-title">🏆 UK Life Changing Competitions</h1>
             <p className="dash-subtitle">Live draw tracking — Cash or Prize — Your choice</p>
           </div>
           <Link to="/" className="back-link">← Home</Link>
