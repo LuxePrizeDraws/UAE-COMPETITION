@@ -229,17 +229,17 @@
 .payment-methods {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.25rem;
 }
 
 .payment-option {
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  padding: 0.9rem 1.25rem;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  padding: 0.6rem 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -252,8 +252,8 @@
 }
 
 .payment-option--active {
-  border-color: #333;
-  background: #fafafa;
+  border-color: transparent;
+  background: transparent;
 }
 
 .payment-option--unavailable {
@@ -262,46 +262,47 @@
 }
 
 .payment-name {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #111;
   display: flex;
   align-items: center;
+  gap: 0.4rem;
 }
 
 .payment-name--apple {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
 }
 
 .payment-name--google {
   font-family: 'Google Sans', 'Product Sans', sans-serif;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
 }
 
 .payment-name--paypal {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  color: #003087;
-  font-weight: 800;
-  font-size: 1.05rem;
-  letter-spacing: -0.2px;
+  gap: 0.35rem;
+  color: #111;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.3px;
 }
 
 .paypal-icon {
-  width: 28px;
+  width: 26px;
   height: auto;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .paypal-wordmark {
-  height: 20px;
+  height: 19px;
   object-fit: contain;
 }
 
 .payment-logo {
-  height: 22px;
+  height: 20px;
   object-fit: contain;
 }
 
