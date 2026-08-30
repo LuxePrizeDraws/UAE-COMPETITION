@@ -33,6 +33,8 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [showFreeEntry, setShowFreeEntry] = useState(false);
   const [freeEntryStatusMessage, setFreeEntryStatusMessage] = useState('');
+  const [freeEntryTermsAccepted, setFreeEntryTermsAccepted] = useState(false);
+  const [freeEntryDeclarationAccepted, setFreeEntryDeclarationAccepted] = useState(false);
   const [freeEntryDetails, setFreeEntryDetails] = useState({
     fullName: '',
     email: '',
@@ -96,6 +98,10 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const handleFreeEntrySubmit = async (e: FormEvent) => {
     e.preventDefault();
     setFreeEntryStatusMessage('');
+    if (!freeEntryTermsAccepted || !freeEntryDeclarationAccepted) {
+      setFreeEntryStatusMessage('Please accept both free-entry confirmations before submitting.');
+      return;
+    }
 
     try {
       const response = await fetch(`${apiBaseUrl}/api/competitions/${competition.id}/free-entry`, {
@@ -103,8 +109,8 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...freeEntryDetails,
-          termsAccepted: true,
-          declarationAccepted: true,
+          termsAccepted: freeEntryTermsAccepted,
+          declarationAccepted: freeEntryDeclarationAccepted,
         }),
       });
       const payload = await response.json();
@@ -113,6 +119,8 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       }
       setFreeEntryStatusMessage(`Free entry submitted. Reference: ${payload.reference}`);
       setFreeEntryDetails({ fullName: '', email: '', postalAddress: '' });
+      setFreeEntryTermsAccepted(false);
+      setFreeEntryDeclarationAccepted(false);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to submit free entry';
       setFreeEntryStatusMessage(message);
@@ -267,6 +275,22 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
             value={freeEntryDetails.postalAddress}
             onChange={(e) => setFreeEntryDetails((current) => ({ ...current, postalAddress: e.target.value }))}
           />
+          <label className="free-entry-check">
+            <input
+              type="checkbox"
+              checked={freeEntryTermsAccepted}
+              onChange={(e) => setFreeEntryTermsAccepted(e.target.checked)}
+            />
+            <span>I confirm my free entry follows the published terms.</span>
+          </label>
+          <label className="free-entry-check">
+            <input
+              type="checkbox"
+              checked={freeEntryDeclarationAccepted}
+              onChange={(e) => setFreeEntryDeclarationAccepted(e.target.checked)}
+            />
+            <span>I declare this entry is genuine and from an eligible participant.</span>
+          </label>
           <button type="submit" className="btn-free-entry-submit">SUBMIT FREE ENTRY</button>
           {freeEntryStatusMessage && <p className="free-entry-status">{freeEntryStatusMessage}</p>}
         </form>

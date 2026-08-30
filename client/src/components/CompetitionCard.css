@@ -395,6 +395,18 @@
   resize: vertical;
 }
 
+.free-entry-check {
+  display: flex;
+  gap: 0.45rem;
+  align-items: flex-start;
+  font-size: 0.8rem;
+  color: #d6d6d6;
+}
+
+.free-entry-check input {
+  margin-top: 0.15rem;
+}
+
 .free-entry-status {
   margin: 0;
   font-size: 0.8rem;

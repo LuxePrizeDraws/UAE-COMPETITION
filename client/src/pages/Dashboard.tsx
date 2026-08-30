@@ -143,6 +143,22 @@ const COMPETITIONS: Competition[] = [
     status: 'live',
     details: ['£80K cash', 'Premium Supercar', 'Ltd Company setup', 'Digital business package', 'Luxury lifestyle bundle', 'OR take £320K cash'],
   },
+  {
+    id: 9,
+    title: 'BIGGEST BUSINESS PRIZE',
+    prize: '£100K Own Company + Start-up Grant',
+    prizeAmount: '£100,000',
+    entryPrice: '£1',
+    entriesSold: 0,
+    entriesNeeded: 400000,
+    drawReadyPercent: 0,
+    timeRemaining: 'Coming Soon',
+    cashAlternative: '£100,000 cash',
+    type: 'package',
+    icon: '🚀',
+    status: 'coming-soon',
+    details: ['Company launch support', 'Start-up grant package', 'Custom web build design', 'Custom app build design', 'OR take £100K cash'],
+  },
 ];
 
 type DrawStatus = 'ready' | 'almost' | 'in-progress' | 'coming-soon';

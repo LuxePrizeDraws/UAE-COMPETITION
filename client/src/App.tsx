@@ -75,6 +75,25 @@ const competitions = [
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
   },
+  {
+    id: 9,
+    title: 'BIGGEST BUSINESS PRIZE: £100K Win Your Own Company + Start-up Grant',
+    description: 'Our flagship launch prize: win a £100K company package with custom web + app build design support.',
+    prizeType: 'FLAGSHIP MEGA BUSINESS DRAW',
+    prizeAmount: 100000,
+    prizeDetails: {
+      currency: 'GBP',
+      description: 'Business launch package',
+      includes: ['Company launch support', 'Start-up grant package', 'Custom web build design', 'Custom app build design', 'OR take £100,000 cash'],
+    },
+    entryPrice: 1,
+    totalEntries: 400000,
+    soldEntries: 0,
+    endsIn: 'Coming Soon',
+    tags: ['Flagship Prize', 'Biggest Business Package', 'Coming Soon', 'Cash Alternative Available'],
+    profitMargin: '40% House, 60% Prize Pool (Transparent)',
+    expectedWinners: 1,
+  },
 ];
 
 function App() {

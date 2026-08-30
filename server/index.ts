@@ -208,6 +208,33 @@ const competitions = [
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
   },
+  {
+    id: 9,
+    title: 'BIGGEST BUSINESS PRIZE: £100K Win Your Own Company + Start-up Grant',
+    description: 'Flagship launch prize: win a £100K company package with custom web + app build design support.',
+    prizeType: 'FLAGSHIP BUSINESS PACKAGE',
+    prizeAmount: 100000,
+    currency: 'GBP',
+    cashAlternative: true,
+    cashAlternativeAmount: 100000,
+    entryPrice: 1,
+    totalEntries: 400000,
+    soldEntries: 0,
+    drawReadyPercent: 0,
+    endsIn: 'Coming Soon',
+    status: 'coming-soon',
+    annualProfitPotential: 1200000,
+    prizeIncludes: [
+      'Company launch support',
+      'Start-up grant package',
+      'Custom web build design',
+      'Custom app build design',
+      'OR take £100,000 cash',
+    ],
+    tags: ['Flagship Prize', 'Biggest Business Package', 'Coming Soon', 'Cash Alternative Available'],
+    profitMargin: '40% House, 60% Prize Pool (Transparent)',
+    expectedWinners: 1,
+  },
 ];
 
 const getCompetition = (idParam: string) => competitions.find(c => c.id === parseInt(idParam, 10));
@@ -292,27 +319,12 @@ const createPayPalCheckoutOrder = async (args: {
     throw new Error('PayPal is not configured. Set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET.');
   }
 
-  const basicAuth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
-  const tokenResponse = await fetch(`${PAYPAL_BASE_URL}/v1/oauth2/token`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${basicAuth}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({ grant_type: 'client_credentials' }),
-  });
-
-  if (!tokenResponse.ok) {
-    const tokenError = await tokenResponse.text();
-    throw new Error(`PayPal auth failed: ${tokenError}`);
-  }
-
-  const tokenPayload = await tokenResponse.json() as { access_token: string };
+  const accessToken = await getPayPalAccessToken();
   const amount = (args.competition.entryPrice * args.quantity).toFixed(2);
   const orderResponse = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders`, {
     method: 'POST',
     headers: {
-      Authorization: 'Bearer ' + tokenPayload.access_token,
+      Authorization: 'Bearer ' + accessToken,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -358,6 +370,30 @@ const createPayPalCheckoutOrder = async (args: {
     prizeOption: args.prizeOption,
     settlementEntity: PAYMENT_SETTLEMENT_ENTITY,
   };
+};
+
+const getPayPalAccessToken = async () => {
+  if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+    throw new Error('PayPal is not configured. Set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET.');
+  }
+
+  const basicAuth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
+  const tokenResponse = await fetch(`${PAYPAL_BASE_URL}/v1/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${basicAuth}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({ grant_type: 'client_credentials' }),
+  });
+
+  if (!tokenResponse.ok) {
+    const tokenError = await tokenResponse.text();
+    throw new Error(`PayPal auth failed: ${tokenError}`);
+  }
+
+  const tokenPayload = await tokenResponse.json() as { access_token: string };
+  return tokenPayload.access_token;
 };
 
 // Routes
@@ -458,6 +494,10 @@ app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Competition not found' });
   }
 
+  if (competition.status === 'coming-soon') {
+    return res.status(400).json({ error: 'Competition not yet open. Please check back soon.' });
+  }
+
   if (!termsAccepted || !declarationAccepted) {
     return res.status(400).json({ error: 'Terms and declaration must be accepted for free entry.' });
   }
@@ -473,6 +513,63 @@ app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
     competitionId: competition.id,
     reference,
   });
+});
+
+app.get('/api/payments/stripe/session/:sessionId/verify', async (req: Request, res: Response) => {
+  try {
+    if (!STRIPE_SECRET_KEY) {
+      return res.status(503).json({ error: 'Stripe is not configured.' });
+    }
+
+    const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${req.params.sessionId}`, {
+      headers: {
+        Authorization: 'Bearer ' + STRIPE_SECRET_KEY,
+      },
+    });
+
+    if (!response.ok) {
+      const details = await response.text();
+      return res.status(400).json({ error: 'Unable to verify Stripe session', details });
+    }
+
+    const session = await response.json() as { payment_status?: string; status?: string };
+    const paid = session.payment_status === 'paid' || session.status === 'complete';
+    return res.json({ success: true, paid, session });
+  } catch (error) {
+    const details = error instanceof Error ? error.message : 'Unknown error';
+    return res.status(500).json({ error: 'Stripe verification failed', details });
+  }
+});
+
+app.post('/api/payments/paypal/capture', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.body;
+    if (!orderId || typeof orderId !== 'string') {
+      return res.status(400).json({ error: 'orderId is required.' });
+    }
+
+    const accessToken = await getPayPalAccessToken();
+    const response = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders/${orderId}/capture`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
+
+    if (!response.ok) {
+      const details = await response.text();
+      return res.status(400).json({ error: 'Unable to capture PayPal payment', details });
+    }
+
+    const payload = await response.json() as { status?: string };
+    const paid = payload.status === 'COMPLETED';
+    return res.json({ success: true, paid, capture: payload });
+  } catch (error) {
+    const details = error instanceof Error ? error.message : 'Unknown error';
+    return res.status(500).json({ error: 'PayPal capture failed', details });
+  }
 });
 
 app.get('/api/compliance/no-purchase-route', (_req: Request, res: Response) => {
