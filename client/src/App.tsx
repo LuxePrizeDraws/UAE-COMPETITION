@@ -27,7 +27,7 @@ const competitions = [
     prizeDetails: {
       currency: 'GBP',
       description: 'Luxury Experience Package',
-      includes: ['5-star Dubai resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
+      includes: ['5-star London hotel stay', 'Business class flights', 'Luxury yacht experience', 'Fine dining package'],
     },
     entryPrice: 5,
     totalEntries: 72000,
@@ -82,7 +82,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="header-content">
-          <h1 className="logo">🏆 UAE Competition Platform</h1>
+          <h1 className="logo">🏆 UK Life Changing Competitions</h1>
           <nav>
             <Link to="/" className="nav-link">Home</Link>
             <Link to="/dashboard" className="nav-link nav-link--highlight">📊 Live Dashboard</Link>
@@ -97,7 +97,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>© 2024 UAE Competition Platform | Fair, Transparent &amp; Compliant Draws</p>
+        <p>© 2024 UK Life Changing Competitions | Fair, Transparent &amp; Compliant Draws</p>
       </footer>
     </div>
   );

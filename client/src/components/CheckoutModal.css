@@ -235,53 +235,59 @@
 .payment-option {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid #333;
-  border-radius: 8px;
+  gap: 0.85rem;
+  padding: 0.9rem 1.25rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
 .payment-option input[type='radio'] {
-  accent-color: #c9a84c;
-  width: 16px;
-  height: 16px;
+  accent-color: #333;
+  width: 17px;
+  height: 17px;
   flex-shrink: 0;
 }
 
 .payment-option--active {
-  border-color: #c9a84c;
-  background: rgba(201, 168, 76, 0.08);
+  border-color: #333;
+  background: #fafafa;
 }
 
-.payment-option--disabled {
-  opacity: 0.4;
+.payment-option--unavailable {
+  opacity: 0.55;
   cursor: not-allowed;
+}
+
+.payment-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111;
+  display: flex;
+  align-items: center;
+}
+
+.payment-name--apple {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  letter-spacing: -0.2px;
+}
+
+.payment-name--google {
+  font-family: 'Google Sans', 'Product Sans', sans-serif;
+  letter-spacing: -0.2px;
+}
+
+.payment-name--paypal {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .payment-logo {
   height: 22px;
   object-fit: contain;
-}
-
-.payment-name {
-  font-size: 0.95rem;
-  color: #e8d5b7;
-  font-weight: 600;
-}
-
-.coming-soon-badge {
-  margin-left: auto;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 0.2rem 0.5rem;
-  background: rgba(201, 168, 76, 0.15);
-  border: 1px solid rgba(201, 168, 76, 0.3);
-  color: #c9a84c;
-  border-radius: 4px;
 }
 
 /* ── Terms ── */

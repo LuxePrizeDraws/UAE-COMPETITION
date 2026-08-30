@@ -160,7 +160,7 @@ const competitions = [
     endsIn: '5 days 8 hours 12 minutes',
     status: 'live',
     annualProfitPotential: 1800000,
-    prizeIncludes: ['5-star Dubai resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
+    prizeIncludes: ['5-star London hotel stay', 'Business class flights', 'Luxury yacht experience', 'Fine dining package'],
     tags: ['Luxury Experience', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
@@ -407,11 +407,11 @@ app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
+  res.json({ message: 'UK Life Changing Competitions API (Transparent & Compliant)', version: '1.0.0' });
 });
 
 app.listen(PORT, () => {
-  console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
+  console.log(`\n🏆 UK Life Changing Competitions API running on http://localhost:${PORT}`);
   console.log(`📡 CORS enabled for ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
   console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);

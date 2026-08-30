@@ -171,6 +171,26 @@ export default function CheckoutModal({
             {/* Payment method selector */}
             <p className="payment-label">Select payment method:</p>
             <div className="payment-methods">
+              <label className={`payment-option ${paymentMethod === 'apple' ? 'payment-option--active' : ''} payment-option--unavailable`} title="Apple Pay – coming soon">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="apple"
+                  disabled
+                />
+                <span className="payment-name payment-name--apple">Apple Pay</span>
+              </label>
+
+              <label className={`payment-option ${paymentMethod === 'google' ? 'payment-option--active' : ''} payment-option--unavailable`} title="Google Pay – coming soon">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="google"
+                  disabled
+                />
+                <span className="payment-name payment-name--google">Google Pay</span>
+              </label>
+
               <label className={`payment-option ${paymentMethod === 'paypal' ? 'payment-option--active' : ''}`}>
                 <input
                   type="radio"
@@ -179,23 +199,13 @@ export default function CheckoutModal({
                   checked={paymentMethod === 'paypal'}
                   onChange={() => setPaymentMethod('paypal')}
                 />
-                <img
-                  src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png"
-                  alt="PayPal"
-                  className="payment-logo"
-                />
-              </label>
-
-              <label className={`payment-option payment-option--disabled`} title="Coming soon – requires Stripe">
-                <input type="radio" name="paymentMethod" disabled />
-                <span className="payment-name">🍎 Apple Pay</span>
-                <span className="coming-soon-badge">Coming Soon</span>
-              </label>
-
-              <label className={`payment-option payment-option--disabled`} title="Coming soon – requires Stripe">
-                <input type="radio" name="paymentMethod" disabled />
-                <span className="payment-name">🟢 Google Pay</span>
-                <span className="coming-soon-badge">Coming Soon</span>
+                <span className="payment-name payment-name--paypal">
+                  <img
+                    src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png"
+                    alt="PayPal"
+                    className="payment-logo"
+                  />
+                </span>
               </label>
             </div>
 
