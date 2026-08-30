@@ -286,6 +286,7 @@ type DrawEntryRecord = {
 
 const drawEntryPool: DrawEntryRecord[] = [];
 const participantEmailCounts = new Map<string, number>();
+const MAX_TRACKED_PARTICIPANT_EMAILS = 5000;
 
 const generateEntryNumbers = (competitionId: number, quantity: number) =>
   Array.from({ length: quantity }, () => `${competitionId}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`);
@@ -308,6 +309,10 @@ const runEntryRiskScan = (input: {
   if (fullName.length > 0 && fullName.split(' ').filter(Boolean).length < 2) score += 15;
 
   if (email) {
+    if (participantEmailCounts.size >= MAX_TRACKED_PARTICIPANT_EMAILS && !participantEmailCounts.has(email)) {
+      const firstKey = participantEmailCounts.keys().next().value;
+      if (typeof firstKey === 'string') participantEmailCounts.delete(firstKey);
+    }
     const previousCount = participantEmailCounts.get(email) || 0;
     if (previousCount >= 2) score += 25;
     participantEmailCounts.set(email, previousCount + 1);
@@ -415,7 +420,7 @@ const createStripeCheckoutSession = async (args: {
       Authorization: 'Bearer ' + STRIPE_SECRET_KEY,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: params,
+    body: params.toString(),
   });
 
   if (!stripeResponse.ok) {
