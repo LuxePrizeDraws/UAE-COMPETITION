@@ -5,11 +5,12 @@
   "type": "module",
   "main": "server/index.js",
   "scripts": {
+    "postinstall": "npm --prefix client install",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon --exec \"npx ts-node-esm\" server/index.ts",
-    "dev:client": "cd client && vite",
-    "build": "cd client && vite build",
-    "preview": "cd client && vite preview",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "preview": "npm --prefix client run preview",
     "type-check": "tsc --noEmit",
     "test": "vitest"
   },

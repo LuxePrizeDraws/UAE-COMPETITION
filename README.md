@@ -53,11 +53,11 @@ git clone <your-repo-url>
 cd <repo-folder>
 ```
 
-### 2. Backend Setup
+### 2. Install and Run
 ```bash
 npm install
 cp .env.example .env
-npm run dev:server
+npm run dev
 ```
 
 You should see:
@@ -65,26 +65,15 @@ You should see:
 ✨ UK Luxe Prize Draw API running on http://localhost:5000
 ```
 
-### 3. Frontend Setup
-```bash
-cd client
-npm install
-cp .env.example .env
-npm run dev
-```
-
-### 4. Access the Platform
+### 3. Access the Platform
 
 | Service | URL |
 |---------|-----|
 | 🖥️ Frontend | http://localhost:5173 |
 | 📊 Dashboard | http://localhost:5173/dashboard |
+| 🔐 Signup | http://localhost:5173/signup |
+| 🔐 Login | http://localhost:5173/login |
 | 🔌 Backend API | http://localhost:5000 |
-
-### Run Both Together (from root)
-```bash
-npm run dev
-```
 
 ---
 
@@ -93,7 +82,7 @@ npm run dev
 ```
 <repo-root>/
 ├── server/
-│   ├── index.ts               # Main API with 10 competitions
+│   ├── index.ts               # Main API
 │   └── .env.example
 ├── client/
 │   ├── src/
