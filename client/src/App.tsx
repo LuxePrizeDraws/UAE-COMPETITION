@@ -1,8 +1,16 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from './components/CompetitionCard';
 import './App.css';
 
 const WORLD_RECORD_TARGET_USD = 10_000_001;
+
+const WINNER_FLASH_FEED = [
+  { name: 'Emma R.', prize: '£10,000 Cash', nationality: 'British' },
+  { name: 'Liam K.', prize: '£2,500 Fast Cash Sprint', nationality: 'Irish' },
+  { name: 'Zara H.', prize: 'Luxury Experience Package', nationality: 'British' },
+  { name: 'Noah S.', prize: '£900 Micro Cash Flash', nationality: 'Scottish' },
+];
 
 const competitions = [
   {
@@ -186,8 +194,31 @@ const competitions = [
 ];
 
 function App() {
+  const [winnerIndex, setWinnerIndex] = useState(0);
+  const [showWinnerFlash, setShowWinnerFlash] = useState(true);
+
+  useEffect(() => {
+    const cycleTimer = window.setInterval(() => {
+      setWinnerIndex((current) => (current + 1) % WINNER_FLASH_FEED.length);
+      setShowWinnerFlash(true);
+      window.setTimeout(() => setShowWinnerFlash(false), 3200);
+    }, 7000);
+
+    return () => window.clearInterval(cycleTimer);
+  }, []);
+
+  const activeWinner = WINNER_FLASH_FEED[winnerIndex];
+
   return (
     <div className="app">
+      {showWinnerFlash && (
+        <aside className="winner-flash" role="status" aria-live="polite">
+          <div className="winner-flash__title">🏆 Winner League Flash</div>
+          <div className="winner-flash__name">{activeWinner.name}</div>
+          <div className="winner-flash__meta">{activeWinner.prize}</div>
+          <div className="winner-flash__meta">{activeWinner.nationality}</div>
+        </aside>
+      )}
       <header className="app-header">
         <div className="header-content">
           <h1 className="logo">
