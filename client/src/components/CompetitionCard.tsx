@@ -38,6 +38,7 @@ interface CompetitionCardProps {
 }
 
 const CompetitionCard = ({ competition }: CompetitionCardProps) => {
+  const ticketBatchOptions = [1, 5, 10, 25, 50, 100];
   const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const [quantity, setQuantity] = useState(1);
   const [paymentProvider, setPaymentProvider] = useState<'stripe' | 'paypal'>('stripe');
@@ -255,6 +256,18 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       <div className="entry-controls">
         <div className="quantity-selector">
           <label>Number of Tickets:</label>
+          <div className="batch-options" role="group" aria-label="Ticket batch options">
+            {ticketBatchOptions.map((batchSize) => (
+              <button
+                key={batchSize}
+                type="button"
+                className={`batch-option ${quantity === batchSize ? 'batch-option--active' : ''}`}
+                onClick={() => setQuantity(batchSize)}
+              >
+                {batchSize}
+              </button>
+            ))}
+          </div>
           <input
             type="number"
             min="1"
