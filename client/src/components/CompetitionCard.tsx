@@ -30,6 +30,8 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [showCelebration, setShowCelebration] = useState(false);
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
+  const formattedEntryPrice = competition.entryPrice.toFixed(2);
+  const formattedTotalCost = totalCost.toFixed(2);
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
 
@@ -41,7 +43,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   };
 
   const handleEnterNow = () => {
-    const confirmed = window.confirm(`Buy ${quantity} ticket${quantity > 1 ? 's' : ''} for £${totalCost}?`);
+    const confirmed = window.confirm(`Buy ${quantity} ticket${quantity > 1 ? 's' : ''} for £${formattedTotalCost}?`);
     if (!confirmed) return;
 
     setShowCelebration(true);
@@ -78,7 +80,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       <div className="card-stats">
         <div className="stat">
           <span className="stat-label">TICKET PRICE</span>
-          <span className="stat-value">£{competition.entryPrice}</span>
+          <span className="stat-value">£{formattedEntryPrice}</span>
           <span className="stat-sublabel">PER ENTRY</span>
         </div>
         <div className="stat">
@@ -132,12 +134,12 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
         <div className="cost-display">
           <span className="cost-label">Total Cost:</span>
-          <span className="cost-amount">£{totalCost}</span>
+          <span className="cost-amount">£{formattedTotalCost}</span>
         </div>
       </div>
 
       <button className="btn-enter-now" onClick={handleEnterNow}>
-        ENTER NOW - £{totalCost}
+        ENTER NOW - £{formattedTotalCost}
       </button>
 
       {showCelebration && (

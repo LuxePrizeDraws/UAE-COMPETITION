@@ -49,7 +49,7 @@ const COMPETITIONS: Competition[] = [
     type: 'experience',
     icon: '✈️',
     status: 'live',
-    details: ['5-star Dubai resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
+    details: ['5-star luxury resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
   },
   {
     id: 3,

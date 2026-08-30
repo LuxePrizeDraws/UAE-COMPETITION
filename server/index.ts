@@ -66,7 +66,7 @@ const competitions = [
     endsIn: '5 days 8 hours 12 minutes',
     status: 'live',
     annualProfitPotential: 1800000,
-    prizeIncludes: ['5-star Dubai resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
+    prizeIncludes: ['5-star luxury resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
     tags: ['Luxury Experience', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,

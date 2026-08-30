@@ -27,7 +27,7 @@ const competitions = [
     prizeDetails: {
       currency: 'GBP',
       description: 'Luxury Experience Package',
-      includes: ['5-star Dubai resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
+      includes: ['5-star luxury resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
     },
     entryPrice: 5,
     totalEntries: 72000,
