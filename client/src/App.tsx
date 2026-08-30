@@ -6,10 +6,10 @@ import './App.css';
 const WORLD_RECORD_TARGET_USD = 10_000_001;
 
 const WINNER_FLASH_FEED = [
-  { name: 'Emma R.', prize: '£10,000 Cash', nationality: 'British' },
-  { name: 'Liam K.', prize: '£2,500 Fast Cash Sprint', nationality: 'Irish' },
-  { name: 'Zara H.', prize: 'Luxury Experience Package', nationality: 'British' },
-  { name: 'Noah S.', prize: '£900 Micro Cash Flash', nationality: 'Scottish' },
+  { name: 'Emma R.', prize: '£10,000 Cash', nationality: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Liam K.', prize: '£2,500 Fast Cash Sprint', nationality: 'Ireland', flag: '🇮🇪' },
+  { name: 'Zara H.', prize: 'Luxury Experience Package', nationality: 'United Kingdom', flag: '🇬🇧' },
+  { name: 'Noah S.', prize: '£900 Micro Cash Flash', nationality: 'Scotland', flag: '🏴' },
 ];
 
 const competitions = [
@@ -216,7 +216,7 @@ function App() {
           <div className="winner-flash__title">🏆 Winner League Flash</div>
           <div className="winner-flash__name">{activeWinner.name}</div>
           <div className="winner-flash__meta">{activeWinner.prize}</div>
-          <div className="winner-flash__meta">{activeWinner.nationality}</div>
+          <div className="winner-flash__flag" aria-label={activeWinner.nationality}>{activeWinner.flag}</div>
         </aside>
       )}
       <header className="app-header">

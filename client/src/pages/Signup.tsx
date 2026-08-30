@@ -2,9 +2,14 @@ import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Signup.css';
 
-const LAMBORGHINI_BACKGROUND_URL = 'https://github.com/user-attachments/assets/63e54c11-99db-45fd-bef3-c909ab378ccc';
+const LAMBORGHINI_BACKGROUND_URL = '/white-lamborghini-bg.svg';
 
-function Signup() {
+type SignupProps = {
+  mode?: 'signup' | 'login';
+};
+
+function Signup({ mode = 'signup' }: SignupProps) {
+  const isLoginMode = mode === 'login';
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,7 +17,7 @@ function Signup() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    window.alert(`Demo signup complete for ${fullName || email}`);
+    window.alert(isLoginMode ? `Demo login complete for ${email}` : `Demo signup complete for ${fullName || email}`);
   };
 
   return (
@@ -24,22 +29,24 @@ function Signup() {
           <Link to="/" className="signup-back-link">← Back to draws</Link>
         </header>
 
-        <main className="signup-card" role="main" aria-label="Sign up">
-          <p className="signup-kicker">Create your account</p>
-          <h1>Sign up to enter draws</h1>
-          <p className="signup-subtext">Booking-style quick signup demo with luxury background preview.</p>
+        <main className="signup-card" role="main" aria-label={isLoginMode ? 'Log in' : 'Sign up'}>
+          <p className="signup-kicker">{isLoginMode ? 'Welcome back' : 'Create your account'}</p>
+          <h1>{isLoginMode ? 'Log in to your account' : 'Sign up to enter draws'}</h1>
+          <p className="signup-subtext">Booking-style quick auth demo with white Lamborghini luxury background.</p>
 
           <form className="signup-form" onSubmit={handleSubmit}>
-            <label>
-              Full name
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="e.g. Alex Taylor"
-                required
-              />
-            </label>
+            {!isLoginMode && (
+              <label>
+                Full name
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="e.g. Alex Taylor"
+                  required
+                />
+              </label>
+            )}
 
             <label>
               Email address
@@ -64,21 +71,27 @@ function Signup() {
               />
             </label>
 
-            <label className="signup-terms">
-              <input
-                type="checkbox"
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                required
-              />
-              <span>I confirm I am 18+ and accept the competition terms.</span>
-            </label>
+            {!isLoginMode && (
+              <label className="signup-terms">
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  required
+                />
+                <span>I confirm I am 18+ and accept the competition terms.</span>
+              </label>
+            )}
 
-            <button type="submit" className="signup-submit">Create account</button>
+            <button type="submit" className="signup-submit">{isLoginMode ? 'Log in' : 'Create account'}</button>
           </form>
 
           <p className="signup-footer-note">
-            Already registered? <a href="#">Log in</a>
+            {isLoginMode ? (
+              <>Need an account? <Link to="/signup">Sign up</Link></>
+            ) : (
+              <>Already registered? <Link to="/login">Log in</Link></>
+            )}
           </p>
         </main>
       </div>
