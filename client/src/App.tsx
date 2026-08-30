@@ -117,6 +117,9 @@ function App() {
         <p className="trust-banner">
           Trusted launch mode: secure checkout, transparent draw maths, and a no-purchase route for fair participation.
         </p>
+        <div className="aim-advert" role="note" aria-label="Launch ambition">
+          🚀 Our mission: build toward the highest-ever app-based prize giveaway.
+        </div>
       </header>
 
       <main className="competitions-grid">

@@ -100,6 +100,18 @@ nav {
   letter-spacing: 0.35px;
 }
 
+.aim-advert {
+  max-width: 1400px;
+  margin: 0.65rem auto 0;
+  border: 1px solid rgba(201, 168, 76, 0.8);
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.08));
+  color: #f4e7c5;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
 @keyframes mascot-bounce {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   25% { transform: translateY(-4px) rotate(-6deg); }
