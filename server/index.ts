@@ -741,7 +741,7 @@ app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'A valid email address is required.' });
   }
 
-  const referenceSuffix = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const referenceSuffix = randomUUID().replace(/-/g, '').slice(0, 8).toUpperCase();
   const reference = `FREE-${competition.id}-${Date.now()}-${referenceSuffix}`;
   const drawEntry = registerDrawEntries({
     competitionId: competition.id,
