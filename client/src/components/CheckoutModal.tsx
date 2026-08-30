@@ -190,13 +190,18 @@ export default function CheckoutModal({
                   onChange={() => setPaymentMethod('paypal')}
                 />
                 <span className="payment-name payment-name--paypal">
+                  PayPal
                   <img
                     src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
                     alt=""
                     className="paypal-icon"
                     aria-hidden="true"
                   />
-                  PayPal
+                  <img
+                    src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png"
+                    alt="PayPal"
+                    className="paypal-wordmark"
+                  />
                 </span>
               </label>
             </div>
