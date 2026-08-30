@@ -39,7 +39,7 @@ app.use(limiter);
 
 const WORLD_RECORD_TARGET_USD = 10_000_001;
 
-// 10 competitions data – transparent structure with cash alternatives
+// Competition data – transparent structure with cash alternatives
 const competitions = [
   {
     id: 1,
