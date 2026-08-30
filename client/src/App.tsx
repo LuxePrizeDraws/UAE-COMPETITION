@@ -91,6 +91,10 @@ function App() {
             <Link to="/dashboard" className="nav-link nav-link--highlight">📊 Live Dashboard</Link>
           </nav>
         </div>
+        <div className="mascot-banner" aria-live="polite">
+          <span className="mascot-figure" aria-hidden="true">🕺</span>
+          <p className="mascot-speech">welcome to a luxury poundland</p>
+        </div>
       </header>
 
       <main className="competitions-grid">
