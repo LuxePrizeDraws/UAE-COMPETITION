@@ -1,8 +1,8 @@
 
 {
-  "name": "UAE-COMPETITION",
+  "name": "uk-life-changing-competitions",
   "version": "1.0.0",
-  "description": "Premium UAE luxury competition platform",
+  "description": "Premium UK life changing competition platform",
   "type": "module",
   "main": "server/index.js",
   "scripts": {
@@ -16,8 +16,8 @@
   },
   "keywords": [
     "competition",
-    "uae",
-    "luxury",
+    "uk",
+    "prize",
     "platform"
   ],
   "author": "shugstarwork-maker",

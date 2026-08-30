@@ -168,26 +168,16 @@ export default function CheckoutModal({
               <span className="summary-total">£{totalCost.toFixed(2)}</span>
             </div>
 
-            {/* Payment method selector */}
+            {/* Payment method selector – matches image layout */}
             <p className="payment-label">Select payment method:</p>
             <div className="payment-methods">
-              <label className={`payment-option ${paymentMethod === 'apple' ? 'payment-option--active' : ''} payment-option--unavailable`} title="Apple Pay – coming soon">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="apple"
-                  disabled
-                />
+              <label className="payment-option payment-option--unavailable" title="Apple Pay – coming soon">
+                <input type="radio" name="paymentMethod" value="apple" disabled />
                 <span className="payment-name payment-name--apple">Apple Pay</span>
               </label>
 
-              <label className={`payment-option ${paymentMethod === 'google' ? 'payment-option--active' : ''} payment-option--unavailable`} title="Google Pay – coming soon">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="google"
-                  disabled
-                />
+              <label className="payment-option payment-option--unavailable" title="Google Pay – coming soon">
+                <input type="radio" name="paymentMethod" value="google" disabled />
                 <span className="payment-name payment-name--google">Google Pay</span>
               </label>
 
@@ -201,10 +191,12 @@ export default function CheckoutModal({
                 />
                 <span className="payment-name payment-name--paypal">
                   <img
-                    src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png"
-                    alt="PayPal"
-                    className="payment-logo"
+                    src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
+                    alt=""
+                    className="paypal-icon"
+                    aria-hidden="true"
                   />
+                  PayPal
                 </span>
               </label>
             </div>

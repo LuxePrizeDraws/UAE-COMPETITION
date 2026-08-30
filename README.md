@@ -1,16 +1,16 @@
-# UAE Competition Platform 🏆
+# UK Life Changing Competitions 🏆
 
 Premium UK competition platform with **8 live competitions**, transparent pricing, draw-ready tracking, and cash alternatives for every prize.
 
 ---
 
-## 🌐 Live Staging Links
+## 🌐 Live Links
 
 | Service | URL |
 |---------|-----|
 | 🖥️ Frontend | *(Deploy to Vercel – see [Deployment](#deployment) below)* |
 | 🔌 Backend API | *(Deploy to Railway – see [Deployment](#deployment) below)* |
-| 📬 Postman Collection | Import `UAE-Competition-API.postman_collection.json` |
+| 📬 Postman Collection | Import `UK-Competitions-API.postman_collection.json` |
 
 ---
 
@@ -33,10 +33,11 @@ Premium UK competition platform with **8 live competitions**, transparent pricin
 
 ### Key Features
 - 🔵 **Draw-ready tracking** – Live progress bars showing entries sold vs needed
-- 💰 **Cash alternatives** – Every prize offers a cash equivalent ("CASH OR CARS – YOU CHOOSE!")
+- 💰 **Cash alternatives** – Every prize offers a cash equivalent
 - 📊 **Transparent pricing** – 40% house margin shown publicly
 - ⏰ **Countdown timers** – Real-time draw deadlines
-- ✅ **Terms acceptance** – Compliance-first entry flow
+- ✅ **UK Compliance challenge** – Skill question required before entry (legally required)
+- 💳 **PayPal payments** – Live checkout with Apple Pay & Google Pay coming soon
 - 📱 **Responsive design** – Works on mobile, tablet, desktop
 
 ---
@@ -62,7 +63,7 @@ npm run dev:server
 
 You should see:
 ```
-✨ UAE Competition API running on http://localhost:5000
+🏆 UK Life Changing Competitions API running on http://localhost:5000
 ```
 
 ### 3. Frontend Setup
@@ -91,16 +92,17 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-UAE-COMPETITION/
+uk-life-changing-competitions/
 ├── server/
 │   ├── index.ts               # Main API with 8 competitions
 │   └── .env.example
 ├── client/
 │   ├── src/
 │   │   ├── components/
-│   │   │   └── CompetitionCard.tsx
+│   │   │   ├── CompetitionCard.tsx
+│   │   │   └── CheckoutModal.tsx  # PayPal checkout + compliance challenge
 │   │   ├── pages/
-│   │   │   └── Dashboard.tsx  # Live demo dashboard
+│   │   │   └── Dashboard.tsx      # Live draw dashboard
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   ├── index.html
@@ -108,10 +110,7 @@ UAE-COMPETITION/
 │   ├── package.json
 │   └── vercel.json            # Vercel deployment config
 ├── .env.example
-├── .env.staging
-├── .env.production
 ├── railway.toml               # Railway deployment config
-├── UAE-Competition-API.postman_collection.json
 └── README.md
 ```
 
@@ -124,59 +123,50 @@ UAE-COMPETITION/
 curl http://localhost:5000/api/health
 ```
 
+### Get Skill Challenge Question
+```bash
+curl http://localhost:5000/api/challenge
+```
+
 ### Get All Competitions
 ```bash
 curl http://localhost:5000/api/competitions
 ```
 
-### Get Single Competition
+### Enter a Competition (requires challenge token + PayPal order ID)
 ```bash
-curl http://localhost:5000/api/competitions/7
-```
-
-### Enter a Competition
-```bash
-# Basic cash entry
 curl -X POST http://localhost:5000/api/competitions/1/enter \
   -H "Content-Type: application/json" \
-  -d '{"quantity": 5, "termsAccepted": true}'
-
-# Supercar – physical prize
-curl -X POST http://localhost:5000/api/competitions/7/enter \
-  -H "Content-Type: application/json" \
-  -d '{"quantity": 10, "termsAccepted": true, "prizeOption": "physical"}'
-
-# UK Dream – cash alternative
-curl -X POST http://localhost:5000/api/competitions/8/enter \
-  -H "Content-Type: application/json" \
-  -d '{"quantity": 3, "termsAccepted": true, "prizeOption": "cash"}'
+  -d '{
+    "quantity": 1,
+    "termsAccepted": true,
+    "challengeToken": "<token from /api/challenge>",
+    "challengeAnswer": "20",
+    "paypalOrderId": "<PayPal order ID>",
+    "prizeOption": "cash"
+  }'
 ```
-
-**Request body fields:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `quantity` | integer | ✅ | Tickets to buy (1–1000) |
-| `termsAccepted` | boolean | ✅ | Must be `true` |
-| `prizeOption` | string | ❌ | `"physical"` or `"cash"` |
 
 ---
 
 ## ⚙️ Environment Variables
 
-### Backend (`server/.env.example`)
+### Backend (`.env.example`)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `5000` | Server port |
-| `NODE_ENV` | `development` | Environment |
+| `NODE_ENV` | `development` | Set to `production` for live PayPal |
 | `CLIENT_URL` | `http://localhost:5173` | Frontend URL for CORS |
+| `PAYPAL_CLIENT_ID` | *(required)* | PayPal app client ID |
+| `PAYPAL_CLIENT_SECRET` | *(required)* | PayPal app secret |
 
 ### Frontend (`client/.env.example`)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
+| `VITE_PAYPAL_CLIENT_ID` | *(required)* | PayPal client ID (same as backend) |
 
 ---
 
@@ -184,40 +174,33 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 
 ### Deploy Frontend → Vercel (Free)
 1. Sign in at [vercel.com](https://vercel.com)
-2. **New Project** → Import `UAE-COMPETITION` repo
-3. Set **Root Directory** to `client`
-4. Add env var: `VITE_API_URL=https://your-backend.railway.app`
-5. Deploy
+2. **New Project** → Import this repo
+3. Add env vars: `VITE_API_URL`, `VITE_PAYPAL_CLIENT_ID`
+4. Deploy
 
 ### Deploy Backend → Railway (Free)
 1. Sign in at [railway.app](https://railway.app)
-2. **New Project** → Deploy from GitHub → `UAE-COMPETITION`
-3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`
+2. **New Project** → Deploy from GitHub → this repo
+3. Add env vars: `NODE_ENV=production`, `CLIENT_URL`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`
 4. Railway auto-detects `railway.toml`
 
 ---
 
 ## 🔧 Troubleshooting
 
-**Port already in use**
-```bash
-lsof -i :5000   # find PID
-kill -9 <PID>
-```
-
-**CORS errors** – Ensure `CLIENT_URL` in backend `.env` exactly matches your frontend URL.
-
 **npm install failures**
 ```bash
 rm -rf node_modules package-lock.json && npm install
 ```
 
+**CORS errors** – Ensure `CLIENT_URL` in backend `.env` exactly matches your frontend URL.
+
+**PayPal not loading** – Check `VITE_PAYPAL_CLIENT_ID` is set in `client/.env`.
+
 **TypeScript errors**
 ```bash
 npm run type-check
 ```
-
-**Frontend can't reach API** – Check `VITE_API_URL` in `client/.env` points to running backend.
 
 ---
 
@@ -228,17 +211,9 @@ npm run type-check
 | Frontend | React 18 + Vite + TypeScript |
 | Routing | React Router v6 |
 | Backend | Express + Node.js + TypeScript |
+| Payments | PayPal (Apple Pay & Google Pay via Stripe — coming soon) |
 | Security | Helmet, CORS, Rate limiting |
 | Deployment | Vercel (frontend) + Railway (backend) |
-
----
-
-## 📬 Postman Collection
-
-Import `UAE-Competition-API.postman_collection.json` into Postman:
-1. Open Postman → **Import** → select the JSON file
-2. Set `baseUrl` variable to your backend URL (default: `http://localhost:5000`)
-3. Run requests from **Health & Info**, **Competitions**, or **Entry Management**
 
 ---
 
