@@ -33,11 +33,13 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
   const [paymentProvider, setPaymentProvider] = useState<'stripe' | 'paypal'>('stripe');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [showFreeEntry, setShowFreeEntry] = useState(false);
   const [freeEntryStatusMessage, setFreeEntryStatusMessage] = useState('');
   const [freeEntryTermsAccepted, setFreeEntryTermsAccepted] = useState(false);
   const [freeEntryDeclarationAccepted, setFreeEntryDeclarationAccepted] = useState(false);
+  const [freeEntryAgeConfirmed, setFreeEntryAgeConfirmed] = useState(false);
   const [freeEntryDetails, setFreeEntryDetails] = useState({
     fullName: '',
     email: '',
@@ -62,8 +64,8 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   };
 
   const handleEnterNow = async () => {
-    if (!termsAccepted) {
-      window.alert('Please accept the terms and no-purchase route declaration first.');
+    if (!termsAccepted || !ageConfirmed) {
+      window.alert('Please accept terms and confirm you are 18+ first.');
       return;
     }
 
@@ -79,6 +81,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         body: JSON.stringify({
           quantity,
           termsAccepted: true,
+          ageConfirmed: true,
           prizeOption: 'cash',
           paymentProvider,
         }),
@@ -108,8 +111,8 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const handleFreeEntrySubmit = async (e: FormEvent) => {
     e.preventDefault();
     setFreeEntryStatusMessage('');
-    if (!freeEntryTermsAccepted || !freeEntryDeclarationAccepted) {
-      setFreeEntryStatusMessage('Please accept both free-entry confirmations before submitting.');
+    if (!freeEntryTermsAccepted || !freeEntryDeclarationAccepted || !freeEntryAgeConfirmed) {
+      setFreeEntryStatusMessage('Please accept all free-entry confirmations, including 18+ age confirmation.');
       return;
     }
 
@@ -121,6 +124,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
           ...freeEntryDetails,
           termsAccepted: freeEntryTermsAccepted,
           declarationAccepted: freeEntryDeclarationAccepted,
+          ageConfirmed: freeEntryAgeConfirmed,
         }),
       });
       const payload = await response.json();
@@ -131,6 +135,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       setFreeEntryDetails({ fullName: '', email: '', postalAddress: '' });
       setFreeEntryTermsAccepted(false);
       setFreeEntryDeclarationAccepted(false);
+      setFreeEntryAgeConfirmed(false);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to submit free entry';
       setFreeEntryStatusMessage(message);
@@ -253,6 +258,14 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
           I accept terms and acknowledge a free no-purchase entry route is available.
         </span>
       </label>
+      <label className="terms-check">
+        <input
+          type="checkbox"
+          checked={ageConfirmed}
+          onChange={(e) => setAgeConfirmed(e.target.checked)}
+        />
+        <span>I confirm I am 18 years old or above.</span>
+      </label>
 
       <div className="payment-provider">
         <label htmlFor={`provider-${competition.id}`}>Payment Method</label>
@@ -318,6 +331,14 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
               onChange={(e) => setFreeEntryDeclarationAccepted(e.target.checked)}
             />
             <span>I declare this entry is genuine and from an eligible participant.</span>
+          </label>
+          <label className="free-entry-check">
+            <input
+              type="checkbox"
+              checked={freeEntryAgeConfirmed}
+              onChange={(e) => setFreeEntryAgeConfirmed(e.target.checked)}
+            />
+            <span>I confirm I am 18 years old or above.</span>
           </label>
           <button type="submit" className="btn-free-entry-submit">SUBMIT FREE ENTRY</button>
           {freeEntryStatusMessage && <p className="free-entry-status">{freeEntryStatusMessage}</p>}

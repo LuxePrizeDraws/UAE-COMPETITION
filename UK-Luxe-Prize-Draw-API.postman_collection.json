@@ -13,7 +13,7 @@
     {
       "key": "competitionId",
       "value": "1",
-      "description": "Competition ID (1-8)"
+      "description": "Competition ID (1-10)"
     }
   ],
   "item": [

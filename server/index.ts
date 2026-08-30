@@ -244,7 +244,7 @@ const competitions = [
     description: 'A live global £1-entry campaign targeting a record milestone, subject to eligibility, terms, and legal approvals.',
     prizeType: 'LIVE CASH CHALLENGE',
     prizeAmount: 100000000,
-    currency: 'USD TARGET',
+    currency: 'GBP',
     cashAlternative: false,
     cashAlternativeAmount: 0,
     entryPrice: 1,
@@ -346,7 +346,12 @@ const registerDrawEntries = (input: {
   return record;
 };
 
-const validateEntryInput = (competition: (typeof competitions)[number] | undefined, quantity: unknown, termsAccepted: unknown) => {
+const validateEntryInput = (
+  competition: (typeof competitions)[number] | undefined,
+  quantity: unknown,
+  termsAccepted: unknown,
+  ageConfirmed: unknown,
+) => {
   if (!competition) {
     return { error: { status: 404, message: 'Competition not found' } };
   }
@@ -357,6 +362,10 @@ const validateEntryInput = (competition: (typeof competitions)[number] | undefin
 
   if (!termsAccepted) {
     return { error: { status: 400, message: 'You must accept the terms and conditions to enter.' } };
+  }
+
+  if (!ageConfirmed) {
+    return { error: { status: 400, message: 'You must confirm you are 18+ to enter.' } };
   }
 
   const qty = Number(quantity);
@@ -527,9 +536,9 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
 });
 
 app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
-  const { quantity, termsAccepted, prizeOption, fullName, email, postalAddress } = req.body;
+  const { quantity, termsAccepted, ageConfirmed, prizeOption, fullName, email, postalAddress } = req.body;
   const competition = getCompetition(req.params.id);
-  const validation = validateEntryInput(competition, quantity, termsAccepted);
+  const validation = validateEntryInput(competition, quantity, termsAccepted, ageConfirmed);
   if ('error' in validation) {
     return res.status(validation.error.status).json({ error: validation.error.message });
   }
@@ -568,9 +577,9 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
 
 app.post('/api/competitions/:id/checkout-session', async (req: Request, res: Response) => {
   try {
-    const { quantity, termsAccepted, prizeOption, customerEmail, paymentProvider } = req.body;
+    const { quantity, termsAccepted, ageConfirmed, prizeOption, customerEmail, paymentProvider } = req.body;
     const competition = getCompetition(req.params.id);
-    const validation = validateEntryInput(competition, quantity, termsAccepted);
+    const validation = validateEntryInput(competition, quantity, termsAccepted, ageConfirmed);
     if ('error' in validation) {
       return res.status(validation.error.status).json({ error: validation.error.message });
     }
@@ -607,7 +616,7 @@ app.post('/api/competitions/:id/checkout-session', async (req: Request, res: Res
 });
 
 app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
-  const { fullName, email, postalAddress, termsAccepted, declarationAccepted } = req.body;
+  const { fullName, email, postalAddress, termsAccepted, declarationAccepted, ageConfirmed } = req.body;
   const competition = getCompetition(req.params.id);
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
@@ -619,6 +628,10 @@ app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
 
   if (!termsAccepted || !declarationAccepted) {
     return res.status(400).json({ error: 'Terms and declaration must be accepted for free entry.' });
+  }
+
+  if (!ageConfirmed) {
+    return res.status(400).json({ error: 'You must confirm you are 18+ for free entry.' });
   }
 
   if (!fullName || !email || !postalAddress) {
