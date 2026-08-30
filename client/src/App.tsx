@@ -82,7 +82,10 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="header-content">
-          <h1 className="logo">🏆 UAE Competition Platform</h1>
+          <h1 className="logo">
+            <span className="logo-mark" aria-hidden="true">£</span>
+            <span className="logo-text">UAE Competition Platform</span>
+          </h1>
           <nav>
             <Link to="/" className="nav-link">Home</Link>
             <Link to="/dashboard" className="nav-link nav-link--highlight">📊 Live Dashboard</Link>
