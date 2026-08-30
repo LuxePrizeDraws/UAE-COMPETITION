@@ -714,7 +714,7 @@ app.get('/api/competitions/:id/draw-pool', (req: Request, res: Response) => {
     postalTickets,
     acceptedTickets,
     equalChanceRule: '1 ticket = 1 draw chance across paid and postal entries.',
-    entries,
+    reviewQueue: entries.filter((entry) => entry.status === 'manual-review').length,
   });
 });
 
@@ -762,7 +762,7 @@ app.post('/api/payments/paypal/capture', async (req: Request, res: Response) => 
     }
     const isSafeOrderId = orderId.length > 6
       && orderId.length < 80
-      && [...orderId].every((char) => /[A-Za-z0-9-]/.test(char));
+      && [...orderId].every((char) => /[A-Za-z0-9]/.test(char));
     if (!isSafeOrderId) {
       return res.status(400).json({ error: 'Invalid PayPal order id.' });
     }

@@ -19,6 +19,7 @@ interface Competition {
   tags: string[];
   profitMargin: string;
   expectedWinners: number;
+  status?: string;
   recordGoalUSD?: number;
   recordCurrentUSD?: number;
   recordUnlockText?: string;
@@ -63,7 +64,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const recordGoalUSD = competition.recordGoalUSD;
   const recordCurrentUSD = competition.recordCurrentUSD ?? 0;
   const recordProgressPercent = recordGoalUSD ? Math.min((recordCurrentUSD / recordGoalUSD) * 100, 100) : 0;
-  const isComingSoon = competition.endsIn.toLowerCase().includes('coming soon');
+  const isComingSoon = competition.status === 'coming-soon';
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
