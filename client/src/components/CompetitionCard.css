@@ -309,6 +309,46 @@
   transform: translateY(0);
 }
 
+.ticket-confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -12%;
+  font-size: 1.1rem;
+  animation: confetti-fall 1.8s ease-out forwards;
+}
+
+.confetti-piece:nth-child(3n + 1) {
+  left: 10%;
+  animation-delay: 0.02s;
+}
+
+.confetti-piece:nth-child(3n + 2) {
+  left: 45%;
+  animation-delay: 0.08s;
+}
+
+.confetti-piece:nth-child(3n + 3) {
+  left: 78%;
+  animation-delay: 0.14s;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120%) rotate(420deg) scale(1.15);
+    opacity: 0;
+  }
+}
+
 /* Terms Link */
 .terms-link {
   text-align: center;

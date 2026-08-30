@@ -27,6 +27,7 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
+  const [showCelebration, setShowCelebration] = useState(false);
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
@@ -37,6 +38,11 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
     if (value > 0 && value <= 100) {
       setQuantity(value);
     }
+  };
+
+  const handleEnterNow = () => {
+    setShowCelebration(true);
+    window.setTimeout(() => setShowCelebration(false), 1800);
   };
 
   return (
@@ -127,7 +133,17 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button className="btn-enter-now" onClick={handleEnterNow}>
+        ENTER NOW - {totalCost} AED
+      </button>
+
+      {showCelebration && (
+        <div className="ticket-confetti" aria-hidden="true">
+          {Array.from({ length: 18 }).map((_, index) => (
+            <span key={index} className="confetti-piece">🎉</span>
+          ))}
+        </div>
+      )}
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>
