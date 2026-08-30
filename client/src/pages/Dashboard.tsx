@@ -175,6 +175,38 @@ const COMPETITIONS: Competition[] = [
     status: 'live',
     details: ['NEW RECORD AT $10,000,001', 'At the end to unlock: $100M community mega draw', 'Instant win coming soon', 'Global £1 entry participation'],
   },
+  {
+    id: 11,
+    title: 'Fast Cash Sprint Draw',
+    prize: '£2,500 Cash',
+    prizeAmount: '£2,500',
+    entryPrice: '£0.50',
+    entriesSold: 6400,
+    entriesNeeded: 10000,
+    drawReadyPercent: 64,
+    timeRemaining: '14h 00m',
+    cashAlternative: '£2,500 cash',
+    type: 'cash',
+    icon: '⚡',
+    status: 'live',
+    details: ['50p entry', 'Fast-cycle payout model', 'Frequent fixed draw windows'],
+  },
+  {
+    id: 12,
+    title: 'Micro Cash Flash Draw',
+    prize: '£900 Cash',
+    prizeAmount: '£900',
+    entryPrice: '£0.20',
+    entriesSold: 4200,
+    entriesNeeded: 7500,
+    drawReadyPercent: 56,
+    timeRemaining: '6h 00m',
+    cashAlternative: '£900 cash',
+    type: 'cash',
+    icon: '🪙',
+    status: 'live',
+    details: ['20p entry', 'Very frequent draw rounds', 'Quick payout focus'],
+  },
 ];
 
 type DrawStatus = 'ready' | 'almost' | 'in-progress' | 'coming-soon';
@@ -313,7 +345,7 @@ export default function Dashboard() {
 
       <section className="dash-stats">
         <div className="stat-card">
-          <span className="stat-num">8</span>
+          <span className="stat-num">{COMPETITIONS.length}</span>
           <span className="stat-label">Total Competitions</span>
         </div>
         <div className="stat-card">
@@ -343,7 +375,7 @@ export default function Dashboard() {
 
       {loading ? (
         <div className="dash-grid">
-          {Array.from({ length: 8 }).map((_, i) => (
+          {Array.from({ length: COMPETITIONS.length }).map((_, i) => (
             <div key={i} className="skeleton-card" />
           ))}
         </div>

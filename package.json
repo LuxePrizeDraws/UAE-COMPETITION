@@ -6,7 +6,7 @@
   "main": "server/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "nodemon --exec node --loader ts-node/esm server/index.ts",
+    "dev:server": "nodemon --exec \"npx ts-node-esm\" server/index.ts",
     "dev:client": "cd client && vite",
     "build": "cd client && vite build",
     "preview": "cd client && vite preview",
