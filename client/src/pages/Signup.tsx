@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Signup.css';
 
-const LAMBORGHINI_BACKGROUND_URL = '/white-lamborghini-bg.svg';
+const LAMBORGHINI_BACKGROUND_URL = 'https://github.com/user-attachments/assets/63e54c11-99db-45fd-bef3-c909ab378ccc';
 
 type SignupProps = {
   mode?: 'signup' | 'login';
@@ -21,7 +21,7 @@ function Signup({ mode = 'signup' }: SignupProps) {
   };
 
   return (
-    <div className="signup-page" style={{ backgroundImage: `url(${LAMBORGHINI_BACKGROUND_URL})` }}>
+    <div className="signup-page" style={{ backgroundImage: `url(${LAMBORGHINI_BACKGROUND_URL}), url('/white-lamborghini-bg.svg')` }}>
       <div className="signup-overlay" />
       <div className="signup-shell">
         <header className="signup-header">
