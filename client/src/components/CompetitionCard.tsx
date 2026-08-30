@@ -267,32 +267,38 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         <span>I confirm I am 18 years old or above.</span>
       </label>
 
-      <div className="payment-provider">
-        <label htmlFor={`provider-${competition.id}`}>Payment Method</label>
-        <select
-          id={`provider-${competition.id}`}
-          value={paymentProvider}
-          onChange={(e) => setPaymentProvider(e.target.value === 'paypal' ? 'paypal' : 'stripe')}
+      <div className="entry-route entry-route--paid">
+        <p className="entry-route-title">⭐ Normal Entry (Paid)</p>
+        <div className="payment-provider">
+          <label htmlFor={`provider-${competition.id}`}>Payment Method</label>
+          <select
+            id={`provider-${competition.id}`}
+            value={paymentProvider}
+            onChange={(e) => setPaymentProvider(e.target.value === 'paypal' ? 'paypal' : 'stripe')}
+          >
+            <option value="stripe">Stripe (Card)</option>
+            <option value="paypal">PayPal</option>
+          </select>
+        </div>
+
+        <button className="btn-enter-now" onClick={handleEnterNow} disabled={isProcessingPayment}>
+          {isProcessingPayment ? 'STARTING CHECKOUT...' : `PAY WITH ${paymentProvider.toUpperCase()} - £${formattedTotalCost}`}
+        </button>
+      </div>
+
+      <div className="entry-route entry-route--postal">
+        <p className="entry-route-title">✉️ Postal Entry (No Purchase Route)</p>
+        <div className="compliance-note">
+          No purchase necessary route: submit a free postal-style entry request below for manual validation (subject to terms and eligibility).
+        </div>
+        <button
+          type="button"
+          className="btn-free-entry"
+          onClick={() => setShowFreeEntry((current) => !current)}
         >
-          <option value="stripe">Stripe (Card)</option>
-          <option value="paypal">PayPal</option>
-        </select>
+          {showFreeEntry ? 'HIDE FREE ENTRY FORM' : 'USE FREE ENTRY ROUTE'}
+        </button>
       </div>
-
-      <button className="btn-enter-now" onClick={handleEnterNow} disabled={isProcessingPayment}>
-        {isProcessingPayment ? 'STARTING CHECKOUT...' : `PAY WITH ${paymentProvider.toUpperCase()} - £${formattedTotalCost}`}
-      </button>
-
-      <div className="compliance-note">
-        No purchase necessary route: submit a free postal-style entry request below for manual validation (subject to terms and eligibility).
-      </div>
-      <button
-        type="button"
-        className="btn-free-entry"
-        onClick={() => setShowFreeEntry((current) => !current)}
-      >
-        {showFreeEntry ? 'HIDE FREE ENTRY FORM' : 'USE FREE ENTRY ROUTE'}
-      </button>
 
       {showFreeEntry && (
         <form className="free-entry-form" onSubmit={handleFreeEntrySubmit}>
