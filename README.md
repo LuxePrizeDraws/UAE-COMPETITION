@@ -1,6 +1,6 @@
 # UK Luxe Prize Draw Platform 🏆
 
-Premium UK competition platform with **8 live competitions**, transparent pricing, draw-ready tracking, and cash alternatives for every prize.
+Premium UK competition platform with **10 competitions**, transparent pricing, draw-ready tracking, and cash alternatives for every prize.
 
 ---
 
@@ -93,7 +93,7 @@ npm run dev
 ```
 <repo-root>/
 ├── server/
-│   ├── index.ts               # Main API with 8 competitions
+│   ├── index.ts               # Main API with 10 competitions
 │   └── .env.example
 ├── client/
 │   ├── src/
@@ -139,17 +139,17 @@ curl http://localhost:5000/api/competitions/7
 # Basic cash entry
 curl -X POST http://localhost:5000/api/competitions/1/enter \
   -H "Content-Type: application/json" \
-  -d '{"quantity": 5, "termsAccepted": true}'
+  -d '{"quantity": 5, "termsAccepted": true, "ageConfirmed": true}'
 
 # Supercar – physical prize
 curl -X POST http://localhost:5000/api/competitions/7/enter \
   -H "Content-Type: application/json" \
-  -d '{"quantity": 10, "termsAccepted": true, "prizeOption": "physical"}'
+  -d '{"quantity": 10, "termsAccepted": true, "ageConfirmed": true, "prizeOption": "physical"}'
 
 # UK Dream – cash alternative
 curl -X POST http://localhost:5000/api/competitions/8/enter \
   -H "Content-Type: application/json" \
-  -d '{"quantity": 3, "termsAccepted": true, "prizeOption": "cash"}'
+  -d '{"quantity": 3, "termsAccepted": true, "ageConfirmed": true, "prizeOption": "cash"}'
 ```
 
 **Request body fields:**
@@ -158,6 +158,7 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 |-------|------|----------|-------------|
 | `quantity` | integer | ✅ | Tickets to buy (1–1000) |
 | `termsAccepted` | boolean | ✅ | Must be `true` |
+| `ageConfirmed` | boolean | ✅ | Must be `true` (18+ verification) |
 | `prizeOption` | string | ❌ | `"physical"` or `"cash"` |
 
 ---
