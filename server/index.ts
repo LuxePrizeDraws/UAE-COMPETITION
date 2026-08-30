@@ -326,6 +326,26 @@ const competitions = [
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
   },
+  {
+    id: 13,
+    title: 'Community Pot Draw (Shared Pot League)',
+    description: 'All entrant funds go into one shared pot and the draw picks one winner each cycle.',
+    prizeType: 'COMMUNITY POT CASH DRAW',
+    prizeAmount: 5000,
+    currency: 'GBP',
+    cashAlternative: false,
+    cashAlternativeAmount: 0,
+    entryPrice: 1,
+    totalEntries: 20000,
+    soldEntries: 9900,
+    drawReadyPercent: 49.5,
+    endsIn: '1 day 4 hours',
+    status: 'live',
+    annualProfitPotential: 260000,
+    tags: ['Shared Pot', 'League Draw', 'Transparent 10% Admin Fee'],
+    profitMargin: '10% admin fee from final winning pot',
+    expectedWinners: 1,
+  },
 ];
 
 const getCompetition = (idParam: string) => competitions.find(c => c.id === parseInt(idParam, 10));

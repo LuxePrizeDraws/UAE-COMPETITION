@@ -207,6 +207,22 @@ const COMPETITIONS: Competition[] = [
     status: 'live',
     details: ['20p entry', 'Very frequent draw rounds', 'Quick payout focus'],
   },
+  {
+    id: 13,
+    title: 'Community Pot Draw',
+    prize: 'Shared Pot Winner Draw',
+    prizeAmount: 'Dynamic Pot',
+    entryPrice: '£1',
+    entriesSold: 9900,
+    entriesNeeded: 20000,
+    drawReadyPercent: 49.5,
+    timeRemaining: '1d 4h 00m',
+    cashAlternative: 'Winner receives pot less transparent 10% admin fee',
+    type: 'cash',
+    icon: '🏁',
+    status: 'live',
+    details: ['All entries fund one central pot', 'One winner per cycle', '10% admin fee deducted from final pot'],
+  },
 ];
 
 type DrawStatus = 'ready' | 'almost' | 'in-progress' | 'coming-soon';

@@ -191,6 +191,26 @@ const competitions = [
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
   },
+  {
+    id: 13,
+    title: 'Community Pot Draw (Shared Pot League)',
+    description: 'All entrant funds go into one shared pot; one winner is picked per draw cycle.',
+    prizeType: 'COMMUNITY POT CASH DRAW',
+    prizeAmount: 5000,
+    prizeDetails: {
+      currency: 'GBP',
+      description: 'Shared winner pot model',
+      includes: ['Entrant-funded pooled pot', 'Single winner selected per cycle', '10% admin fee applied to final pot'],
+    },
+    entryPrice: 1,
+    totalEntries: 20000,
+    soldEntries: 9900,
+    endsIn: '1 day 4 hours',
+    status: 'live',
+    tags: ['Shared Pot', 'League Draw', 'Transparent 10% Admin Fee'],
+    profitMargin: '10% Admin Fee from final winner pot (displayed transparently)',
+    expectedWinners: 1,
+  },
 ];
 
 function App() {
@@ -228,6 +248,7 @@ function App() {
           <nav>
             <Link to="/" className="nav-link">Home</Link>
             <Link to="/signup" className="nav-link">Sign Up</Link>
+            <Link to="/login" className="nav-link">Log In</Link>
             <Link to="/dashboard" className="nav-link nav-link--highlight">📊 Live Dashboard</Link>
           </nav>
         </div>
