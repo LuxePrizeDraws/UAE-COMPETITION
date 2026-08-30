@@ -1,6 +1,8 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import './CompetitionCard.css';
 
+const TICKET_BATCH_OPTIONS = [1, 5, 10, 25, 50, 100];
+
 interface Competition {
   id: number;
   title: string;
@@ -38,7 +40,6 @@ interface CompetitionCardProps {
 }
 
 const CompetitionCard = ({ competition }: CompetitionCardProps) => {
-  const ticketBatchOptions = [1, 5, 10, 25, 50, 100];
   const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const [quantity, setQuantity] = useState(1);
   const [paymentProvider, setPaymentProvider] = useState<'stripe' | 'paypal'>('stripe');
@@ -257,7 +258,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         <div className="quantity-selector">
           <label>Number of Tickets:</label>
           <div className="batch-options" role="group" aria-label="Ticket batch options">
-            {ticketBatchOptions.map((batchSize) => (
+            {TICKET_BATCH_OPTIONS.map((batchSize) => (
               <button
                 key={batchSize}
                 type="button"

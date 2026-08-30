@@ -680,7 +680,8 @@ app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'A valid email address is required.' });
   }
 
-  const reference = `FREE-${competition.id}-${Date.now()}`;
+  const referenceSuffix = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const reference = `FREE-${competition.id}-${Date.now()}-${referenceSuffix}`;
   const drawEntry = registerDrawEntries({
     competitionId: competition.id,
     method: 'postal',
@@ -751,9 +752,9 @@ app.get('/api/payments/stripe/session/:sessionId/verify', async (req: Request, r
       return res.status(400).json({ error: 'Unable to verify Stripe session', details });
     }
 
-    const session = await response.json() as { payment_status?: string; status?: string };
+    const session = await response.json() as { id?: string; payment_status?: string; status?: string };
     const paid = session.payment_status === 'paid' || session.status === 'completed';
-    return res.json({ success: true, paid, session });
+    return res.json({ success: true, paid, sessionId: session.id, paymentStatus: session.payment_status, status: session.status });
   } catch (error) {
     const details = error instanceof Error ? error.message : 'Unknown error';
     return res.status(500).json({ error: 'Stripe verification failed', details });
