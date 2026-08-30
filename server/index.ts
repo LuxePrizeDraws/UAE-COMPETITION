@@ -372,7 +372,7 @@ const createPayPalCheckoutOrder = async (args: {
   };
 };
 
-const getPayPalAccessToken = async () => {
+async function getPayPalAccessToken() {
   if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
     throw new Error('PayPal is not configured. Set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET.');
   }
@@ -394,7 +394,7 @@ const getPayPalAccessToken = async () => {
 
   const tokenPayload = await tokenResponse.json() as { access_token: string };
   return tokenPayload.access_token;
-};
+}
 
 // Routes
 app.get('/api/health', (req: Request, res: Response) => {
@@ -504,6 +504,11 @@ app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
 
   if (!fullName || !email || !postalAddress) {
     return res.status(400).json({ error: 'fullName, email, and postalAddress are required.' });
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (typeof email !== 'string' || !emailPattern.test(email)) {
+    return res.status(400).json({ error: 'A valid email address is required.' });
   }
 
   const reference = `FREE-${competition.id}-${Date.now()}`;

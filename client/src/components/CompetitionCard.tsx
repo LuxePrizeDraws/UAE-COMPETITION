@@ -65,6 +65,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
     if (!confirmed) return;
 
     setIsProcessingPayment(true);
+    let isRedirecting = false;
     try {
       const response = await fetch(`${apiBaseUrl}/api/competitions/${competition.id}/checkout-session`, {
         method: 'POST',
@@ -83,6 +84,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       }
 
       setShowCelebration(true);
+      isRedirecting = true;
       window.setTimeout(() => {
         window.location.href = payload.checkoutUrl;
       }, 350);
@@ -90,8 +92,10 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       const message = error instanceof Error ? error.message : 'Unable to start checkout';
       window.alert(message);
     } finally {
-      setIsProcessingPayment(false);
-      window.setTimeout(() => setShowCelebration(false), 1800);
+      if (!isRedirecting) {
+        setIsProcessingPayment(false);
+        window.setTimeout(() => setShowCelebration(false), 1800);
+      }
     }
   };
 
