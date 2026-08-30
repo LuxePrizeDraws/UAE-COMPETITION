@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import CompetitionCard from './components/CompetitionCard';
 import './App.css';
 
+const WORLD_RECORD_TARGET_USD = 10_000_001;
+
 const competitions = [
   {
     id: 1,
@@ -93,7 +95,7 @@ const competitions = [
     tags: ['Flagship Prize', 'Biggest Business Package', 'Coming Soon', 'Cash Alternative Available'],
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
-    recordGoalUSD: 10000001,
+    recordGoalUSD: WORLD_RECORD_TARGET_USD,
     recordCurrentUSD: 0,
     recordUnlockText: '$100M community mega draw',
   },
@@ -115,7 +117,7 @@ const competitions = [
     tags: ['Live Competition', 'Record Chase', '£1 Entry', 'Community Unlock'],
     profitMargin: 'Target campaign model with transparent milestone tracking',
     expectedWinners: 1,
-    recordGoalUSD: 10000001,
+    recordGoalUSD: WORLD_RECORD_TARGET_USD,
     recordCurrentUSD: 6400000,
     recordUnlockText: '$100M community mega draw',
   },

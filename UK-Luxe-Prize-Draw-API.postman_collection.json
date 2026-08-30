@@ -27,8 +27,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/health",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "health"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
             },
             "description": "Returns API status, timestamp, total competitions, and live count."
           },
@@ -41,10 +46,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/",
-              "host": ["{{baseUrl}}"],
-              "path": [""]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
             },
-            "description": "Root endpoint – returns platform name and version."
+            "description": "Root endpoint \u2013 returns platform name and version."
           },
           "response": []
         }
@@ -60,8 +69,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions"
+              ]
             },
             "description": "Returns all 10 competitions with prize details, entry prices, draw progress percentages, cash alternatives, and time remaining."
           },
@@ -74,113 +88,167 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/{{competitionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "{{competitionId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "{{competitionId}}"
+              ]
             },
             "description": "Returns a single competition by ID. Change `competitionId` variable to 1-10."
           },
           "response": []
         },
         {
-          "name": "Get Competition 1 – Weekly £10K",
+          "name": "Get Competition 1 \u2013 Weekly \u00a310K",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "1"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Competition 2 – Luxury Experience",
+          "name": "Get Competition 2 \u2013 Luxury Experience",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/2",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "2"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "2"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Competition 3 – £50K Monthly",
+          "name": "Get Competition 3 \u2013 \u00a350K Monthly",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/3",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "3"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "3"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Competition 4 – £500K Quarterly",
+          "name": "Get Competition 4 \u2013 \u00a3500K Quarterly",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/4",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "4"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "4"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Competition 5 – £5M Annual",
+          "name": "Get Competition 5 \u2013 \u00a35M Annual",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/5",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "5"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "5"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Competition 6 – Weekly Bonus £10K",
+          "name": "Get Competition 6 \u2013 Weekly Bonus \u00a310K",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/6",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "6"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "6"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Competition 7 – Supercars OR £135K",
+          "name": "Get Competition 7 \u2013 Supercars OR \u00a3135K",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/7",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "7"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "7"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Get Competition 8 – UK Dream OR £320K",
+          "name": "Get Competition 8 \u2013 UK Dream OR \u00a3320K",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/competitions/8",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "8"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "8"
+              ]
             }
           },
           "response": []
@@ -191,178 +259,268 @@
       "name": "Entry Management",
       "item": [
         {
-          "name": "Enter Competition 1 – Cash (5 tickets)",
+          "name": "Enter Competition 1 \u2013 Cash (5 tickets)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 5,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 5,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/1/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "1", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
             },
-            "description": "Enter Weekly £10K draw with 5 tickets."
+            "description": "Enter Weekly \u00a310K draw with 5 tickets."
           },
           "response": []
         },
         {
-          "name": "Enter Competition 2 – Luxury (10 tickets, cash)",
+          "name": "Enter Competition 2 \u2013 Luxury (10 tickets, cash)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\"\n}"
+              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\",\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/2/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "2", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "2",
+                "enter"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Enter Competition 3 – £50K (3 tickets)",
+          "name": "Enter Competition 3 \u2013 \u00a350K (3 tickets)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 3,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 3,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/3/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "3", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "3",
+                "enter"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Enter Competition 4 – £500K (1 ticket)",
+          "name": "Enter Competition 4 \u2013 \u00a3500K (1 ticket)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/4/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "4", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "4",
+                "enter"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Enter Competition 5 – £5M Annual (should fail: coming soon)",
+          "name": "Enter Competition 5 \u2013 \u00a35M Annual (should fail: coming soon)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 2,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 2,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/5/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "5", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "5",
+                "enter"
+              ]
             },
-            "description": "Expected: 400 error – competition not yet open."
+            "description": "Expected: 400 error \u2013 competition not yet open."
           },
           "response": []
         },
         {
-          "name": "Enter Competition 6 – Weekly Bonus (20 tickets)",
+          "name": "Enter Competition 6 \u2013 Weekly Bonus (20 tickets)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 20,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 20,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/6/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "6", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "6",
+                "enter"
+              ]
             }
           },
           "response": []
         },
         {
-          "name": "Enter Competition 7 – Supercars (physical prize)",
+          "name": "Enter Competition 7 \u2013 Supercars (physical prize)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"physical\"\n}"
+              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"physical\",\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/7/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "7", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "7",
+                "enter"
+              ]
             },
             "description": "Enter Supercars competition choosing physical prize (Porsche, Lamborghini, Ferrari)."
           },
           "response": []
         },
         {
-          "name": "Enter Competition 7 – Supercars (cash alternative)",
+          "name": "Enter Competition 7 \u2013 Supercars (cash alternative)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\"\n}"
+              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\",\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/7/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "7", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "7",
+                "enter"
+              ]
             },
-            "description": "Enter Supercars competition choosing £135K cash alternative instead."
+            "description": "Enter Supercars competition choosing \u00a3135K cash alternative instead."
           },
           "response": []
         },
         {
-          "name": "Enter Competition 8 – UK Dream (cash alternative)",
+          "name": "Enter Competition 8 \u2013 UK Dream (cash alternative)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 3,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\"\n}"
+              "raw": "{\n  \"quantity\": 3,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\",\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/8/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "8", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "8",
+                "enter"
+              ]
             },
-            "description": "Enter UK Entrepreneur Dream taking £320K cash alternative."
+            "description": "Enter UK Entrepreneur Dream taking \u00a3320K cash alternative."
           },
           "response": []
         }
@@ -372,102 +530,152 @@
       "name": "Error Scenarios",
       "item": [
         {
-          "name": "FAIL – No terms accepted",
+          "name": "FAIL \u2013 No terms accepted",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 5,\n  \"termsAccepted\": false\n}"
+              "raw": "{\n  \"quantity\": 5,\n  \"termsAccepted\": false,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/1/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "1", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
             },
-            "description": "Expected: 400 – You must accept the terms and conditions to enter."
+            "description": "Expected: 400 \u2013 You must accept the terms and conditions to enter."
           },
           "response": []
         },
         {
-          "name": "FAIL – Invalid quantity (0)",
+          "name": "FAIL \u2013 Invalid quantity (0)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 0,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 0,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/1/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "1", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
             },
-            "description": "Expected: 400 – Invalid quantity."
+            "description": "Expected: 400 \u2013 Invalid quantity."
           },
           "response": []
         },
         {
-          "name": "FAIL – Invalid quantity (over 1000)",
+          "name": "FAIL \u2013 Invalid quantity (over 1000)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 9999,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 9999,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/1/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "1", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
             },
-            "description": "Expected: 400 – Invalid quantity. Must be a whole number between 1 and 1000."
+            "description": "Expected: 400 \u2013 Invalid quantity. Must be a whole number between 1 and 1000."
           },
           "response": []
         },
         {
-          "name": "FAIL – Competition not found (ID 999)",
+          "name": "FAIL \u2013 Competition not found (ID 999)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/999/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "999", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "999",
+                "enter"
+              ]
             },
-            "description": "Expected: 404 – Competition not found."
+            "description": "Expected: 404 \u2013 Competition not found."
           },
           "response": []
         },
         {
-          "name": "FAIL – Competition coming soon (ID 5)",
+          "name": "FAIL \u2013 Competition coming soon (ID 5)",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/5/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "5", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "5",
+                "enter"
+              ]
             },
-            "description": "Expected: 400 – Competition not yet open."
+            "description": "Expected: 400 \u2013 Competition not yet open."
           },
           "response": []
         }
@@ -477,22 +685,32 @@
       "name": "Load Testing",
       "item": [
         {
-          "name": "Bulk Entry – 1000 tickets",
+          "name": "Bulk Entry \u2013 1000 tickets",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"quantity\": 1000,\n  \"termsAccepted\": true\n}"
+              "raw": "{\n  \"quantity\": 1000,\n  \"termsAccepted\": true,\n  \"ageConfirmed\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/competitions/1/enter",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "competitions", "1", "enter"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
             },
-            "description": "Maximum allowed bulk entry – tests server under load."
+            "description": "Maximum allowed bulk entry \u2013 tests server under load."
           },
           "response": []
         }

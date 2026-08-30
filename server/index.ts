@@ -286,6 +286,7 @@ type DrawEntryRecord = {
   createdAt: string;
 };
 
+// Demo-only in-memory stores; replace with persistent storage before production use.
 const drawEntryPool: DrawEntryRecord[] = [];
 const participantEmailCounts = new Map<string, number>();
 const MAX_TRACKED_PARTICIPANT_EMAILS = 5000;
@@ -725,7 +726,7 @@ app.get('/api/payments/stripe/session/:sessionId/verify', async (req: Request, r
     }
 
     const session = await response.json() as { payment_status?: string; status?: string };
-    const paid = session.payment_status === 'paid' || session.status === 'complete';
+    const paid = session.payment_status === 'paid' || session.status === 'completed';
     return res.json({ success: true, paid, session });
   } catch (error) {
     const details = error instanceof Error ? error.message : 'Unknown error';
