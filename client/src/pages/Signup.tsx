@@ -32,7 +32,7 @@ function Signup({ mode = 'signup' }: SignupProps) {
         <main className="signup-card" role="main" aria-label={isLoginMode ? 'Log in' : 'Sign up'}>
           <p className="signup-kicker">{isLoginMode ? 'Welcome back' : 'Create your account'}</p>
           <h1>{isLoginMode ? 'Log in to your account' : 'Sign up to enter draws'}</h1>
-          <p className="signup-subtext">Booking-style quick auth demo with white Lamborghini luxury background.</p>
+          <p className="signup-subtext">Create your account to enter live draws, track tickets, and manage your entries securely.</p>
 
           <form className="signup-form" onSubmit={handleSubmit}>
             {!isLoginMode && (

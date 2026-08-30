@@ -223,6 +223,22 @@ const COMPETITIONS: Competition[] = [
     status: 'live',
     details: ['All entries fund one central pot', 'One winner per cycle', 'Terms and conditions must be accepted before entry'],
   },
+  {
+    id: 14,
+    title: "People's Prize Annual Draw",
+    prize: 'Gold/Silver/Bronze Pot Split',
+    prizeAmount: '100% Winner Pot',
+    entryPrice: '£1',
+    entriesSold: 125000,
+    entriesNeeded: 300000,
+    drawReadyPercent: 41.7,
+    timeRemaining: '112d 0h 00m',
+    cashAlternative: 'Gold 50% • Silver 30% • Bronze 20%',
+    type: 'cash',
+    icon: '🥇',
+    status: 'live',
+    details: ['Annual community draw', 'Top 3 winners: Gold/Silver/Bronze', 'No platform profit on this draw'],
+  },
 ];
 
 type DrawStatus = 'ready' | 'almost' | 'in-progress' | 'coming-soon';

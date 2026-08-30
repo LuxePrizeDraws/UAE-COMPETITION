@@ -211,6 +211,31 @@ const competitions = [
     profitMargin: 'Shared-pot draw model with published terms and eligibility',
     expectedWinners: 1,
   },
+  {
+    id: 14,
+    title: "People's Prize Annual Draw",
+    description: 'Once a year community pot draw where the final pot is split across Gold, Silver, and Bronze winners.',
+    prizeType: 'ANNUAL COMMUNITY SPLIT DRAW',
+    prizeAmount: 300000,
+    prizeDetails: {
+      currency: 'GBP',
+      description: 'Top 3 winner split payout',
+      includes: [
+        'Gold winner: 50% of final pot',
+        'Silver winner: 30% of final pot',
+        'Bronze winner: 20% of final pot',
+        'No platform profit on this annual draw',
+      ],
+    },
+    entryPrice: 1,
+    totalEntries: 300000,
+    soldEntries: 125000,
+    endsIn: 'Annual final in 112 days',
+    status: 'live',
+    tags: ['People’s Prize', 'Gold Silver Bronze', 'No-Profit Annual Draw'],
+    profitMargin: '0% platform profit for this draw; full pot allocated to top 3 winners',
+    expectedWinners: 3,
+  },
 ];
 
 function App() {
