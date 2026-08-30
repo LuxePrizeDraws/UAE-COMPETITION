@@ -1,8 +1,8 @@
 
 {
-  "name": "UAE-COMPETITION",
+  "name": "uk-luxe-prize-draw",
   "version": "1.0.0",
-  "description": "Premium UAE luxury competition platform",
+  "description": "Premium UK luxury competition platform",
   "type": "module",
   "main": "server/index.js",
   "scripts": {
@@ -16,7 +16,7 @@
   },
   "keywords": [
     "competition",
-    "uae",
+    "uk",
     "luxury",
     "platform"
   ],

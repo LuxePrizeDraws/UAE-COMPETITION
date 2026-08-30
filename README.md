@@ -1,4 +1,4 @@
-# UAE Competition Platform 🏆
+# UK Luxe Prize Draw Platform 🏆
 
 Premium UK competition platform with **8 live competitions**, transparent pricing, draw-ready tracking, and cash alternatives for every prize.
 
@@ -10,7 +10,7 @@ Premium UK competition platform with **8 live competitions**, transparent pricin
 |---------|-----|
 | 🖥️ Frontend | *(Deploy to Vercel – see [Deployment](#deployment) below)* |
 | 🔌 Backend API | *(Deploy to Railway – see [Deployment](#deployment) below)* |
-| 📬 Postman Collection | Import `UAE-Competition-API.postman_collection.json` |
+| 📬 Postman Collection | Import `UK-Luxe-Prize-Draw-API.postman_collection.json` |
 
 ---
 
@@ -49,8 +49,8 @@ Premium UK competition platform with **8 live competitions**, transparent pricin
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/shugstarwork-maker/UAE-COMPETITION.git
-cd UAE-COMPETITION
+git clone <your-repo-url>
+cd <repo-folder>
 ```
 
 ### 2. Backend Setup
@@ -62,7 +62,7 @@ npm run dev:server
 
 You should see:
 ```
-✨ UAE Competition API running on http://localhost:5000
+✨ UK Luxe Prize Draw API running on http://localhost:5000
 ```
 
 ### 3. Frontend Setup
@@ -91,7 +91,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-UAE-COMPETITION/
+<repo-root>/
 ├── server/
 │   ├── index.ts               # Main API with 8 competitions
 │   └── .env.example
@@ -111,7 +111,7 @@ UAE-COMPETITION/
 ├── .env.staging
 ├── .env.production
 ├── railway.toml               # Railway deployment config
-├── UAE-Competition-API.postman_collection.json
+├── UK-Luxe-Prize-Draw-API.postman_collection.json
 └── README.md
 ```
 
@@ -184,14 +184,14 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 
 ### Deploy Frontend → Vercel (Free)
 1. Sign in at [vercel.com](https://vercel.com)
-2. **New Project** → Import `UAE-COMPETITION` repo
+2. **New Project** → Import your repository
 3. Set **Root Directory** to `client`
 4. Add env var: `VITE_API_URL=https://your-backend.railway.app`
 5. Deploy
 
 ### Deploy Backend → Railway (Free)
 1. Sign in at [railway.app](https://railway.app)
-2. **New Project** → Deploy from GitHub → `UAE-COMPETITION`
+2. **New Project** → Deploy from GitHub → your repository
 3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`
 4. Railway auto-detects `railway.toml`
 
@@ -235,7 +235,7 @@ npm run type-check
 
 ## 📬 Postman Collection
 
-Import `UAE-Competition-API.postman_collection.json` into Postman:
+Import `UK-Luxe-Prize-Draw-API.postman_collection.json` into Postman:
 1. Open Postman → **Import** → select the JSON file
 2. Set `baseUrl` variable to your backend URL (default: `http://localhost:5000`)
 3. Run requests from **Health & Info**, **Competitions**, or **Entry Management**

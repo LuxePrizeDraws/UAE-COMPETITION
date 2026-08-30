@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "UAE Competition Platform API",
+    "name": "UK Luxe Prize Draw Platform API",
     "description": "Complete API testing collection for all 8 competitions. Set the `baseUrl` variable to your backend URL before running.\n\nDefault: http://localhost:5000\n\nImport instructions:\n1. Open Postman\n2. Click Import\n3. Select this file\n4. Update `baseUrl` variable if needed\n5. Run any request!",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
