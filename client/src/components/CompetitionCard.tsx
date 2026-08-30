@@ -22,6 +22,13 @@ interface Competition {
   recordGoalUSD?: number;
   recordCurrentUSD?: number;
   recordUnlockText?: string;
+  drawStructure?: {
+    model: string;
+    flagshipSchedule: string;
+    weeklyDraws: string;
+    dailyDraws: string;
+    instantWinAllocation: string;
+  };
 }
 
 interface CompetitionCardProps {
@@ -222,6 +229,15 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         <h4>💡 Transparent Structure</h4>
         <p className="transparency-text">{competition.profitMargin}</p>
         <p className="transparency-text">Expected Winners: {competition.expectedWinners}</p>
+        {competition.drawStructure && (
+          <>
+            <p className="transparency-text">Draw Model: {competition.drawStructure.model}</p>
+            <p className="transparency-text">Flagship Scheduled Draws: {competition.drawStructure.flagshipSchedule}</p>
+            <p className="transparency-text">Weekly Draws: {competition.drawStructure.weeklyDraws}</p>
+            <p className="transparency-text">Daily Draws: {competition.drawStructure.dailyDraws}</p>
+            <p className="transparency-text">Instant Wins (Minority): {competition.drawStructure.instantWinAllocation}</p>
+          </>
+        )}
       </div>
 
       <div className="card-tags">

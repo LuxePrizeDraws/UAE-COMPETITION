@@ -98,6 +98,13 @@ const competitions = [
     recordGoalUSD: WORLD_RECORD_TARGET_USD,
     recordCurrentUSD: 0,
     recordUnlockText: '$100M community mega draw',
+    drawStructure: {
+      model: 'Overlapping fixed draw windows',
+      flagshipSchedule: 'Monthly flagship draw (fixed date/time)',
+      weeklyDraws: 'Weekly fixed draws every Friday',
+      dailyDraws: 'Daily mini draws at fixed cut-off',
+      instantWinAllocation: 'Up to 8% of prize fund, pre-structured and capped',
+    },
   },
   {
     id: 10,
@@ -120,6 +127,13 @@ const competitions = [
     recordGoalUSD: WORLD_RECORD_TARGET_USD,
     recordCurrentUSD: 6400000,
     recordUnlockText: '$100M community mega draw',
+    drawStructure: {
+      model: 'Overlapping fixed draw windows',
+      flagshipSchedule: 'Quarterly flagship draw with audited cut-off',
+      weeklyDraws: 'Weekly record-chase supporting draws',
+      dailyDraws: 'Daily £1 micro draws with fixed schedule',
+      instantWinAllocation: 'Minority instant wins capped at 5% of total prize pool',
+    },
   },
 ];
 
