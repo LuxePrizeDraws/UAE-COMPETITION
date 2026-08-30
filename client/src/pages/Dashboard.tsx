@@ -159,6 +159,22 @@ const COMPETITIONS: Competition[] = [
     status: 'coming-soon',
     details: ['Company launch support', 'Start-up grant package', 'Custom web build design', 'Custom app build design', 'OR take £100K cash'],
   },
+  {
+    id: 10,
+    title: 'LIVE WORLD RECORD CHASE',
+    prize: 'Target: Beat $10M Record',
+    prizeAmount: '$100,000,000',
+    entryPrice: '£1',
+    entriesSold: 6400000,
+    entriesNeeded: 120000000,
+    drawReadyPercent: 5.3,
+    timeRemaining: '37d 0h 00m',
+    cashAlternative: 'Unlock at campaign completion',
+    type: 'cash',
+    icon: '🌍',
+    status: 'live',
+    details: ['NEW RECORD AT $10,000,001', 'At the end to unlock: $100M community mega draw', 'Global £1 entry participation'],
+  },
 ];
 
 type DrawStatus = 'ready' | 'almost' | 'in-progress' | 'coming-soon';

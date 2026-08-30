@@ -182,6 +182,49 @@
   text-align: center;
 }
 
+.record-progress-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  border-radius: 8px;
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.record-progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #f0dca6;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.record-progress-bar {
+  height: 9px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.25);
+  margin-bottom: 0.5rem;
+}
+
+.record-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37, #ffd66b);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.45);
+}
+
+.record-progress-detail {
+  font-size: 0.78rem;
+  color: #d9d9d9;
+  margin-bottom: 0.45rem;
+}
+
+.record-unlock-text {
+  font-size: 0.8rem;
+  color: #f7e6b7;
+  font-weight: 600;
+}
+
 /* Transparency Section */
 .transparency-section {
   background: rgba(212, 175, 55, 0.08);

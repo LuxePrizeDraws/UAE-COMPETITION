@@ -19,6 +19,9 @@ interface Competition {
   tags: string[];
   profitMargin: string;
   expectedWinners: number;
+  recordGoalUSD?: number;
+  recordCurrentUSD?: number;
+  recordUnlockText?: string;
 }
 
 interface CompetitionCardProps {
@@ -47,6 +50,9 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const formattedTotalCost = totalCost.toFixed(2);
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
+  const recordGoalUSD = competition.recordGoalUSD;
+  const recordCurrentUSD = competition.recordCurrentUSD ?? 0;
+  const recordProgressPercent = recordGoalUSD ? Math.min((recordCurrentUSD / recordGoalUSD) * 100, 100) : 0;
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
@@ -188,6 +194,24 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
           {competition.soldEntries.toLocaleString()} / {competition.totalEntries.toLocaleString()} sold
         </div>
       </div>
+
+      {recordGoalUSD && (
+        <div className="record-progress-section">
+          <div className="record-progress-header">
+            <span>NEW RECORD AT</span>
+            <span>${recordGoalUSD.toLocaleString()}</span>
+          </div>
+          <div className="record-progress-bar">
+            <div className="record-progress-fill" style={{ width: `${recordProgressPercent}%` }}></div>
+          </div>
+          <div className="record-progress-detail">
+            ${recordCurrentUSD.toLocaleString()} raised · {recordProgressPercent.toFixed(1)}%
+          </div>
+          <div className="record-unlock-text">
+            At the end to unlock: {competition.recordUnlockText || 'World record prize pot'}
+          </div>
+        </div>
+      )}
 
       <div className="transparency-section">
         <h4>💡 Transparent Structure</h4>
