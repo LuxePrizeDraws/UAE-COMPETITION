@@ -118,7 +118,7 @@ function App() {
           Trusted launch mode: secure checkout, transparent draw maths, and a no-purchase route for fair participation.
         </p>
         <div className="aim-advert" role="note" aria-label="Launch ambition">
-          🚀 Our mission: build toward the highest-ever app-based prize giveaway.
+          🚀 Mission target: beat the reported $10M in-app prize benchmark by 10x — powered by global £1 entries for life-changing wins.
         </div>
       </header>
 
