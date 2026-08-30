@@ -368,7 +368,7 @@ const competitions = [
       'Bronze winner: 20% of final pot',
       'No platform profit on this annual draw',
     ],
-    tags: ['People’s Prize', 'Gold Silver Bronze', 'No-Profit Annual Draw'],
+    tags: ['Peoples Prize', 'Gold Silver Bronze', 'No-Profit Annual Draw'],
     profitMargin: '0% platform profit for this draw; full pot allocated to top 3 winners',
     expectedWinners: 3,
   },
@@ -509,6 +509,9 @@ const createStripeCheckoutSession = async (args: {
 
   const { competition, quantity, prizeOption, customerEmail } = args;
   const unitAmount = Math.round(competition.entryPrice * 100);
+  const normalizedCurrency = /^[A-Za-z]{3}$/.test(competition.currency)
+    ? competition.currency.toLowerCase()
+    : 'gbp';
   const successUrl = `${CLIENT_URL}/?checkout=success&competitionId=${competition.id}`;
   const cancelUrl = `${CLIENT_URL}/?checkout=cancelled&competitionId=${competition.id}`;
   const params = new URLSearchParams();
@@ -521,7 +524,7 @@ const createStripeCheckoutSession = async (args: {
   params.set('payment_intent_data[metadata][prizeOption]', prizeOption);
   params.set('payment_intent_data[metadata][settlementEntity]', PAYMENT_SETTLEMENT_ENTITY);
   params.set('line_items[0][quantity]', String(quantity));
-  params.set('line_items[0][price_data][currency]', 'gbp');
+  params.set('line_items[0][price_data][currency]', normalizedCurrency);
   params.set('line_items[0][price_data][unit_amount]', String(unitAmount));
   params.set('line_items[0][price_data][product_data][name]', `${competition.title} Ticket Entry`);
   params.set('line_items[0][price_data][product_data][description]', `Ticket purchase for ${competition.title}`);
@@ -558,6 +561,9 @@ const createPayPalCheckoutOrder = async (args: {
 
   const accessToken = await getPayPalAccessToken();
   const amount = (args.competition.entryPrice * args.quantity).toFixed(2);
+  const normalizedCurrency = /^[A-Za-z]{3}$/.test(args.competition.currency)
+    ? args.competition.currency.toUpperCase()
+    : 'GBP';
   const orderResponse = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders`, {
     method: 'POST',
     headers: {
@@ -572,7 +578,7 @@ const createPayPalCheckoutOrder = async (args: {
           custom_id: String(args.competition.id),
           soft_descriptor: 'UK LUXE PRIZE DRAW',
           amount: {
-            currency_code: 'GBP',
+            currency_code: normalizedCurrency,
             value: amount,
           },
         },

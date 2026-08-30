@@ -1,8 +1,9 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Signup.css';
 
-const LAMBORGHINI_BACKGROUND_URL = '/white-lamborghini-bg.svg';
+const HERO_CAR_BACKGROUND_URL = 'https://github.com/user-attachments/assets/316a8c79-c988-4869-b4e5-8442dbece578';
+const HERO_CAR_BACKGROUND_FALLBACK_URL = '/white-lamborghini-bg.svg';
 
 type SignupProps = {
   mode?: 'signup' | 'login';
@@ -10,10 +11,17 @@ type SignupProps = {
 
 function Signup({ mode = 'signup' }: SignupProps) {
   const isLoginMode = mode === 'login';
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState(HERO_CAR_BACKGROUND_URL);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  useEffect(() => {
+    const img = new Image();
+    img.onerror = () => setBackgroundImageUrl(HERO_CAR_BACKGROUND_FALLBACK_URL);
+    img.src = HERO_CAR_BACKGROUND_URL;
+  }, []);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,7 +29,10 @@ function Signup({ mode = 'signup' }: SignupProps) {
   };
 
   return (
-    <div className="signup-page" style={{ backgroundImage: `url(${LAMBORGHINI_BACKGROUND_URL})` }}>
+    <div
+      className="signup-page"
+      style={{ backgroundImage: `url(${backgroundImageUrl})` }}
+    >
       <div className="signup-overlay" />
       <div className="signup-shell">
         <header className="signup-header">

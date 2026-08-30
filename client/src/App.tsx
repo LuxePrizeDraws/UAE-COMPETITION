@@ -232,7 +232,7 @@ const competitions = [
     soldEntries: 125000,
     endsIn: 'Annual final in 112 days',
     status: 'live',
-    tags: ['People’s Prize', 'Gold Silver Bronze', 'No-Profit Annual Draw'],
+    tags: ['Peoples Prize', 'Gold Silver Bronze', 'No-Profit Annual Draw'],
     profitMargin: '0% platform profit for this draw; full pot allocated to top 3 winners',
     expectedWinners: 3,
   },
