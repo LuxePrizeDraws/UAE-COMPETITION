@@ -179,7 +179,7 @@ function CountdownTimer({ timeRemaining }: { timeRemaining: string }) {
 
 function parsePound(str: string): number {
   const match = str.replace(/,/g, '').match(/[\d.]+/);
-  return match ? parseInt(match[0], 10) : 0;
+  return match ? parseFloat(match[0]) : 0;
 }
 
 function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSelect: (id: number) => void; onEnter: (id: number) => void }) {
