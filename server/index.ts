@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import { randomUUID } from 'crypto';
+import { recordEntry, incrementSoldEntries, getSoldEntries, getDrawHistory } from './database.js';
+import { checkAndTriggerDraw } from './drawEngine.js';
 
 dotenv.config();
 
@@ -95,13 +97,13 @@ async function getPayPalAccessToken(): Promise<string> {
   return data.access_token;
 }
 
-async function verifyPayPalOrder(
+async function getPayPalOrderDetails(
   orderID: string,
   expectedAmount: number
-): Promise<boolean> {
-  if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) return false;
+): Promise<{ verified: boolean; payerEmail?: string; payerName?: string }> {
+  if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) return { verified: false };
   // Validate orderID format to prevent SSRF – PayPal order IDs are alphanumeric + hyphens only
-  if (!/^[A-Z0-9-]{1,50}$/i.test(orderID)) return false;
+  if (!/^[A-Z0-9-]{1,50}$/i.test(orderID)) return { verified: false };
   try {
     const accessToken = await getPayPalAccessToken();
     const safeOrderID = encodeURIComponent(orderID);
@@ -111,14 +113,17 @@ async function verifyPayPalOrder(
     const order = (await res.json()) as {
       status: string;
       purchase_units: Array<{ amount: { value: string } }>;
+      payer?: { email_address?: string; name?: { given_name?: string; surname?: string } };
     };
-    if (order.status !== 'COMPLETED') return false;
-    const paidAmount = parseFloat(
-      order.purchase_units[0]?.amount?.value || '0'
-    );
-    return Math.abs(paidAmount - expectedAmount) < 0.01;
+    if (order.status !== 'COMPLETED') return { verified: false };
+    const paidAmount = parseFloat(order.purchase_units[0]?.amount?.value || '0');
+    if (Math.abs(paidAmount - expectedAmount) >= 0.01) return { verified: false };
+    const payerEmail = order.payer?.email_address;
+    const payerName = [order.payer?.name?.given_name, order.payer?.name?.surname]
+      .filter(Boolean).join(' ') || undefined;
+    return { verified: true, payerEmail, payerName };
   } catch {
-    return false;
+    return { verified: false };
   }
 }
 
@@ -378,8 +383,10 @@ app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
   if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
     return res.status(503).json({ error: 'Payment processing is not configured. Please contact support.' });
   }
-  const paymentVerified = await verifyPayPalOrder(String(paypalOrderId), expectedAmount);
-  if (!paymentVerified) {
+
+  // Get full PayPal order details (amount + payer info)
+  const orderDetails = await getPayPalOrderDetails(String(paypalOrderId), expectedAmount);
+  if (!orderDetails.verified) {
     return res.status(400).json({ error: 'Payment could not be verified. Please contact support.' });
   }
 
@@ -387,6 +394,42 @@ app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
   const validPrizeOptions = ['physical', 'cash'];
   const selectedPrizeOption =
     prizeOption && validPrizeOptions.includes(prizeOption) ? prizeOption : 'cash';
+
+  // Generate entry numbers
+  const entryNumbers = Array.from({ length: qty }, () =>
+    `${competition.id}-${randomUUID().slice(0, 8).toUpperCase()}`
+  );
+
+  // ── Persist to database ──
+  recordEntry({
+    competitionId: competition.id,
+    entryNumbers,
+    quantity: qty,
+    totalCost,
+    currency: competition.currency,
+    prizeOption: competition.cashAlternative ? selectedPrizeOption : 'physical',
+    paypalOrderId: String(paypalOrderId),
+    payerEmail: orderDetails.payerEmail,
+    payerName: orderDetails.payerName,
+  });
+  incrementSoldEntries(competition.id, qty, competition.totalEntries);
+
+  const soldSoFar = getSoldEntries(competition.id);
+  const drawReadyPercent = Math.min((soldSoFar / competition.totalEntries) * 100, 100);
+
+  // ── Trigger draw if competition is full (async – don't block response) ──
+  checkAndTriggerDraw(
+    {
+      id: competition.id,
+      title: competition.title,
+      prizeAmount: competition.prizeAmount,
+      currency: competition.currency,
+      entryPrice: competition.entryPrice,
+      totalEntries: competition.totalEntries,
+    },
+    orderDetails.payerEmail,
+    orderDetails.payerName
+  ).catch(err => console.error('Draw engine error:', err));
 
   res.json({
     success: true,
@@ -397,13 +440,73 @@ app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
     totalCost,
     currency: competition.currency,
     prizeOption: competition.cashAlternative ? selectedPrizeOption : 'physical',
-    entryNumbers: Array.from({ length: qty }, () =>
-      `${competition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`
-    ),
+    entryNumbers,
     paypalOrderId,
-    drawReadyPercent: competition.drawReadyPercent,
-    endsIn: competition.endsIn,
+    drawReadyPercent,
+    soldEntries: soldSoFar,
+    totalEntries: competition.totalEntries,
   });
+});
+
+// GET /api/competitions/:id/state – live sold-entry count from DB
+app.get('/api/competitions/:id/state', (req: Request, res: Response) => {
+  const competition = competitions.find(c => c.id === parseInt(req.params.id));
+  if (!competition) return res.status(404).json({ error: 'Competition not found' });
+  const sold = getSoldEntries(competition.id);
+  res.json({
+    competitionId: competition.id,
+    soldEntries: sold,
+    totalEntries: competition.totalEntries,
+    drawReadyPercent: Math.min((sold / competition.totalEntries) * 100, 100),
+  });
+});
+
+// GET /api/draws – draw history (all or by competition)
+app.get('/api/draws', (req: Request, res: Response) => {
+  const competitionId = req.query.competitionId ? parseInt(req.query.competitionId as string) : undefined;
+  res.json(getDrawHistory(competitionId));
+});
+
+// POST /api/webhooks/paypal – PayPal IPN / webhook (auto payment confirmation)
+// PayPal sends this when a payment completes – no user action required.
+app.post('/api/webhooks/paypal', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
+  const webhookId = process.env.PAYPAL_WEBHOOK_ID || '';
+  const body = req.body as Buffer;
+
+  // Verify webhook signature if webhook ID is configured
+  if (webhookId) {
+    const transmissionId   = req.headers['paypal-transmission-id'] as string;
+    const transmissionTime = req.headers['paypal-transmission-time'] as string;
+    const certUrl          = req.headers['paypal-cert-url'] as string;
+    const actualSig        = req.headers['paypal-transmission-sig'] as string;
+
+    // Basic presence check – full cert verification requires PayPal SDK
+    if (!transmissionId || !transmissionTime || !certUrl || !actualSig) {
+      return res.status(400).json({ error: 'Missing PayPal webhook headers' });
+    }
+  }
+
+  try {
+    const event = JSON.parse(body.toString()) as {
+      event_type: string;
+      resource: {
+        id: string;
+        purchase_units?: Array<{ description?: string; amount: { value: string } }>;
+        payer?: { email_address?: string; name?: { given_name?: string; surname?: string } };
+        status?: string;
+      };
+    };
+
+    if (event.event_type === 'CHECKOUT.ORDER.APPROVED' || event.event_type === 'PAYMENT.CAPTURE.COMPLETED') {
+      console.log(`📬 PayPal webhook: ${event.event_type} | order ${event.resource.id}`);
+      // Webhook received – entry already recorded via the /enter endpoint.
+      // This serves as a secondary confirmation and audit trail.
+    }
+
+    res.json({ received: true });
+  } catch {
+    res.status(400).json({ error: 'Invalid webhook payload' });
+  }
 });
 
 app.get('/', (req: Request, res: Response) => {
@@ -414,5 +517,7 @@ app.listen(PORT, () => {
   console.log(`\n🏆 UK Life Changing Competitions API running on http://localhost:${PORT}`);
   console.log(`📡 CORS enabled for ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);
+  console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions`);
+  console.log(`🎯 Draw history: http://localhost:${PORT}/api/draws\n`);
 });
+
