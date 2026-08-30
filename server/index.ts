@@ -230,7 +230,7 @@ const validateEntryInput = (competition: (typeof competitions)[number] | undefin
     return { error: { status: 400, message: 'Invalid quantity. Must be a whole number between 1 and 1000.' } };
   }
 
-  return { qty };
+  return { qty, competition };
 };
 
 const createStripeCheckoutSession = async (args: {
@@ -391,23 +391,23 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     return res.status(validation.error.status).json({ error: validation.error.message });
   }
 
-  const qty = validation.qty;
-  const totalCost = qty * competition.entryPrice;
+  const { qty, competition: validatedCompetition } = validation;
+  const totalCost = qty * validatedCompetition.entryPrice;
   const validPrizeOptions = ['physical', 'cash'];
   const selectedPrizeOption = prizeOption && validPrizeOptions.includes(prizeOption) ? prizeOption : 'cash';
   
   res.json({
     success: true,
     message: 'Entry processed successfully (demo mode)',
-    competitionId: competition.id,
-    competitionTitle: competition.title,
+    competitionId: validatedCompetition.id,
+    competitionTitle: validatedCompetition.title,
     quantity: qty,
     totalCost,
-    currency: competition.currency,
-    prizeOption: competition.cashAlternative ? selectedPrizeOption : 'physical',
-    entryNumbers: Array.from({ length: qty }, () => `${competition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`),
-    drawReadyPercent: competition.drawReadyPercent,
-    endsIn: competition.endsIn,
+    currency: validatedCompetition.currency,
+    prizeOption: validatedCompetition.cashAlternative ? selectedPrizeOption : 'physical',
+    entryNumbers: Array.from({ length: qty }, () => `${validatedCompetition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`),
+    drawReadyPercent: validatedCompetition.drawReadyPercent,
+    endsIn: validatedCompetition.endsIn,
   });
 });
 
@@ -423,15 +423,16 @@ app.post('/api/competitions/:id/checkout-session', async (req: Request, res: Res
     const validPrizeOptions = ['physical', 'cash'];
     const selectedPrizeOption = prizeOption && validPrizeOptions.includes(prizeOption) ? prizeOption : 'cash';
     const provider = paymentProvider === 'paypal' ? 'paypal' : 'stripe';
+    const { qty, competition: validatedCompetition } = validation;
     const session = provider === 'paypal'
       ? await createPayPalCheckoutOrder({
-        competition,
-        quantity: validation.qty,
+        competition: validatedCompetition,
+        quantity: qty,
         prizeOption: selectedPrizeOption,
       })
       : await createStripeCheckoutSession({
-        competition,
-        quantity: validation.qty,
+        competition: validatedCompetition,
+        quantity: qty,
         prizeOption: selectedPrizeOption,
         customerEmail: typeof customerEmail === 'string' ? customerEmail : undefined,
       });

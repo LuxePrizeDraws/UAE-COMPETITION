@@ -32,7 +32,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [showFreeEntry, setShowFreeEntry] = useState(false);
-  const [freeEntrySubmitted, setFreeEntrySubmitted] = useState('');
+  const [freeEntryStatusMessage, setFreeEntryStatusMessage] = useState('');
   const [freeEntryDetails, setFreeEntryDetails] = useState({
     fullName: '',
     email: '',
@@ -95,7 +95,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
 
   const handleFreeEntrySubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setFreeEntrySubmitted('');
+    setFreeEntryStatusMessage('');
 
     try {
       const response = await fetch(`${apiBaseUrl}/api/competitions/${competition.id}/free-entry`, {
@@ -111,11 +111,11 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       if (!response.ok) {
         throw new Error(payload.error || 'Unable to submit free entry');
       }
-      setFreeEntrySubmitted(`Free entry submitted. Reference: ${payload.reference}`);
+      setFreeEntryStatusMessage(`Free entry submitted. Reference: ${payload.reference}`);
       setFreeEntryDetails({ fullName: '', email: '', postalAddress: '' });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to submit free entry';
-      setFreeEntrySubmitted(message);
+      setFreeEntryStatusMessage(message);
     }
   };
 
@@ -268,7 +268,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
             onChange={(e) => setFreeEntryDetails((current) => ({ ...current, postalAddress: e.target.value }))}
           />
           <button type="submit" className="btn-free-entry-submit">SUBMIT FREE ENTRY</button>
-          {freeEntrySubmitted && <p className="free-entry-status">{freeEntrySubmitted}</p>}
+          {freeEntryStatusMessage && <p className="free-entry-status">{freeEntryStatusMessage}</p>}
         </form>
       )}
 
