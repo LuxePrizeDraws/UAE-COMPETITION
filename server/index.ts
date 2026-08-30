@@ -271,6 +271,81 @@ const competitions = [
 
 const getCompetition = (idParam: string) => competitions.find(c => c.id === parseInt(idParam, 10));
 
+type EntryMethod = 'paid' | 'postal';
+type DrawEntryRecord = {
+  id: string;
+  competitionId: number;
+  method: EntryMethod;
+  quantity: number;
+  entryNumbers: string[];
+  riskLevel: 'low' | 'medium' | 'high';
+  riskScore: number;
+  status: 'accepted' | 'manual-review';
+  createdAt: string;
+};
+
+const drawEntryPool: DrawEntryRecord[] = [];
+const participantEmailCounts = new Map<string, number>();
+
+const generateEntryNumbers = (competitionId: number, quantity: number) =>
+  Array.from({ length: quantity }, () => `${competitionId}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`);
+
+const runEntryRiskScan = (input: {
+  method: EntryMethod;
+  quantity: number;
+  fullName?: string;
+  email?: string;
+  postalAddress?: string;
+}) => {
+  let score = 0;
+  const email = (input.email || '').trim().toLowerCase();
+  const fullName = (input.fullName || '').trim();
+  const postalAddress = (input.postalAddress || '').trim();
+
+  if (input.quantity > 50) score += 20;
+  if (input.method === 'postal' && input.quantity !== 1) score += 25;
+  if (postalAddress.length > 0 && postalAddress.length < 10) score += 20;
+  if (fullName.length > 0 && fullName.split(' ').filter(Boolean).length < 2) score += 15;
+
+  if (email) {
+    const previousCount = participantEmailCounts.get(email) || 0;
+    if (previousCount >= 2) score += 25;
+    participantEmailCounts.set(email, previousCount + 1);
+  }
+
+  const riskLevel = score >= 45 ? 'high' : score >= 20 ? 'medium' : 'low';
+  return {
+    riskScore: score,
+    riskLevel,
+    status: (riskLevel === 'high' ? 'manual-review' : 'accepted') as 'accepted' | 'manual-review',
+  };
+};
+
+const registerDrawEntries = (input: {
+  competitionId: number;
+  method: EntryMethod;
+  quantity: number;
+  fullName?: string;
+  email?: string;
+  postalAddress?: string;
+}) => {
+  const scan = runEntryRiskScan(input);
+  const entryNumbers = generateEntryNumbers(input.competitionId, input.quantity);
+  const record: DrawEntryRecord = {
+    id: `DRAW-${input.competitionId}-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+    competitionId: input.competitionId,
+    method: input.method,
+    quantity: input.quantity,
+    entryNumbers,
+    riskLevel: scan.riskLevel,
+    riskScore: scan.riskScore,
+    status: scan.status,
+    createdAt: new Date().toISOString(),
+  };
+  drawEntryPool.push(record);
+  return record;
+};
+
 const validateEntryInput = (competition: (typeof competitions)[number] | undefined, quantity: unknown, termsAccepted: unknown) => {
   if (!competition) {
     return { error: { status: 404, message: 'Competition not found' } };
@@ -452,7 +527,7 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
 });
 
 app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
-  const { quantity, termsAccepted, prizeOption } = req.body;
+  const { quantity, termsAccepted, prizeOption, fullName, email, postalAddress } = req.body;
   const competition = getCompetition(req.params.id);
   const validation = validateEntryInput(competition, quantity, termsAccepted);
   if ('error' in validation) {
@@ -464,6 +539,15 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
   const validPrizeOptions = ['physical', 'cash'];
   const selectedPrizeOption = prizeOption && validPrizeOptions.includes(prizeOption) ? prizeOption : 'cash';
   
+  const drawEntry = registerDrawEntries({
+    competitionId: validatedCompetition.id,
+    method: 'paid',
+    quantity: qty,
+    fullName: typeof fullName === 'string' ? fullName : undefined,
+    email: typeof email === 'string' ? email : undefined,
+    postalAddress: typeof postalAddress === 'string' ? postalAddress : undefined,
+  });
+
   res.json({
     success: true,
     message: 'Entry processed successfully (demo mode)',
@@ -473,7 +557,10 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     totalCost,
     currency: validatedCompetition.currency,
     prizeOption: validatedCompetition.cashAlternative ? selectedPrizeOption : 'physical',
-    entryNumbers: Array.from({ length: qty }, () => `${validatedCompetition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`),
+    entryNumbers: drawEntry.entryNumbers,
+    drawPoolStatus: drawEntry.status,
+    riskLevel: drawEntry.riskLevel,
+    equalChanceRule: 'Each accepted ticket is entered once, regardless of paid or postal route.',
     drawReadyPercent: validatedCompetition.drawReadyPercent,
     endsIn: validatedCompetition.endsIn,
   });
@@ -547,11 +634,46 @@ app.post('/api/competitions/:id/free-entry', (req: Request, res: Response) => {
   }
 
   const reference = `FREE-${competition.id}-${Date.now()}`;
+  const drawEntry = registerDrawEntries({
+    competitionId: competition.id,
+    method: 'postal',
+    quantity: 1,
+    fullName: typeof fullName === 'string' ? fullName : undefined,
+    email: normalizedEmail,
+    postalAddress: typeof postalAddress === 'string' ? postalAddress : undefined,
+  });
   res.status(201).json({
     success: true,
     message: 'Free entry request submitted for manual validation.',
     competitionId: competition.id,
     reference,
+    drawPoolStatus: drawEntry.status,
+    riskLevel: drawEntry.riskLevel,
+    equalChanceRule: 'Postal and paid entries are mixed into one draw with equal chance per ticket.',
+  });
+});
+
+app.get('/api/competitions/:id/draw-pool', (req: Request, res: Response) => {
+  const competition = getCompetition(req.params.id);
+  if (!competition) {
+    return res.status(404).json({ error: 'Competition not found' });
+  }
+
+  const entries = drawEntryPool.filter((entry) => entry.competitionId === competition.id);
+  const paidTickets = entries.filter((entry) => entry.method === 'paid').reduce((sum, entry) => sum + entry.quantity, 0);
+  const postalTickets = entries.filter((entry) => entry.method === 'postal').reduce((sum, entry) => sum + entry.quantity, 0);
+  const acceptedTickets = entries
+    .filter((entry) => entry.status === 'accepted')
+    .reduce((sum, entry) => sum + entry.quantity, 0);
+
+  return res.json({
+    competitionId: competition.id,
+    totalRecords: entries.length,
+    paidTickets,
+    postalTickets,
+    acceptedTickets,
+    equalChanceRule: '1 ticket = 1 draw chance across paid and postal entries.',
+    entries,
   });
 });
 
