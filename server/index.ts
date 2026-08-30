@@ -308,8 +308,14 @@ const participantEmailCounts = new Map<string, number>();
 const MAX_TRACKED_PARTICIPANT_EMAILS = 5000;
 const MAX_DRAW_ENTRY_RECORDS = 20000;
 
-const generateEntryNumbers = (competitionId: number, quantity: number) =>
-  Array.from({ length: quantity }, () => `${competitionId}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`);
+const generateEntryNumbers = (competitionId: number, quantity: number) => {
+  const ticketSet = new Set<string>();
+  while (ticketSet.size < quantity) {
+    const suffix = crypto.randomUUID().replace(/-/g, '').slice(0, 9).toUpperCase();
+    ticketSet.add(`${competitionId}-${suffix}`);
+  }
+  return [...ticketSet];
+};
 
 const runEntryRiskScan = (input: {
   method: EntryMethod;
@@ -810,7 +816,7 @@ app.get('/', (req: Request, res: Response) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`\n✨ UK Luxe Prize Draw API running on http://localhost:${PORT}`);
-  console.log(`📡 CORS enabled for http://localhost:5173`);
+  console.log(`📡 CORS enabled for ${CLIENT_URL}`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
   console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);
 });
