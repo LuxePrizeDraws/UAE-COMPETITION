@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import CheckoutModal from './CheckoutModal';
 import './CompetitionCard.css';
 
 interface Competition {
@@ -27,6 +28,7 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
+  const [showCheckout, setShowCheckout] = useState(false);
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
@@ -69,7 +71,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       <div className="card-stats">
         <div className="stat">
           <span className="stat-label">TICKET PRICE</span>
-          <span className="stat-value">{competition.entryPrice} AED</span>
+          <span className="stat-value">{competition.entryPrice} GBP</span>
           <span className="stat-sublabel">PER ENTRY</span>
         </div>
         <div className="stat">
@@ -123,15 +125,28 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
         <div className="cost-display">
           <span className="cost-label">Total Cost:</span>
-          <span className="cost-amount">{totalCost} AED</span>
+          <span className="cost-amount">{totalCost} GBP</span>
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button className="btn-enter-now" onClick={() => setShowCheckout(true)}>
+        ENTER NOW - {totalCost} GBP
+      </button>
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>
       </div>
+
+      {showCheckout && (
+        <CheckoutModal
+          competitionId={competition.id}
+          competitionTitle={competition.title}
+          entryPrice={competition.entryPrice}
+          currency="GBP"
+          quantity={quantity}
+          onClose={() => setShowCheckout(false)}
+        />
+      )}
     </div>
   );
 };
