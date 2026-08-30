@@ -84,7 +84,7 @@ function App() {
         <div className="header-content">
           <h1 className="logo">
             <span className="logo-mark" aria-hidden="true">£</span>
-            <span className="logo-text">UAE Competition Platform</span>
+            <span className="logo-text">UK Luxe Prize Draw</span>
           </h1>
           <nav>
             <Link to="/" className="nav-link">Home</Link>
@@ -100,7 +100,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>© 2024 UAE Competition Platform | Fair, Transparent &amp; Compliant Draws</p>
+        <p>© 2024 UK Luxe Prize Draw | Fair, Transparent &amp; Compliant Draws</p>
       </footer>
     </div>
   );
