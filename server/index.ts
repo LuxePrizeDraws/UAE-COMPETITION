@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import { randomUUID } from 'crypto';
 
 dotenv.config();
 
@@ -311,7 +312,7 @@ const MAX_DRAW_ENTRY_RECORDS = 20000;
 const generateEntryNumbers = (competitionId: number, quantity: number) => {
   const ticketSet = new Set<string>();
   while (ticketSet.size < quantity) {
-    const suffix = crypto.randomUUID().replace(/-/g, '').slice(0, 9).toUpperCase();
+    const suffix = randomUUID().replace(/-/g, '').slice(0, 9).toUpperCase();
     ticketSet.add(`${competitionId}-${suffix}`);
   }
   return [...ticketSet];
@@ -403,8 +404,8 @@ const validateEntryInput = (
   }
 
   const qty = Number(quantity);
-  if (!Number.isInteger(qty) || qty < 1 || qty > 1000) {
-    return { error: { status: 400, message: 'Invalid quantity. Must be a whole number between 1 and 1000.' } };
+  if (!Number.isInteger(qty) || qty < 1 || qty > 100) {
+    return { error: { status: 400, message: 'Invalid quantity. Must be a whole number between 1 and 100.' } };
   }
 
   return { qty, competition };
@@ -753,7 +754,7 @@ app.get('/api/payments/stripe/session/:sessionId/verify', async (req: Request, r
     }
 
     const session = await response.json() as { id?: string; payment_status?: string; status?: string };
-    const paid = session.payment_status === 'paid' || session.status === 'completed';
+    const paid = session.payment_status === 'paid' || session.status === 'complete';
     return res.json({ success: true, paid, sessionId: session.id, paymentStatus: session.payment_status, status: session.status });
   } catch (error) {
     const details = error instanceof Error ? error.message : 'Unknown error';
@@ -769,7 +770,7 @@ app.post('/api/payments/paypal/capture', async (req: Request, res: Response) => 
     }
     const isSafeOrderId = orderId.length > 6
       && orderId.length < 80
-      && [...orderId].every((char) => /[A-Za-z0-9]/.test(char));
+      && [...orderId].every((char) => /[A-Za-z0-9-]/.test(char));
     if (!isSafeOrderId) {
       return res.status(400).json({ error: 'Invalid PayPal order id.' });
     }

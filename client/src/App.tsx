@@ -166,6 +166,12 @@ function App() {
         <p className="trust-banner">
           Trusted launch mode: secure checkout, transparent draw maths, clear terms, and a no-purchase route for fair participation.
         </p>
+        <p className="trust-banner">
+          Profit-use commitment: profits are reinvested into community development initiatives that support UK economic growth in the right direction.
+        </p>
+        <div className="impact-badge" role="note" aria-label="Mental health impact commitment">
+          🧠 Mental Health Awareness: we aim to fund practical support for mental health issues affecting communities across our nation.
+        </div>
         <div className="aim-advert" role="note" aria-label="Launch ambition">
           🚀 Mission target: aim to exceed the reported $10M in-app benchmark by 10x, subject to compliance approvals and published terms.
         </div>
@@ -178,7 +184,8 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>© 2024 UK Luxe Prize Draw | Fair, Transparent &amp; Compliant Draws</p>
+        <p>© 2024 UK Luxe Prize Draw | Fair, Transparent &amp; Compliant Draws | Tax-free cash prizes where legally applicable</p>
+        <p className="app-footer-credit">Designed by GST LLC • Dubai, UAE</p>
       </footer>
     </div>
   );

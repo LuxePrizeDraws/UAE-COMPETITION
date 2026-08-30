@@ -109,6 +109,12 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       window.setTimeout(() => {
         window.location.href = payload.checkoutUrl;
       }, 350);
+      window.setTimeout(() => {
+        if (document.visibilityState === 'visible') {
+          setIsProcessingPayment(false);
+          setShowCelebration(false);
+        }
+      }, 2500);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to start checkout';
       window.alert(message);
