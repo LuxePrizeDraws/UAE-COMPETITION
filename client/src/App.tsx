@@ -156,6 +156,7 @@ function App() {
           </h1>
           <nav>
             <Link to="/" className="nav-link">Home</Link>
+            <Link to="/signup" className="nav-link">Sign Up</Link>
             <Link to="/dashboard" className="nav-link nav-link--highlight">📊 Live Dashboard</Link>
           </nav>
         </div>
