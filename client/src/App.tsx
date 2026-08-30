@@ -200,15 +200,15 @@ const competitions = [
     prizeDetails: {
       currency: 'GBP',
       description: 'Shared winner pot model',
-      includes: ['Entrant-funded pooled pot', 'Single winner selected per cycle', '10% admin fee applied to final pot'],
+      includes: ['Entrant-funded pooled pot', 'Single winner selected per cycle', 'Entry subject to agreed terms and conditions'],
     },
     entryPrice: 1,
     totalEntries: 20000,
     soldEntries: 9900,
     endsIn: '1 day 4 hours',
     status: 'live',
-    tags: ['Shared Pot', 'League Draw', 'Transparent 10% Admin Fee'],
-    profitMargin: '10% Admin Fee from final winner pot (displayed transparently)',
+    tags: ['Shared Pot', 'League Draw', 'Terms-Acceptance Required'],
+    profitMargin: 'Shared-pot draw model with published terms and eligibility',
     expectedWinners: 1,
   },
 ];

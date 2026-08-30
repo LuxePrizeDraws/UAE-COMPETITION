@@ -342,8 +342,8 @@ const competitions = [
     endsIn: '1 day 4 hours',
     status: 'live',
     annualProfitPotential: 260000,
-    tags: ['Shared Pot', 'League Draw', 'Transparent 10% Admin Fee'],
-    profitMargin: '10% admin fee from final winning pot',
+    tags: ['Shared Pot', 'League Draw', 'Terms-Acceptance Required'],
+    profitMargin: 'Shared-pot draw model with published terms and eligibility',
     expectedWinners: 1,
   },
 ];

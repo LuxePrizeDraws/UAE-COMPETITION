@@ -217,11 +217,11 @@ const COMPETITIONS: Competition[] = [
     entriesNeeded: 20000,
     drawReadyPercent: 49.5,
     timeRemaining: '1d 4h 00m',
-    cashAlternative: 'Winner receives pot less transparent 10% admin fee',
+    cashAlternative: 'Winner receives the final pooled pot per published terms',
     type: 'cash',
     icon: '🏁',
     status: 'live',
-    details: ['All entries fund one central pot', 'One winner per cycle', '10% admin fee deducted from final pot'],
+    details: ['All entries fund one central pot', 'One winner per cycle', 'Terms and conditions must be accepted before entry'],
   },
 ];
 
