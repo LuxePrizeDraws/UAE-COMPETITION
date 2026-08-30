@@ -211,7 +211,7 @@ const competitions = [
   {
     id: 9,
     title: 'BIGGEST BUSINESS PRIZE: £100K Win Your Own Company + Start-up Grant',
-    description: 'Flagship launch prize: win a £100K company package with custom web + app build design support.',
+    description: 'Flagship launch prize ambition: £100K company package with custom web + app build design support, subject to terms.',
     prizeType: 'FLAGSHIP BUSINESS PACKAGE',
     prizeAmount: 100000,
     currency: 'GBP',
@@ -241,7 +241,7 @@ const competitions = [
   {
     id: 10,
     title: 'LIVE WORLD RECORD CHASE: £1 Entry Cash Pot',
-    description: 'A live global £1-entry competition built to beat the $10M app prize benchmark and unlock a mega draw.',
+    description: 'A live global £1-entry campaign targeting a record milestone, subject to eligibility, terms, and legal approvals.',
     prizeType: 'LIVE CASH CHALLENGE',
     prizeAmount: 100000000,
     currency: 'USD TARGET',

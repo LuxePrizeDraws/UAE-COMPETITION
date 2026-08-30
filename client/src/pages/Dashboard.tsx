@@ -162,7 +162,7 @@ const COMPETITIONS: Competition[] = [
   {
     id: 10,
     title: 'LIVE WORLD RECORD CHASE',
-    prize: 'Target: Beat $10M Record',
+    prize: 'Target: Aim to Beat $10M Record (Subject to Terms)',
     prizeAmount: '$100,000,000',
     entryPrice: '£1',
     entriesSold: 6400000,

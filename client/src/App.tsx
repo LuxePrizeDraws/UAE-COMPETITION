@@ -78,7 +78,7 @@ const competitions = [
   {
     id: 9,
     title: 'BIGGEST BUSINESS PRIZE: £100K Win Your Own Company + Start-up Grant',
-    description: 'Our flagship launch prize: win a £100K company package with custom web + app build design support.',
+    description: 'Our flagship launch prize ambition: a £100K company package with custom web + app build design support, subject to terms.',
     prizeType: 'FLAGSHIP MEGA BUSINESS DRAW',
     prizeAmount: 100000,
     prizeDetails: {
@@ -100,7 +100,7 @@ const competitions = [
   {
     id: 10,
     title: 'LIVE WORLD RECORD CHASE: £1 Entry Cash Pot',
-    description: 'A live global £1-entry competition built to beat the $10M app prize benchmark and unlock a mega draw.',
+    description: 'A live global £1-entry campaign targeting a record milestone, subject to eligibility, terms, and legal approvals.',
     prizeType: 'LIVE CASH CHALLENGE',
     prizeAmount: 100000000,
     prizeDetails: {
@@ -140,10 +140,10 @@ function App() {
           <p className="mascot-speech">welcome to a luxury poundland</p>
         </div>
         <p className="trust-banner">
-          Trusted launch mode: secure checkout, transparent draw maths, and a no-purchase route for fair participation.
+          Trusted launch mode: secure checkout, transparent draw maths, clear terms, and a no-purchase route for fair participation.
         </p>
         <div className="aim-advert" role="note" aria-label="Launch ambition">
-          🚀 Mission target: beat the reported $10M in-app prize benchmark by 10x — powered by global £1 entries for life-changing wins.
+          🚀 Mission target: aim to exceed the reported $10M in-app benchmark by 10x, subject to compliance approvals and published terms.
         </div>
       </header>
 

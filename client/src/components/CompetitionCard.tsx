@@ -271,7 +271,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
       </button>
 
       <div className="compliance-note">
-        No purchase necessary route: submit a free postal-style entry request below for manual validation.
+        No purchase necessary route: submit a free postal-style entry request below for manual validation (subject to terms and eligibility).
       </div>
       <button
         type="button"
