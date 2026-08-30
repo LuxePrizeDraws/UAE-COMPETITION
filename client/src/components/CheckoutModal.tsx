@@ -274,7 +274,18 @@ export default function CheckoutModal({
             <h3 className="error-title">Something went wrong</h3>
             <p className="error-msg">{errorMsg}</p>
             <div className="error-actions">
-              <button className="btn-secondary" onClick={() => { setStep('challenge'); setChallengeVerified(false); setChallengeAnswer(''); setErrorMsg(''); }}>
+              <button className="btn-secondary" onClick={() => {
+                // Reset to challenge step and fetch a fresh challenge token
+                setStep('challenge');
+                setChallengeVerified(false);
+                setChallengeAnswer('');
+                setErrorMsg('');
+                setChallenge(null);
+                fetch(`${API_URL}/api/challenge`)
+                  .then(r => r.json())
+                  .then((data: Challenge) => setChallenge(data))
+                  .catch(() => setChallengeError('Could not load challenge. Please refresh.'));
+              }}>
                 Try Again
               </button>
               <button className="btn-primary" onClick={onClose}>Close</button>

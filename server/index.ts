@@ -65,6 +65,9 @@ const CHALLENGE_POOL = [
 ];
 
 // In-memory token store: token → { answer, expiresAt }
+// NOTE: This works for single-process deployments (Railway, Render, VPS).
+// For Vercel serverless functions, replace with an external store (Redis/KV)
+// since each invocation may be a separate process.
 const challengeTokens = new Map<string, { answer: string; expiresAt: number }>();
 
 // Clean up expired tokens every 10 minutes
@@ -97,9 +100,12 @@ async function verifyPayPalOrder(
   expectedAmount: number
 ): Promise<boolean> {
   if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) return false;
+  // Validate orderID format to prevent SSRF – PayPal order IDs are alphanumeric + hyphens only
+  if (!/^[A-Z0-9-]{1,50}$/i.test(orderID)) return false;
   try {
     const accessToken = await getPayPalAccessToken();
-    const res = await fetch(`${PAYPAL_API}/v2/checkout/orders/${orderID}`, {
+    const safeOrderID = encodeURIComponent(orderID);
+    const res = await fetch(`${PAYPAL_API}/v2/checkout/orders/${safeOrderID}`, {
       headers: { Authorization: 'Bearer ' + accessToken },
     });
     const order = (await res.json()) as {
@@ -369,11 +375,12 @@ app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
   const qty = Number(quantity);
   const expectedAmount = qty * competition.entryPrice;
 
-  if (PAYPAL_CLIENT_ID && PAYPAL_CLIENT_SECRET) {
-    const paymentVerified = await verifyPayPalOrder(String(paypalOrderId), expectedAmount);
-    if (!paymentVerified) {
-      return res.status(400).json({ error: 'Payment could not be verified. Please contact support.' });
-    }
+  if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+    return res.status(503).json({ error: 'Payment processing is not configured. Please contact support.' });
+  }
+  const paymentVerified = await verifyPayPalOrder(String(paypalOrderId), expectedAmount);
+  if (!paymentVerified) {
+    return res.status(400).json({ error: 'Payment could not be verified. Please contact support.' });
   }
 
   const totalCost = expectedAmount;
