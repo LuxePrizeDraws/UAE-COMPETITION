@@ -19,13 +19,15 @@ interface Competition {
   tags: string[];
   profitMargin: string;
   expectedWinners: number;
+  status?: string;
 }
 
 interface CompetitionCardProps {
   competition: Competition;
+  onEnter?: (id: number) => void;
 }
 
-const CompetitionCard = ({ competition }: CompetitionCardProps) => {
+const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
@@ -127,7 +129,13 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
         </div>
       </div>
 
-      <button className="btn-enter-now">ENTER NOW - {totalCost} AED</button>
+      <button
+        className="btn-enter-now"
+        disabled={competition.status === 'coming-soon'}
+        onClick={() => onEnter?.(competition.id)}
+      >
+        {competition.status === 'coming-soon' ? '⏳ COMING SOON' : `ENTER NOW - ${totalCost} AED`}
+      </button>
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>
