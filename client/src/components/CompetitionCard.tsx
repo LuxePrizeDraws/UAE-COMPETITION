@@ -28,6 +28,7 @@ interface Competition {
     weeklyDraws: string;
     dailyDraws: string;
     instantWinAllocation: string;
+    instantWinStatus?: string;
   };
 }
 
@@ -236,6 +237,9 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
             <p className="transparency-text">Weekly Draws: {competition.drawStructure.weeklyDraws}</p>
             <p className="transparency-text">Daily Draws: {competition.drawStructure.dailyDraws}</p>
             <p className="transparency-text">Instant Wins (Minority): {competition.drawStructure.instantWinAllocation}</p>
+            {competition.drawStructure.instantWinStatus && (
+              <p className="transparency-text">Instant Win Status: {competition.drawStructure.instantWinStatus}</p>
+            )}
           </>
         )}
       </div>

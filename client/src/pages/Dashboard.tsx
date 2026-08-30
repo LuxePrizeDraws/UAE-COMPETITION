@@ -157,7 +157,7 @@ const COMPETITIONS: Competition[] = [
     type: 'package',
     icon: '🚀',
     status: 'coming-soon',
-    details: ['Company launch support', 'Start-up grant package', 'Custom web build design', 'Custom app build design', 'OR take £100K cash'],
+    details: ['Company launch support', 'Start-up grant package', 'Custom web build design', 'Custom app build design', 'Instant win coming soon', 'OR take £100K cash'],
   },
   {
     id: 10,
@@ -173,7 +173,7 @@ const COMPETITIONS: Competition[] = [
     type: 'cash',
     icon: '🌍',
     status: 'live',
-    details: ['NEW RECORD AT $10,000,001', 'At the end to unlock: $100M community mega draw', 'Global £1 entry participation'],
+    details: ['NEW RECORD AT $10,000,001', 'At the end to unlock: $100M community mega draw', 'Instant win coming soon', 'Global £1 entry participation'],
   },
 ];
 

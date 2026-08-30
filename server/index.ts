@@ -245,6 +245,7 @@ const competitions = [
       weeklyDraws: 'Weekly fixed draws every Friday',
       dailyDraws: 'Daily mini draws at fixed cut-off',
       instantWinAllocation: 'Up to 8% of prize fund, pre-structured and capped',
+      instantWinStatus: 'Coming soon',
     },
   },
   {
@@ -281,6 +282,7 @@ const competitions = [
       weeklyDraws: 'Weekly record-chase supporting draws',
       dailyDraws: 'Daily £1 micro draws with fixed schedule',
       instantWinAllocation: 'Minority instant wins capped at 5% of total prize pool',
+      instantWinStatus: 'Coming soon',
     },
   },
 ];
