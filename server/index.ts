@@ -306,6 +306,7 @@ type DrawEntryRecord = {
 const drawEntryPool: DrawEntryRecord[] = [];
 const participantEmailCounts = new Map<string, number>();
 const MAX_TRACKED_PARTICIPANT_EMAILS = 5000;
+const MAX_DRAW_ENTRY_RECORDS = 20000;
 
 const generateEntryNumbers = (competitionId: number, quantity: number) =>
   Array.from({ length: quantity }, () => `${competitionId}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`);
@@ -366,6 +367,9 @@ const registerDrawEntries = (input: {
     status: scan.status,
     createdAt: new Date().toISOString(),
   };
+  if (drawEntryPool.length >= MAX_DRAW_ENTRY_RECORDS) {
+    drawEntryPool.shift();
+  }
   drawEntryPool.push(record);
   return record;
 };
@@ -758,7 +762,7 @@ app.post('/api/payments/paypal/capture', async (req: Request, res: Response) => 
     }
     const isSafeOrderId = orderId.length > 6
       && orderId.length < 80
-      && [...orderId].every((char) => /[A-Z0-9]/.test(char));
+      && [...orderId].every((char) => /[A-Za-z0-9-]/.test(char));
     if (!isSafeOrderId) {
       return res.status(400).json({ error: 'Invalid PayPal order id.' });
     }

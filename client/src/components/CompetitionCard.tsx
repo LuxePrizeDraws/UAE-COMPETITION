@@ -63,6 +63,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   const recordGoalUSD = competition.recordGoalUSD;
   const recordCurrentUSD = competition.recordCurrentUSD ?? 0;
   const recordProgressPercent = recordGoalUSD ? Math.min((recordCurrentUSD / recordGoalUSD) * 100, 100) : 0;
+  const isComingSoon = competition.endsIn.toLowerCase().includes('coming soon');
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
@@ -301,8 +302,12 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
           </select>
         </div>
 
-        <button className="btn-enter-now" onClick={handleEnterNow} disabled={isProcessingPayment}>
-          {isProcessingPayment ? 'STARTING CHECKOUT...' : `PAY WITH ${paymentProvider.toUpperCase()} - £${formattedTotalCost}`}
+        <button className="btn-enter-now" onClick={handleEnterNow} disabled={isProcessingPayment || isComingSoon}>
+          {isComingSoon
+            ? 'COMING SOON - ENTRY NOT OPEN'
+            : isProcessingPayment
+              ? 'STARTING CHECKOUT...'
+              : `PAY WITH ${paymentProvider.toUpperCase()} - £${formattedTotalCost}`}
         </button>
       </div>
 
