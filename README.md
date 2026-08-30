@@ -62,6 +62,16 @@ npm run dev
 
 If your environment skips dev dependencies by default, run `npm install --include=dev` first.
 
+### Fastest working demo (frontend preview only)
+```bash
+npm run demo
+```
+
+Then open:
+- http://localhost:4173
+- http://localhost:4173/signup
+- http://localhost:4173/login
+
 You should see:
 ```
 ✨ UK Luxe Prize Draw API running on http://localhost:5000
