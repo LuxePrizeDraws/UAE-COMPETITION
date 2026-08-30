@@ -266,12 +266,12 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
 });
 
 app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
+  res.json({ message: 'UK Luxe Prize Draw API (Transparent & Compliant)', version: '1.0.0' });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
+  console.log(`\n✨ UK Luxe Prize Draw API running on http://localhost:${PORT}`);
   console.log(`📡 CORS enabled for http://localhost:5173`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
   console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);

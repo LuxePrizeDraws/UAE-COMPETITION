@@ -41,6 +41,9 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
   };
 
   const handleEnterNow = () => {
+    const confirmed = window.confirm(`Buy ${quantity} ticket${quantity > 1 ? 's' : ''} for £${totalCost}?`);
+    if (!confirmed) return;
+
     setShowCelebration(true);
     window.setTimeout(() => setShowCelebration(false), 1800);
   };
