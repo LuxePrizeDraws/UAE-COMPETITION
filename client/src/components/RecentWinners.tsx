@@ -21,26 +21,28 @@ export default function RecentWinners({ title = 'Recent Winners' }: { title?: st
     <section className="recent-winners">
       <h2 className="recent-winners__title">🏆 {title}</h2>
       <div className="recent-winners__grid" role="table" aria-label="Recent competition winners">
-        {RECENT_WINNERS.map((winner) => (
-          <div className="winner-card" role="row" key={winner.id}>
-            <div className="winner-card__cell" role="cell">
-              <span className="winner-card__label">Winner</span>
-              <strong>{winner.id}</strong>
+        <div role="rowgroup">
+          {RECENT_WINNERS.map((winner) => (
+            <div className="winner-card" role="row" key={winner.id}>
+              <div className="winner-card__cell" role="cell">
+                <span className="winner-card__label">Winner</span>
+                <strong>{winner.id}</strong>
+              </div>
+              <div className="winner-card__cell" role="cell">
+                <span className="winner-card__label">Prize Amount</span>
+                <strong>{winner.prizeAmount}</strong>
+              </div>
+              <div className="winner-card__cell" role="cell">
+                <span className="winner-card__label">Prize Type</span>
+                <strong>{winner.prizeType}</strong>
+              </div>
+              <div className="winner-card__cell" role="cell">
+                <span className="winner-card__label">Date Won</span>
+                <strong>{winner.dateWon}</strong>
+              </div>
             </div>
-            <div className="winner-card__cell" role="cell">
-              <span className="winner-card__label">Prize Amount</span>
-              <strong>{winner.prizeAmount}</strong>
-            </div>
-            <div className="winner-card__cell" role="cell">
-              <span className="winner-card__label">Prize Type</span>
-              <strong>{winner.prizeType}</strong>
-            </div>
-            <div className="winner-card__cell" role="cell">
-              <span className="winner-card__label">Date Won</span>
-              <strong>{winner.dateWon}</strong>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

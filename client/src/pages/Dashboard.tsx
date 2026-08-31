@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
 import SupercarTicker from '../components/SupercarTicker';
 import RecentWinners from '../components/RecentWinners';
+import { getCompetitionVisualImage } from '../components/competitionVisuals';
 import './Dashboard.css';
 
 interface Competition {
@@ -191,11 +192,7 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
   const statusInfo = getStatusLabel(drawStatus);
   const typeColor = getTypeColor(comp.type);
   const remaining = comp.entriesNeeded - comp.entriesSold;
-  const cardImage = comp.id === 7
-    ? 'https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=900&q=70'
-    : [1, 3, 4, 5, 6].includes(comp.id)
-      ? 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=900&q=70'
-      : 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=70';
+  const cardImage = getCompetitionVisualImage(comp.id);
 
   return (
     <div
@@ -258,16 +255,16 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
         </ul>
       )}
 
-      <div className="entry-mode-tabs">
+      <div className="dash-entry-mode-tabs">
         <button
-          className={`entry-mode-tab ${entryMode === 'online' ? 'entry-mode-tab--active' : ''}`}
+          className={`dash-entry-mode-tab ${entryMode === 'online' ? 'dash-entry-mode-tab--active' : ''}`}
           onClick={(e) => { e.stopPropagation(); setEntryMode('online'); }}
           type="button"
         >
           ONLINE ENTRY
         </button>
         <button
-          className={`entry-mode-tab ${entryMode === 'postal' ? 'entry-mode-tab--active' : ''}`}
+          className={`dash-entry-mode-tab ${entryMode === 'postal' ? 'dash-entry-mode-tab--active' : ''}`}
           onClick={(e) => { e.stopPropagation(); setEntryMode('postal'); }}
           type="button"
         >
@@ -275,7 +272,7 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
         </button>
       </div>
 
-      <div className="postal-highlight">📬 FREE POSTAL ENTRY</div>
+      <div className="dash-postal-highlight">📬 FREE POSTAL ENTRY</div>
 
       {entryMode === 'online' ? (
         <button
@@ -286,7 +283,7 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
           {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}
         </button>
       ) : (
-        <div className="postal-entry-panel">
+        <div className="dash-postal-entry-panel">
           <p>Post your name, contact details, competition title and answer to enter for free.</p>
           <p>One entry per envelope. Your postal entry must arrive before draw closure.</p>
           <button className="dash-card__cta dash-card__cta--postal" type="button">POSTAL ENTRY DETAILS</button>

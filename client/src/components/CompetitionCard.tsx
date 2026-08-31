@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './CompetitionCard.css';
+import { getCompetitionVisualImage, getCompetitionVisualType } from './competitionVisuals';
 
 interface Competition {
   id: number;
@@ -34,14 +35,8 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
-  const isVehicle = competition.id === 7;
-  const isCash = [1, 3, 4, 5, 6].includes(competition.id);
-  const visualType = isVehicle ? 'vehicle' : isCash ? 'cash' : 'lifestyle';
-  const visualImage = isVehicle
-    ? 'https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=900&q=70'
-    : isCash
-      ? 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=900&q=70'
-      : 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=70';
+  const visualType = getCompetitionVisualType(competition.id);
+  const visualImage = getCompetitionVisualImage(competition.id);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
@@ -76,7 +71,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         </div>
 
         <div className="prize-image-placeholder">
-          <div className="image-placeholder">{isVehicle ? '🏎️' : isCash ? '💵' : '✨'}</div>
+          <div className="image-placeholder">{visualType === 'vehicle' ? '🏎️' : visualType === 'cash' ? '💵' : '✨'}</div>
         </div>
       </div>
 

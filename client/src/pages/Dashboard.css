@@ -137,7 +137,6 @@
   background-image: linear-gradient(150deg, rgba(8, 8, 8, 0.82), rgba(8, 8, 8, 0.95)), var(--card-image);
   background-size: cover;
   background-position: center;
-  opacity: 0.33;
   pointer-events: none;
 }
 .dash-card:hover {
@@ -288,13 +287,13 @@
   color: #d4af37;
 }
 
-.entry-mode-tabs {
+.dash-entry-mode-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.6rem;
 }
 
-.entry-mode-tab {
+.dash-entry-mode-tab {
   padding: 0.68rem 0.5rem;
   background: #1a1a1a;
   border: 2px solid #d4af37;
@@ -305,12 +304,12 @@
   letter-spacing: 0.6px;
 }
 
-.entry-mode-tab--active {
+.dash-entry-mode-tab--active {
   color: #111;
   background: linear-gradient(135deg, #d4af37, #f0d080);
 }
 
-.postal-highlight {
+.dash-postal-highlight {
   text-align: center;
   color: #f0d080;
   font-size: 1rem;
@@ -318,21 +317,21 @@
   letter-spacing: 0.7px;
 }
 
-.postal-entry-panel {
+.dash-postal-entry-panel {
   border: 1px solid rgba(212, 175, 55, 0.45);
   border-radius: 12px;
   background: rgba(212, 175, 55, 0.08);
   padding: 0.8rem;
 }
 
-.postal-entry-panel p {
+.dash-postal-entry-panel p {
   font-size: 0.8rem;
   color: #d0d0d0;
   margin-bottom: 0.4rem;
   line-height: 1.45;
 }
 
-.postal-entry-panel p:last-of-type {
+.dash-postal-entry-panel p:last-of-type {
   margin-bottom: 0.8rem;
 }
 
