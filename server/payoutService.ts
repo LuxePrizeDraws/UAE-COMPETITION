@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 
 export type PayoutMethodType = 'bank' | 'paypal' | 'stripe' | 'wise' | 'applepay' | 'googlepay' | 'crypto' | 'check';
+export const PAYOUT_METHOD_TYPES: PayoutMethodType[] = ['bank', 'paypal', 'stripe', 'wise', 'applepay', 'googlepay', 'crypto', 'check'];
 type PayoutProcessor = 'stripe' | 'paypal' | 'wise' | 'bank' | 'crypto';
 type PayoutStatus = 'pending' | 'initiated' | 'submitted' | 'processing' | 'completed' | 'failed' | 'retry_scheduled' | 'manual_intervention';
 
@@ -138,7 +139,7 @@ interface Batch {
   successfulPayouts: number;
   failedPayouts: number;
   retryPayouts: number;
-  status: 'created' | 'submitted' | 'processing' | 'completed' | 'partially_failed';
+  status: 'created' | 'submitted' | 'processing' | 'completed' | 'partially_failed' | 'failed';
 }
 
 interface ProcessorResult {
@@ -166,6 +167,7 @@ interface ProcessContext {
 interface PayoutDependencies {
   now?: () => Date;
   processPayout?: (ctx: ProcessContext) => ProcessorResult;
+  runFraudCheck?: (winner: DrawWinnerInput) => { score: number; passed: boolean; details?: string };
 }
 
 const METHOD_PROCESSOR: Record<PayoutMethodType, PayoutProcessor> = {
@@ -213,24 +215,28 @@ export class AutomatedPayoutService {
   private ringFencedBalances = new Map<string, number>();
   private now: () => Date;
   private processPayout: (ctx: ProcessContext) => ProcessorResult;
+  private runFraudCheck: (winner: DrawWinnerInput) => { score: number; passed: boolean; details?: string };
 
   constructor(deps: PayoutDependencies = {}) {
     this.now = deps.now || (() => new Date());
     this.processPayout = deps.processPayout || ((ctx) => this.defaultProcessor(ctx));
+    this.runFraudCheck = deps.runFraudCheck || (() => ({ score: 5, passed: true, details: 'External fraud screening passed' }));
   }
 
   registerWinnerPayoutMethod(input: Omit<WinnerPayoutMethod, 'id' | 'usageCount' | 'totalAmountReceived' | 'createdAt' | 'updatedAt'>): WinnerPayoutMethod {
-    if (this.payoutMethods.has(input.userId)) {
-      throw new Error(`Payout method already exists for user ${input.userId}`);
-    }
     const now = this.now().toISOString();
+    const existing = this.payoutMethods.get(input.userId);
     const method: WinnerPayoutMethod = {
-      id: randomUUID(),
-      usageCount: 0,
-      totalAmountReceived: 0,
-      createdAt: now,
+      id: existing?.id || randomUUID(),
+      usageCount: existing?.usageCount ?? 0,
+      totalAmountReceived: existing?.totalAmountReceived ?? 0,
+      createdAt: existing?.createdAt || now,
       updatedAt: now,
       ...input,
+      destinations: {
+        ...(existing?.destinations || {}),
+        ...(input.destinations || {}),
+      },
     };
     this.payoutMethods.set(method.userId, method);
     return method;
@@ -261,7 +267,7 @@ export class AutomatedPayoutService {
     this.ringFencedBalances.set(params.ringFencedAccount.id, ringBalance);
     const reserveTarget = Math.max(0, ringBalance * (reservePercent / 100));
 
-    const batchId = `batch_${params.drawId}_${Date.now()}`;
+    const batchId = `batch_${params.drawId}_${this.now().getTime()}`;
     const batch: Batch = {
       id: batchId,
       drawId: params.drawId,
@@ -275,26 +281,35 @@ export class AutomatedPayoutService {
     };
     this.batches.set(params.drawId, batch);
 
-    const createdPayouts = params.winners.map((winner) =>
-      this.processWinner({
+    let runningBalanceBeforeWinner = balanceBefore;
+    const createdPayouts = params.winners.map((winner) => {
+      const winnerBalanceBefore = runningBalanceBeforeWinner;
+      runningBalanceBeforeWinner -= winner.prizeAmount;
+      return this.processWinner({
         drawId: params.drawId,
         winner,
         drawCompletedTimestamp,
         ringFencedAccountId: params.ringFencedAccount.id,
-        ringFencedBalanceBefore: balanceBefore,
-        ringFencedBalanceAfter: ringBalance,
+        ringFencedBalanceBefore: winnerBalanceBefore,
+        ringFencedBalanceAfter: runningBalanceBeforeWinner,
         ringFencedDeductionAmount: winner.prizeAmount,
         insurancePolicyId: params.insurancePolicy?.id,
         insuranceBacked: Boolean(params.insurancePolicy?.active),
-      }),
-    );
+      });
+    });
 
-    batch.status = createdPayouts.every((p) => p.status === 'completed') ? 'completed' : 'partially_failed';
     batch.batchSubmittedTimestamp = plusSeconds(startedAt, 3);
     batch.batchCompletedTimestamp = this.now().toISOString();
     batch.successfulPayouts = createdPayouts.filter((p) => p.status === 'completed').length;
     batch.failedPayouts = createdPayouts.filter((p) => p.status !== 'completed').length;
     batch.retryPayouts = createdPayouts.filter((p) => p.retryCount > 0).length;
+    if (batch.successfulPayouts === batch.totalWinners) {
+      batch.status = 'completed';
+    } else if (batch.successfulPayouts === 0) {
+      batch.status = 'failed';
+    } else {
+      batch.status = 'partially_failed';
+    }
 
     return {
       drawId: params.drawId,
@@ -378,7 +393,7 @@ export class AutomatedPayoutService {
 
     const now = this.now();
     const payoutId = randomUUID();
-    const fraudScore = Math.abs([...params.winner.userId].reduce((sum, c) => sum + c.charCodeAt(0), 0)) % 100;
+    const fraudCheck = this.runFraudCheck(params.winner);
     const payout: AutomatedPayout = {
       id: payoutId,
       drawId: params.drawId,
@@ -401,9 +416,9 @@ export class AutomatedPayoutService {
       insurancePolicyId: params.insurancePolicyId,
       insuranceBacked: params.insuranceBacked,
       insuranceVerificationTimestamp: plusSeconds(now, 2),
-      fraudCheckPassed: fraudScore < 80,
+      fraudCheckPassed: fraudCheck.passed,
       fraudCheckTimestamp: plusSeconds(now, 3),
-      fraudCheckDetails: `Fraud score ${fraudScore}/100`,
+      fraudCheckDetails: fraudCheck.details || `Fraud score ${fraudCheck.score}/100`,
       kycVerified: true,
       amlVerified: true,
       retryCount: 0,
@@ -418,9 +433,9 @@ export class AutomatedPayoutService {
       updatedAt: now.toISOString(),
     };
 
-    this.logAudit(payout.id, 'payout_initiated', 'initiated', 'initiated', 'Automated payout initiated');
-    this.tryMethods(payout, payoutMethodRecord);
     this.payouts.set(payout.id, payout);
+    this.logAudit(payout.id, 'payout_initiated', 'pending', 'initiated', 'Automated payout initiated');
+    this.tryMethods(payout, payoutMethodRecord);
     payoutMethodRecord.usageCount += 1;
     payoutMethodRecord.totalAmountReceived += payout.prizeAmount;
     payoutMethodRecord.updatedAt = this.now().toISOString();
@@ -431,12 +446,31 @@ export class AutomatedPayoutService {
     const availableMethods = this.getAvailableMethods(payoutMethodRecord);
     const primaryMethod = payoutMethodRecord.primaryMethod;
     const orderedMethods = [primaryMethod, ...availableMethods.filter((m) => m !== primaryMethod)];
+    let failedPrimary = false;
 
     for (const method of orderedMethods) {
       const destination = payoutMethodRecord.destinations[method];
       if (!destination) continue;
       const settled = this.executeWithRetries(payout, method, destination);
-      if (settled) return;
+      if (settled) {
+        if (failedPrimary && method !== primaryMethod) {
+          this.recoveries.set(payout.id, {
+            id: randomUUID(),
+            automatedPayoutId: payout.id,
+            failureTimestamp: this.now().toISOString(),
+            failureReason: 'Primary payout method failed and was recovered with fallback method',
+            failureCode: payout.errorCode,
+            finalStatus: 'recovered',
+            manualInterventionRequired: false,
+            alternativePayoutMethod: method,
+            updatedAt: this.now().toISOString(),
+          });
+        }
+        return;
+      }
+      if (method === primaryMethod) {
+        failedPrimary = true;
+      }
     }
 
     payout.status = 'manual_intervention';
@@ -459,6 +493,7 @@ export class AutomatedPayoutService {
 
   private executeWithRetries(payout: AutomatedPayout, method: PayoutMethodType, destination: string): boolean {
     for (let attempt = 1; attempt <= payout.maxRetries + 1; attempt += 1) {
+      const previousStatus = payout.status;
       const result = this.processPayout({
         payoutId: payout.id,
         userId: payout.userId,
@@ -474,7 +509,7 @@ export class AutomatedPayoutService {
       payout.payoutProcessorSubmittedTimestamp = plusSeconds(this.now(), 4);
       payout.payoutProcessingTimestamp = plusSeconds(this.now(), 5);
       payout.status = 'processing';
-      this.logAudit(payout.id, 'processor_submitted', 'initiated', 'processing', `Submitted to ${result.processor}`, result);
+      this.logAudit(payout.id, 'processor_submitted', previousStatus, 'processing', `Submitted to ${result.processor}`, result);
 
       if (result.success) {
         const completedAt = this.now();
@@ -503,7 +538,7 @@ export class AutomatedPayoutService {
       payout.errorMessage = result.errorMessage || 'Payout failed';
       payout.updatedAt = this.now().toISOString();
 
-      if (attempt <= payout.maxRetries && result.transient !== false) {
+      if (attempt <= payout.maxRetries && result.transient === true) {
         payout.retryCount += 1;
         payout.status = 'retry_scheduled';
         const backoffSeconds = 30 * Math.pow(2, payout.retryCount - 1);
@@ -515,17 +550,6 @@ export class AutomatedPayoutService {
 
       payout.status = 'failed';
       this.logAudit(payout.id, 'failed', 'processing', 'failed', payout.errorMessage, result);
-      this.recoveries.set(payout.id, {
-        id: randomUUID(),
-        automatedPayoutId: payout.id,
-        failureTimestamp: this.now().toISOString(),
-        failureReason: payout.errorMessage,
-        failureCode: payout.errorCode,
-        finalStatus: 'recovered',
-        manualInterventionRequired: false,
-        alternativePayoutMethod: method,
-        updatedAt: this.now().toISOString(),
-      });
       return false;
     }
 

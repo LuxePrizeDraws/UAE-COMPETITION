@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import { AutomatedPayoutService, PayoutMethodType } from './payoutService.js';
+import { AutomatedPayoutService, PAYOUT_METHOD_TYPES } from './payoutService.js';
 
 dotenv.config();
 
@@ -274,17 +274,18 @@ app.post('/api/payout-methods', (req: Request, res: Response) => {
     destinations,
     preferredCurrency,
     verified = false,
-    autoPayoutEnabled = true,
+    autoPayoutEnabled = false,
     status = 'active',
     paypalVerified,
     stripeConnected,
   } = req.body;
-  const allowedMethods: PayoutMethodType[] = ['bank', 'paypal', 'stripe', 'wise', 'applepay', 'googlepay', 'crypto', 'check'];
-
   if (!userId || typeof userId !== 'string') {
     return res.status(400).json({ error: 'userId is required' });
   }
-  if (!allowedMethods.includes(primaryMethod)) {
+  if (typeof primaryMethod !== 'string') {
+    return res.status(400).json({ error: 'primaryMethod is required' });
+  }
+  if (!PAYOUT_METHOD_TYPES.includes(primaryMethod)) {
     return res.status(400).json({ error: 'Invalid primary payout method' });
   }
   if (!destinations || typeof destinations !== 'object' || Object.keys(destinations).length === 0) {
