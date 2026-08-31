@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
+import SupercarTicker from '../components/SupercarTicker';
+import RecentWinners from '../components/RecentWinners';
 import './Home.css';
 
 interface Competition {
@@ -71,43 +73,28 @@ export default function Home() {
 
   return (
     <div className="home">
-      {/* Hero */}
-      <section className="hero">
-        <div className="hero-background">
-          <div className="hero-gradient" />
-        </div>
-        <div className="hero-content">
-          <span className="hero-badge">🏆 UAE Premium Competitions</span>
-          <h1 className="hero-title">Win Life-Changing Prizes</h1>
-          <p className="hero-subtitle">
-            Fair draws · Cash alternatives · Transparent odds · Guaranteed winners
-          </p>
-          <div className="hero-badges">
-            <div className="badge"><span className="badge-icon">💰</span><span className="badge-text">Cash Alternatives</span></div>
-            <div className="badge"><span className="badge-icon">📊</span><span className="badge-text">Transparent Odds</span></div>
-            <div className="badge"><span className="badge-icon">✅</span><span className="badge-text">Guaranteed Winners</span></div>
-            <div className="badge"><span className="badge-icon">🔴</span><span className="badge-text">Live Draws</span></div>
+      <section className="home-header">
+        <div className="home-header__inner container">
+          <div>
+            <span className="home-header__badge">🏆 UAE Premium Competitions</span>
+            <h1 className="home-header__title">Competition Home</h1>
+            <p className="home-header__subtitle">Live draws · Cash alternatives · Postal entry on every competition</p>
           </div>
-          <a href="#competitions" className="btn-cta">VIEW COMPETITIONS ↓</a>
+          <Link to="/dashboard" className="home-header__link">📊 Open Dashboard</Link>
         </div>
       </section>
 
-      {/* Stats bar */}
-      <div className="home-stats">
-        <div className="container">
-          <div className="home-stats__inner">
-            <div className="home-stat"><strong>{competitions.length}</strong><span>Competitions</span></div>
-            <div className="home-stat"><strong>{liveComps.length}</strong><span>Live Now</span></div>
-            <div className="home-stat"><strong>£18.4M</strong><span>Annual Prizes</span></div>
-            <div className="home-stat"><strong>100%</strong><span>Cash Alternative</span></div>
-          </div>
-        </div>
-      </div>
+      <section className="home-stats-cards container">
+        <div className="home-stat-card"><strong>{competitions.length}</strong><span>Total Competitions</span></div>
+        <div className="home-stat-card"><strong>{liveComps.length}</strong><span>Live Now</span></div>
+        <div className="home-stat-card"><strong>£18.4M</strong><span>Annual Prizes</span></div>
+        <div className="home-stat-card"><strong>FREE</strong><span>Postal Entry</span></div>
+      </section>
 
-      {/* Competitions */}
       <section className="competitions-section" id="competitions">
         <div className="container">
           <h2 className="section-title">🎯 LIVE COMPETITIONS</h2>
+          <SupercarTicker />
           {loading && <p className="loading">Loading competitions...</p>}
           {error && <p className="loading" style={{ color: '#f87171' }}>{error}</p>}
           {!loading && !error && (
@@ -129,10 +116,10 @@ export default function Home() {
               ⏳ <strong>{comingSoon.length} competition{comingSoon.length > 1 ? 's' : ''} coming soon</strong> — check back shortly!
             </p>
           )}
+          <RecentWinners title="Recent Winners & Prize Amounts" />
         </div>
       </section>
 
-      {/* Trust Section */}
       <section className="trust-section">
         <div className="container">
           <h2 className="section-title">WHY CHOOSE US</h2>
@@ -153,9 +140,9 @@ export default function Home() {
               <p>Every prize has a cash equivalent — you always have the choice</p>
             </div>
             <div className="trust-item">
-              <div className="trust-icon">📊</div>
-              <h3>Transparent Odds</h3>
-              <p>40% house margin shown publicly. No hidden fees or surprises</p>
+              <div className="trust-icon">📬</div>
+              <h3>Free Postal Entry</h3>
+              <p>Every competition includes a free postal entry route with equal prominence</p>
             </div>
           </div>
         </div>

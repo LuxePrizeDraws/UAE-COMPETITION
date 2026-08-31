@@ -29,10 +29,19 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
+  const [entryMode, setEntryMode] = useState<'online' | 'postal'>('online');
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
+  const isVehicle = competition.id === 7;
+  const isCash = [1, 3, 4, 5, 6].includes(competition.id);
+  const visualType = isVehicle ? 'vehicle' : isCash ? 'cash' : 'lifestyle';
+  const visualImage = isVehicle
+    ? 'https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=900&q=70'
+    : isCash
+      ? 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=900&q=70'
+      : 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=70';
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
@@ -42,7 +51,10 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   };
 
   return (
-    <div className="competition-card">
+    <div
+      className={`competition-card competition-card--${visualType}`}
+      style={{ '--card-image': `url(${visualImage})` } as React.CSSProperties}
+    >
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
       </div>
@@ -64,7 +76,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         </div>
 
         <div className="prize-image-placeholder">
-          <div className="image-placeholder">💎</div>
+          <div className="image-placeholder">{isVehicle ? '🏎️' : isCash ? '💵' : '✨'}</div>
         </div>
       </div>
 
@@ -111,34 +123,62 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         ))}
       </div>
 
-      <div className="entry-controls">
-        <div className="quantity-selector">
-          <label>Number of Tickets:</label>
-          <input
-            type="number"
-            min="1"
-            max="100"
-            value={quantity}
-            onChange={handleQuantityChange}
-            className="quantity-input"
-          />
-        </div>
-        <div className="cost-display">
-          <span className="cost-label">Total Cost:</span>
-          <span className="cost-amount">{totalCost} AED</span>
-        </div>
+      <div className="entry-mode-tabs">
+        <button
+          className={`entry-mode-tab ${entryMode === 'online' ? 'entry-mode-tab--active' : ''}`}
+          onClick={() => setEntryMode('online')}
+          type="button"
+        >
+          ONLINE ENTRY
+        </button>
+        <button
+          className={`entry-mode-tab ${entryMode === 'postal' ? 'entry-mode-tab--active' : ''}`}
+          onClick={() => setEntryMode('postal')}
+          type="button"
+        >
+          FREE POSTAL ENTRY
+        </button>
       </div>
 
-      <button
-        className="btn-enter-now"
-        disabled={competition.status === 'coming-soon'}
-        onClick={() => onEnter?.(competition.id)}
-      >
-        {competition.status === 'coming-soon' ? '⏳ COMING SOON' : `ENTER NOW - ${totalCost} AED`}
-      </button>
+      <div className="postal-highlight">📬 FREE POSTAL ENTRY</div>
+
+      {entryMode === 'online' ? (
+        <>
+          <div className="entry-controls">
+            <div className="quantity-selector">
+              <label>Number of Tickets:</label>
+              <input
+                type="number"
+                min="1"
+                max="100"
+                value={quantity}
+                onChange={handleQuantityChange}
+                className="quantity-input"
+              />
+            </div>
+            <div className="cost-display">
+              <span className="cost-label">Total Cost:</span>
+              <span className="cost-amount">{totalCost} AED</span>
+            </div>
+          </div>
+          <button
+            className="btn-enter-now"
+            disabled={competition.status === 'coming-soon'}
+            onClick={() => onEnter?.(competition.id)}
+          >
+            {competition.status === 'coming-soon' ? '⏳ COMING SOON' : `ENTER NOW - ${totalCost} AED`}
+          </button>
+        </>
+      ) : (
+        <div className="postal-entry-panel">
+          <p>Post your answer, full name, contact details and competition title to our registered postal address.</p>
+          <p>One free postal entry per envelope. Entries must arrive before draw close.</p>
+          <button className="btn-enter-now btn-enter-now--postal" type="button">FREE POSTAL ENTRY DETAILS</button>
+        </div>
+      )}
 
       <div className="terms-link">
-        <a href="#">View Full Terms & Conditions</a>
+        <a href="#">View Online &amp; Postal Terms</a>
       </div>
     </div>
   );
