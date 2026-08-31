@@ -183,12 +183,6 @@
   box-shadow: 0 12px 35px rgba(212, 175, 55, 0.4);
 }
 
-.btn-cta:active {
-  transform: scale(0.96) translateY(0);
-  box-shadow: 0 0 18px 4px rgba(212, 175, 55, 0.75), 0 0 40px 8px rgba(240, 208, 96, 0.35);
-  filter: brightness(1.35);
-}
-
 /* Competitions Section */
 .competitions-section {
   padding: 4rem 2rem;

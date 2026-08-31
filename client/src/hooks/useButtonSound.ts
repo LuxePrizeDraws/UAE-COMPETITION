@@ -1,20 +1,32 @@
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
+
+/**
+ * Module-level AudioContext singleton, created lazily on first interaction.
+ * A single instance is shared across all components to avoid hitting the
+ * browser's concurrent AudioContext limit.
+ */
+let sharedAudioContext: AudioContext | null = null;
+
+function getAudioContext(): AudioContext | null {
+  try {
+    if (!sharedAudioContext) {
+      sharedAudioContext = new AudioContext();
+    }
+    return sharedAudioContext;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Returns a `playSound` function that triggers a short futuristic click tone
  * using the Web Audio API. No external audio files are required.
- * The AudioContext is lazily created on first interaction to satisfy
- * browser autoplay policies and keep the hook lightweight.
  */
 export function useButtonSound() {
-  const ctxRef = useRef<AudioContext | null>(null);
-
   const playSound = useCallback(() => {
     try {
-      if (!ctxRef.current) {
-        ctxRef.current = new AudioContext();
-      }
-      const ctx = ctxRef.current;
+      const ctx = getAudioContext();
+      if (!ctx) return;
 
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();

@@ -179,6 +179,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
               <div className="qty-controls">
                 <button
                   className="qty-btn btn-interactive"
+                  onMouseDown={playSound}
                   onClick={() => handleQuantityChange(quantity - 1)}
                   disabled={quantity <= 1}
                 >−</button>
@@ -193,6 +194,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                 />
                 <button
                   className="qty-btn btn-interactive"
+                  onMouseDown={playSound}
                   onClick={() => handleQuantityChange(quantity + 1)}
                   disabled={quantity >= 1000}
                 >+</button>
