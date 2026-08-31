@@ -164,19 +164,74 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 
 ## ⚙️ Environment Variables
 
-### Backend (`server/.env.example`)
+### Backend (`.env.example`)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `5000` | Server port |
 | `NODE_ENV` | `development` | Environment |
 | `CLIENT_URL` | `http://localhost:5173` | Frontend URL for CORS |
+| `STRIPE_SECRET_KEY` | – | Stripe secret key (from Stripe Dashboard) |
+| `STRIPE_PUBLISHABLE_KEY` | – | Stripe publishable key (sent to frontend) |
+| `STRIPE_WEBHOOK_SECRET` | – | Stripe webhook signing secret |
 
 ### Frontend (`client/.env.example`)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
+
+---
+
+## 💳 Stripe Payment Integration
+
+### Setup
+
+1. Create a free account at [stripe.com](https://stripe.com) and get your API keys from the [Dashboard](https://dashboard.stripe.com/apikeys).
+2. Copy your keys into `.env`:
+   ```
+   STRIPE_SECRET_KEY=sk_test_...
+   STRIPE_PUBLISHABLE_KEY=pk_test_...
+   ```
+3. For webhooks (local testing), install the [Stripe CLI](https://stripe.com/docs/stripe-cli) and run:
+   ```bash
+   stripe listen --forward-to localhost:5000/api/payments/webhook
+   ```
+   Copy the printed `whsec_...` value into `.env` as `STRIPE_WEBHOOK_SECRET`.
+
+### Payment Flow
+
+1. User selects a competition and quantity → frontend calls `POST /api/payments/create-payment-intent`
+2. Backend creates a Stripe PaymentIntent and returns `clientSecret`
+3. Frontend renders the Stripe Payment Element and collects card details
+4. On confirmation, Stripe processes payment and redirects to `/payment/success` or `/payment/failure`
+5. Stripe fires a webhook event (`payment_intent.succeeded` / `payment_intent.payment_failed`) to `POST /api/payments/webhook`
+
+### Payment API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/payments/create-payment-intent` | Create PaymentIntent for an entry |
+| `POST` | `/api/payments/webhook` | Receive Stripe webhook events |
+| `GET` | `/api/payments/transaction/:id` | Retrieve PaymentIntent details |
+
+### Database Schema (Transactions)
+
+Run the following SQL to create the transactions table when connecting a real database:
+
+```sql
+CREATE TABLE IF NOT EXISTS transactions (
+  transaction_id        UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id               UUID,
+  amount                NUMERIC     NOT NULL,
+  currency              VARCHAR(3)  NOT NULL DEFAULT 'AED',
+  status                VARCHAR(20) NOT NULL DEFAULT 'pending'
+                          CHECK (status IN ('pending', 'succeeded', 'failed')),
+  stripe_payment_intent_id VARCHAR(255) UNIQUE,
+  created_at            TIMESTAMP   NOT NULL DEFAULT NOW(),
+  updated_at            TIMESTAMP   NOT NULL DEFAULT NOW()
+);
+```
 
 ---
 

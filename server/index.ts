@@ -202,6 +202,11 @@ const competitions = [
   },
 ];
 
+// Payment routes – webhook needs raw body for signature verification
+import paymentRoutes from './routes/payments.js';
+app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
+app.use('/api/payments', paymentRoutes);
+
 // Routes
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({
