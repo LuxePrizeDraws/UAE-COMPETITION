@@ -165,8 +165,14 @@ export default function Home() {
       <footer className="home-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
-        </div>
+           <p>
+             Contact:{' '}
+             <a href="mailto:Director@LuxePrizeDraw.com" className="footer-contact-link">
+               Director@LuxePrizeDraw.com
+             </a>
+           </p>
+           <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+         </div>
       </footer>
 
       {selectedComp && (

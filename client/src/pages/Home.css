@@ -50,6 +50,11 @@
   align-items: center;
   gap: 0.75rem;
 }
+.footer-contact-link {
+  color: #c9a84c;
+  font-weight: 600;
+}
+.footer-contact-link:hover { opacity: 0.8; }
 .footer-dash-link {
   color: #c9a84c;
   font-weight: 600;
