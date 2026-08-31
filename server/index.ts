@@ -21,6 +21,17 @@ const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
   apiVersion: '2023-10-16',
 }) : null;
 
+const isValidEmail = (value: string) => {
+  if (value.includes(' ')) {
+    return false;
+  }
+
+  const atIndex = value.indexOf('@');
+  const dotIndex = value.lastIndexOf('.');
+
+  return atIndex > 0 && dotIndex > atIndex + 1 && dotIndex < value.length - 1;
+};
+
 // Stripe webhook must be registered BEFORE global JSON body parser
 // so it receives the raw request body required for signature verification
 app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), (req: Request, res: Response) => {
@@ -323,7 +334,7 @@ app.post('/api/payment/create-checkout-session', async (req: Request, res: Respo
   if (competition.status === 'coming-soon') {
     return res.status(400).json({ error: 'Competition not yet open.' });
   }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!email || !isValidEmail(email)) {
     return res.status(400).json({ error: 'A valid email address is required.' });
   }
   if (!stripe) {
