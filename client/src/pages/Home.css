@@ -57,6 +57,12 @@
   transition: opacity 0.2s;
 }
 .footer-dash-link:hover { opacity: 0.8; }
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: center;
+}
 
 .home {
   width: 100%;
