@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import MentalHealthButton from './MentalHealthButton';
 import './CompetitionCard.css';
 
 interface Competition {
@@ -45,6 +46,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
     <div className="competition-card">
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
+        <MentalHealthButton variant="compact" />
       </div>
 
       <div className="card-content">

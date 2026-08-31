@@ -58,6 +58,14 @@
 }
 .footer-dash-link:hover { opacity: 0.8; }
 
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .home {
   width: 100%;
 }
