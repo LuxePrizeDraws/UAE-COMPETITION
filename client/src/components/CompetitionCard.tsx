@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import RingFencingBadge from './RingFencingBadge';
 import './CompetitionCard.css';
 
 interface Competition {
@@ -104,6 +105,19 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         <p className="transparency-text">{competition.profitMargin}</p>
         <p className="transparency-text">Expected Winners: {competition.expectedWinners}</p>
       </div>
+
+      <RingFencingBadge
+        insuranceAmount={competition.prizeAmount >= 500000 ? 2000000 : competition.prizeAmount >= 100000 ? 500000 : competition.prizeAmount >= 50000 ? 250000 : competition.prizeAmount >= 10000 ? 140000 : 35000}
+        auditStatus="verified"
+        accountType={
+          competition.prizeType === 'VEHICLE COMPETITION' ? 'supercar'
+          : competition.prizeType === 'BUSINESS PACKAGE' ? 'dream_app'
+          : competition.prizeAmount >= 500000 ? 'world_record'
+          : competition.prizeAmount >= 50000 ? 'monthly'
+          : 'weekly'
+        }
+        compact={false}
+      />
 
       <div className="card-tags">
         {competition.tags.map((tag, idx) => (

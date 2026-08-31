@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import RingFencing from './pages/RingFencing';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -13,6 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="ring-fencing" element={<RingFencing />} />
         </Route>
       </Routes>
     </BrowserRouter>
