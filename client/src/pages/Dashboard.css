@@ -96,6 +96,12 @@
   padding: 0 2rem;
 }
 
+.dash-grid-wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
 /* Skeleton loader */
 .skeleton-card {
   background: linear-gradient(90deg, #161616 25%, #1f1f1f 50%, #161616 75%);
@@ -121,6 +127,17 @@
   flex-direction: column;
   gap: 0.85rem;
   border-top: 3px solid var(--type-color, #c9a84c);
+  position: relative;
+  overflow: hidden;
+}
+.dash-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(150deg, rgba(8, 8, 8, 0.82), rgba(8, 8, 8, 0.95)), var(--card-image);
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
 }
 .dash-card:hover {
   transform: translateY(-4px);
@@ -128,6 +145,11 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 .dash-card--dimmed { opacity: 0.55; }
+
+.dash-card > * {
+  position: relative;
+  z-index: 1;
+}
 
 .dash-card__header {
   display: flex;
@@ -244,8 +266,8 @@
   font-size: 0.9rem;
   letter-spacing: 0.5px;
   padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 10px;
+  border: 2px solid #d4af37;
+  border-radius: 999px;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
   width: 100%;
@@ -258,6 +280,59 @@
   background: #2a2a2a;
   color: #555;
   cursor: not-allowed;
+}
+
+.dash-card__cta--postal {
+  background: #161616;
+  color: #d4af37;
+}
+
+.dash-entry-mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.dash-entry-mode-tab {
+  padding: 0.68rem 0.5rem;
+  background: #1a1a1a;
+  border: 2px solid #d4af37;
+  border-radius: 999px;
+  color: #aaa;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.dash-entry-mode-tab--active {
+  color: #111;
+  background: linear-gradient(135deg, #d4af37, #f0d080);
+}
+
+.dash-postal-highlight {
+  text-align: center;
+  color: #f0d080;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.7px;
+}
+
+.dash-postal-entry-panel {
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 12px;
+  background: rgba(212, 175, 55, 0.08);
+  padding: 0.8rem;
+}
+
+.dash-postal-entry-panel p {
+  font-size: 0.8rem;
+  color: #d0d0d0;
+  margin-bottom: 0.4rem;
+  line-height: 1.45;
+}
+
+.dash-postal-entry-panel p:last-of-type {
+  margin-bottom: 0.8rem;
 }
 
 /* Modal */

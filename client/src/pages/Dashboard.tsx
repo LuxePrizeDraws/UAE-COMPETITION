@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
+import SupercarTicker from '../components/SupercarTicker';
+import RecentWinners from '../components/RecentWinners';
+import { getCompetitionVisualImage } from '../components/competitionVisuals';
 import './Dashboard.css';
 
 interface Competition {
@@ -184,16 +187,18 @@ function parsePound(str: string): number {
 
 function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSelect: (id: number) => void; onEnter: (id: number) => void }) {
   const [cashMode, setCashMode] = useState(false);
+  const [entryMode, setEntryMode] = useState<'online' | 'postal'>('online');
   const drawStatus = getDrawStatus(comp.drawReadyPercent);
   const statusInfo = getStatusLabel(drawStatus);
   const typeColor = getTypeColor(comp.type);
   const remaining = comp.entriesNeeded - comp.entriesSold;
+  const cardImage = getCompetitionVisualImage(comp.id);
 
   return (
     <div
       className={`dash-card dash-card--${comp.type} ${comp.status === 'coming-soon' ? 'dash-card--dimmed' : ''}`}
       onClick={() => onSelect(comp.id)}
-      style={{ '--type-color': typeColor } as React.CSSProperties}
+      style={{ '--type-color': typeColor, '--card-image': `url(${cardImage})` } as React.CSSProperties}
     >
       <div className="dash-card__header">
         <span className="dash-card__icon">{comp.icon}</span>
@@ -250,13 +255,40 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
         </ul>
       )}
 
-      <button
-        className="dash-card__cta"
-        disabled={comp.status === 'coming-soon'}
-        onClick={(e) => { e.stopPropagation(); onEnter(comp.id); }}
-      >
-        {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}
-      </button>
+      <div className="dash-entry-mode-tabs">
+        <button
+          className={`dash-entry-mode-tab ${entryMode === 'online' ? 'dash-entry-mode-tab--active' : ''}`}
+          onClick={(e) => { e.stopPropagation(); setEntryMode('online'); }}
+          type="button"
+        >
+          ONLINE ENTRY
+        </button>
+        <button
+          className={`dash-entry-mode-tab ${entryMode === 'postal' ? 'dash-entry-mode-tab--active' : ''}`}
+          onClick={(e) => { e.stopPropagation(); setEntryMode('postal'); }}
+          type="button"
+        >
+          FREE POSTAL ENTRY
+        </button>
+      </div>
+
+      <div className="dash-postal-highlight">📬 FREE POSTAL ENTRY</div>
+
+      {entryMode === 'online' ? (
+        <button
+          className="dash-card__cta"
+          disabled={comp.status === 'coming-soon'}
+          onClick={(e) => { e.stopPropagation(); onEnter(comp.id); }}
+        >
+          {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}
+        </button>
+      ) : (
+        <div className="dash-postal-entry-panel">
+          <p>Post your name, contact details, competition title and answer to enter for free.</p>
+          <p>One entry per envelope. Your postal entry must arrive before draw closure.</p>
+          <button className="dash-card__cta dash-card__cta--postal" type="button">POSTAL ENTRY DETAILS</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -338,6 +370,10 @@ export default function Dashboard() {
         <span className="legend-item"><span style={{ color: '#6b7280' }}>⚪</span> Coming Soon (0–49%)</span>
       </div>
 
+      <div className="dash-grid-wrap">
+        <SupercarTicker />
+      </div>
+
       {loading ? (
         <div className="dash-grid">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -356,6 +392,10 @@ export default function Dashboard() {
           ))}
         </div>
       )}
+
+      <div className="dash-grid-wrap">
+        <RecentWinners />
+      </div>
 
       {selectedId !== null && (() => {
         const comp = COMPETITIONS.find(c => c.id === selectedId);

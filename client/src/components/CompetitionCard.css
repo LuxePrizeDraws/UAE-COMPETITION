@@ -1,11 +1,21 @@
 .competition-card {
   background: linear-gradient(135deg, var(--color-dark-gray) 0%, #141414 100%);
   border: 2px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 14px;
   padding: 2rem;
   transition: all 0.3s ease;
   overflow: hidden;
   position: relative;
+}
+
+.competition-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(145deg, rgba(10, 10, 10, 0.75), rgba(10, 10, 10, 0.95)), var(--card-image);
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
 }
 
 .competition-card::before {
@@ -28,6 +38,11 @@
 
 .competition-card:hover::before {
   opacity: 1;
+}
+
+.competition-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .card-header {
@@ -101,7 +116,7 @@
   height: 150px;
   background: rgba(212, 175, 55, 0.05);
   border: 1px dashed var(--color-gold);
-  border-radius: 8px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -236,6 +251,57 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+.entry-mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.entry-mode-tab {
+  padding: 0.75rem;
+  background: #1a1a1a;
+  color: #aaa;
+  border: 2px solid #d4af37;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+}
+
+.entry-mode-tab--active {
+  color: #0a0a0a;
+  background: linear-gradient(135deg, #d4af37, #f0d060);
+}
+
+.postal-highlight {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #f0d060;
+  margin-bottom: 1rem;
+  text-align: center;
+  letter-spacing: 0.7px;
+}
+
+.postal-entry-panel {
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 12px;
+  background: rgba(212, 175, 55, 0.06);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.postal-entry-panel p {
+  font-size: 0.84rem;
+  color: #d0d0d0;
+  line-height: 1.5;
+  margin-bottom: 0.45rem;
+}
+
+.postal-entry-panel p:last-of-type {
+  margin-bottom: 0.8rem;
+}
+
 .quantity-selector {
   display: flex;
   flex-direction: column;
@@ -294,7 +360,8 @@
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 1.5px;
-  border-radius: 4px;
+  border: 2px solid #d4af37;
+  border-radius: 999px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
   margin-bottom: 1rem;
@@ -307,6 +374,12 @@
 
 .btn-enter-now:active {
   transform: translateY(0);
+}
+
+.btn-enter-now--postal {
+  background: #1a1a1a;
+  color: #d4af37;
+  margin-bottom: 0;
 }
 
 /* Terms Link */
