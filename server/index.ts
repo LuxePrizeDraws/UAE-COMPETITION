@@ -14,24 +14,30 @@ if (!process.env.STRIPE_SECRET_KEY) {
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
   apiVersion: '2023-10-16',
-});
+}) : null;
 
 // Stripe webhook must be registered BEFORE global JSON body parser
 // so it receives the raw request body required for signature verification
 app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), (req: Request, res: Response) => {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const signature = Array.isArray(sig) ? sig[0] : sig;
 
-  if (!webhookSecret || !sig) {
-    return res.status(400).json({ error: 'Missing webhook configuration' });
+  if (!stripe || !webhookSecret) {
+    return res.status(503).json({ error: 'Stripe webhook is not configured' });
+  }
+  if (!signature) {
+    return res.status(400).json({ error: 'Missing Stripe signature' });
   }
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
   } catch (err: any) {
     console.error('Webhook signature failed:', err.message);
     return res.status(400).json({ error: `Webhook Error: ${err.message}` });
@@ -50,7 +56,7 @@ app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), (req
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: CLIENT_URL,
   credentials: true,
 }));
 app.use(express.json());
@@ -308,7 +314,8 @@ app.get('/', (req: Request, res: Response) => {
 // Stripe checkout session route
 app.post('/api/payment/create-checkout-session', async (req: Request, res: Response) => {
   const { competitionId, quantity, userEmail } = req.body;
-  const competition = competitions.find(c => c.id === parseInt(competitionId));
+  const competition = competitions.find(c => c.id === parseInt(String(competitionId), 10));
+  const email = typeof userEmail === 'string' ? userEmail.trim() : '';
 
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
@@ -316,12 +323,18 @@ app.post('/api/payment/create-checkout-session', async (req: Request, res: Respo
   if (competition.status === 'coming-soon') {
     return res.status(400).json({ error: 'Competition not yet open.' });
   }
-  const qty = Math.max(1, Math.min(1000, parseInt(quantity) || 1));
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'A valid email address is required.' });
+  }
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripe is not configured' });
+  }
+  const qty = Math.max(1, Math.min(1000, parseInt(String(quantity), 10) || 1));
 
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      customer_email: userEmail || undefined,
+      customer_email: email,
       line_items: [
         {
           price_data: {
@@ -336,8 +349,8 @@ app.post('/api/payment/create-checkout-session', async (req: Request, res: Respo
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/?payment=cancelled`,
+      success_url: `${CLIENT_URL}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${CLIENT_URL}/?payment=cancelled`,
       metadata: {
         competitionId: String(competition.id),
         quantity: String(qty),
@@ -354,7 +367,7 @@ app.post('/api/payment/create-checkout-session', async (req: Request, res: Respo
 // Start server
 app.listen(PORT, () => {
   console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
-  console.log(`📡 CORS enabled for http://localhost:5173`);
+  console.log(`📡 CORS enabled for ${CLIENT_URL}`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
   console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);
 });

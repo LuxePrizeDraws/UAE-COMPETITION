@@ -164,19 +164,30 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 
 ## ⚙️ Environment Variables
 
-### Backend (`server/.env.example`)
+### Root / Backend (`.env.example` or `server/.env.example`)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `5000` | Server port |
 | `NODE_ENV` | `development` | Environment |
 | `CLIENT_URL` | `http://localhost:5173` | Frontend URL for CORS |
+| `VITE_API_URL` | `http://localhost:5000` | Backend API URL used by the frontend build |
+| `JWT_SECRET` | `your_jwt_secret_key_change_in_production` | JWT signing secret |
+| `STRIPE_SECRET_KEY` | `sk_test_...` | Stripe secret key for checkout session creation |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_...` | Stripe webhook signing secret |
 
 ### Frontend (`client/.env.example`)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | `pk_test_...` | Stripe publishable key used by CheckoutModal |
+
+### Launch-critical Stripe requirements
+
+- `STRIPE_SECRET_KEY` must be set before `/api/payment/create-checkout-session` will accept traffic.
+- `STRIPE_WEBHOOK_SECRET` must be set before `/api/payment/webhook` can verify Stripe signatures.
+- Configure the Stripe webhook endpoint to point at `/api/payment/webhook` on the deployed backend.
 
 ---
 
@@ -185,14 +196,14 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 ### Deploy Frontend → Vercel (Free)
 1. Sign in at [vercel.com](https://vercel.com)
 2. **New Project** → Import `UAE-COMPETITION` repo
-3. Set **Root Directory** to `client`
-4. Add env var: `VITE_API_URL=https://your-backend.railway.app`
-5. Deploy
+3. Keep the project rooted at the repository root to use `/vercel.json` (or set the root directory to `client` to use `client/vercel.json`)
+4. Add env vars: `VITE_API_URL=https://your-backend.railway.app` and `VITE_STRIPE_PUBLISHABLE_KEY=pk_live_...`
+5. Deploy — the Vercel build only installs dependencies once, then builds `client/dist`
 
 ### Deploy Backend → Railway (Free)
 1. Sign in at [railway.app](https://railway.app)
 2. **New Project** → Deploy from GitHub → `UAE-COMPETITION`
-3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`
+3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`, `STRIPE_SECRET_KEY=sk_live_...`, `STRIPE_WEBHOOK_SECRET=whsec_...`
 4. Railway auto-detects `railway.toml`
 
 ---
