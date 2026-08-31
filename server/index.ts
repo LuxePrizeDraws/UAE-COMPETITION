@@ -9,12 +9,21 @@ dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 // Middleware
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS origin not allowed'));
+  },
   credentials: true,
 }));
 app.use(express.json());
@@ -272,7 +281,7 @@ app.get('/', (req: Request, res: Response) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
-  console.log(`📡 CORS enabled for http://localhost:5173`);
+  console.log(`📡 CORS enabled for ${allowedOrigins.join(', ')}`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
   console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);
 });

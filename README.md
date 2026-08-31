@@ -164,19 +164,22 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 
 ## ⚙️ Environment Variables
 
-### Backend (`server/.env.example`)
+### Backend (`server/.env.example` or Railway Variables)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `5000` | Server port |
 | `NODE_ENV` | `development` | Environment |
-| `CLIENT_URL` | `http://localhost:5173` | Frontend URL for CORS |
+| `CLIENT_URL` | `http://localhost:5173` | Frontend URL(s) for CORS (comma-separated allowed) |
+| `STRIPE_SECRET_KEY` | `sk_test_replace_me` | Stripe secret key (set only in host env vars) |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_replace_me` | Stripe webhook signing secret (set only in host env vars) |
 
-### Frontend (`client/.env.example`)
+### Frontend (`client/.env.example` or Vercel Variables)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | `pk_test_replace_me` | Stripe publishable key |
 
 ---
 
@@ -186,14 +189,22 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 1. Sign in at [vercel.com](https://vercel.com)
 2. **New Project** → Import `UAE-COMPETITION` repo
 3. Set **Root Directory** to `client`
-4. Add env var: `VITE_API_URL=https://your-backend.railway.app`
+4. Add env vars:
+   - `VITE_API_URL=https://your-backend.railway.app`
+   - `VITE_STRIPE_PUBLISHABLE_KEY=pk_live_or_pk_test_value`
 5. Deploy
 
 ### Deploy Backend → Railway (Free)
 1. Sign in at [railway.app](https://railway.app)
 2. **New Project** → Deploy from GitHub → `UAE-COMPETITION`
-3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`
-4. Railway auto-detects `railway.toml`
+3. Add env vars:
+   - `NODE_ENV=production`
+   - `CLIENT_URL=https://your-frontend.vercel.app` (or comma-separated preview + prod URLs)
+   - `STRIPE_SECRET_KEY=sk_live_or_sk_test_value`
+   - `STRIPE_WEBHOOK_SECRET=whsec_value`
+4. Railway auto-detects `railway.toml` and runs:
+   - Build: `npm install && npm run build:server`
+   - Start: `npm run start`
 
 ---
 
