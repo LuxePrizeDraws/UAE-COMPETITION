@@ -25,9 +25,10 @@ interface Competition {
 interface CompetitionCardProps {
   competition: Competition;
   onEnter?: (id: number) => void;
+  onPostalEnter?: (id: number) => void;
 }
 
-const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
+const CompetitionCard = ({ competition, onEnter, onPostalEnter }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
@@ -45,6 +46,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
     <div className="competition-card">
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
+        <span className="card-badge card-badge--postal">✉️ Free Postal Entry</span>
       </div>
 
       <div className="card-content">
@@ -136,6 +138,15 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
       >
         {competition.status === 'coming-soon' ? '⏳ COMING SOON' : `ENTER NOW - ${totalCost} AED`}
       </button>
+
+      {competition.status !== 'coming-soon' && (
+        <button
+          className="btn-enter-post"
+          onClick={() => onPostalEnter?.(competition.id)}
+        >
+          ✉️ Enter by Post — FREE · Same Odds
+        </button>
+      )}
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>
