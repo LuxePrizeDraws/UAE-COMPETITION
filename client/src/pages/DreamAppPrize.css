@@ -376,11 +376,7 @@
   font-size: 1.1rem;
 }
 
-/* Container */
-.container {
-  max-width: 1300px;
-  margin: 0 auto;
-}
+/* Container — defined in index.css */
 
 @media (max-width: 640px) {
   .da-hero-title { font-size: 2.8rem; }

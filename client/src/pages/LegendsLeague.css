@@ -336,11 +336,7 @@
   font-size: 1.1rem;
 }
 
-/* Container utility */
-.container {
-  max-width: 1300px;
-  margin: 0 auto;
-}
+/* Container utility — defined in index.css; this selector intentionally removed */
 
 /* Responsive */
 @media (max-width: 640px) {

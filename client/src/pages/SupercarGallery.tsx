@@ -161,6 +161,7 @@ const cars: Car[] = [
 ];
 
 export default function SupercarGallery() {
+  const brandCount = new Set(cars.map((c) => c.make)).size;
   return (
     <div className="sg-page">
       {/* Hero */}
@@ -182,7 +183,7 @@ export default function SupercarGallery() {
         <div className="sg-stat"><strong>{cars.length}</strong><span>Supercars</span></div>
         <div className="sg-stat"><strong>£50M+</strong><span>Total Value</span></div>
         <div className="sg-stat"><strong>100%</strong><span>Cash Alternative</span></div>
-        <div className="sg-stat"><strong>12</strong><span>Brands</span></div>
+        <div className="sg-stat"><strong>{brandCount}</strong><span>Brands</span></div>
       </div>
 
       {/* Gallery grid */}

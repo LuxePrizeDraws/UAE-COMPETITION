@@ -5,7 +5,7 @@ function App() {
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard';
   const isLegendsLeague = location.pathname === '/legends-league';
-  const isDreamApp = location.pathname.startsWith('/prize/dream-app');
+  const isDreamApp = location.pathname === '/prize/dream-app';
   const isGallery = location.pathname === '/supercar-gallery';
   const isHome = !isDashboard && !isLegendsLeague && !isDreamApp && !isGallery;
 

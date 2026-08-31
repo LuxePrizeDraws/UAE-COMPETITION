@@ -38,6 +38,7 @@ const tiers = [
   },
 ];
 
+// Placeholder Hall of Fame entries — replace with real API data before going live
 const hallOfFame = [
   { name: 'Mohammed A.', prize: '£250,000 Cash', date: 'Jan 2025', tier: 'Champion' },
   { name: 'Sarah K.', prize: 'Lamborghini Huracán', date: 'Feb 2025', tier: 'Champion' },
