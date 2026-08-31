@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
-import { SUPERCAR_TICKER, getCompetitionVisualImage } from '../constants/competitionVisuals';
+import { DRAW_LEGEND_ITEMS } from '../constants/drawLegend';
+import { SUPERCAR_COMPETITION_ID, SUPERCAR_TICKER, getCompetitionVisualImage } from '../constants/competitionVisuals';
+import '../styles/luxuryLayout.css';
 import '../styles/supercarTicker.css';
 import './Dashboard.css';
 
@@ -213,7 +215,7 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
 
       <h3 className="dash-card__title">{comp.title}</h3>
 
-      {comp.id === 7 && (
+      {comp.id === SUPERCAR_COMPETITION_ID && (
         <div className="supercar-ticker" aria-label="Featured supercars">
           <div className="supercar-ticker__track">
             {[...SUPERCAR_TICKER, ...SUPERCAR_TICKER].map((name, index) => (
@@ -354,10 +356,11 @@ export default function Dashboard() {
       </section>
 
       <div className="draw-legend">
-        <span className="legend-item"><span style={{ color: '#22c55e' }}>🟢</span> Draw Ready (100%)</span>
-        <span className="legend-item"><span style={{ color: '#eab308' }}>🟡</span> Almost Ready (75–99%)</span>
-        <span className="legend-item"><span style={{ color: '#3b82f6' }}>🔵</span> In Progress (50–74%)</span>
-        <span className="legend-item"><span style={{ color: '#6b7280' }}>⚪</span> Coming Soon (0–49%)</span>
+        {DRAW_LEGEND_ITEMS.map((item) => (
+          <span key={item.label} className="legend-item">
+            <span style={{ color: item.color }}>{item.icon}</span> {item.label}
+          </span>
+        ))}
       </div>
 
       {loading ? (

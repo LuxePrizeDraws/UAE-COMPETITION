@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SUPERCAR_TICKER, getCompetitionVisualImage } from '../constants/competitionVisuals';
+import { SUPERCAR_COMPETITION_ID, SUPERCAR_TICKER, getCompetitionVisualImage } from '../constants/competitionVisuals';
 import '../styles/supercarTicker.css';
 import './CompetitionCard.css';
 
@@ -35,7 +35,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
-  const isVehicleCompetition = competition.id === 7;
+  const isSupercarCompetition = competition.id === SUPERCAR_COMPETITION_ID;
   const visualImage = getCompetitionVisualImage(competition.id);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +58,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         <span className="card-badge">{competition.prizeType}</span>
       </div>
 
-      {isVehicleCompetition && (
+      {isSupercarCompetition && (
         <div className="supercar-ticker" aria-label="Featured supercars">
           <div className="supercar-ticker__track">
             {[...SUPERCAR_TICKER, ...SUPERCAR_TICKER].map((name, index) => (
