@@ -14,7 +14,7 @@
     "build:server": "tsc -p tsconfig.server.json",
     "preview": "npm --prefix client run preview",
     "start": "node dist/server/index.js",
-    "type-check": "tsc -p tsconfig.server.json --noEmit && npm --prefix client exec tsc --noEmit",
+    "type-check": "tsc -p tsconfig.server.json --noEmit && tsc -p client/tsconfig.json --noEmit",
     "test": "vitest"
   },
   "keywords": [
