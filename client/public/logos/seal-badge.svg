@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0e68c"/>
+      <stop offset="50%" style="stop-color:#d4af37"/>
+      <stop offset="100%" style="stop-color:#c9a84c"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#1a1a1a"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Black circle background -->
+  <circle cx="100" cy="100" r="98" fill="url(#bgGrad)"/>
+  <!-- Gold outer ring -->
+  <circle cx="100" cy="100" r="96" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+  <!-- Inner ring -->
+  <circle cx="100" cy="100" r="86" fill="none" stroke="#d4af37" stroke-width="0.8" opacity="0.5"/>
+  <!-- Decorative dots on outer ring -->
+  <circle cx="100" cy="6" r="3" fill="#d4af37"/>
+  <circle cx="100" cy="194" r="3" fill="#d4af37"/>
+  <circle cx="6" cy="100" r="3" fill="#d4af37"/>
+  <circle cx="194" cy="100" r="3" fill="#d4af37"/>
+  <!-- Trophy -->
+  <g transform="translate(60, 28)" filter="url(#glow)">
+    <!-- Cup body -->
+    <path d="M40 8 Q40 0 50 0 Q60 0 60 8 L58 36 Q58 46 50 50 Q42 46 42 36 Z" fill="url(#goldGrad)"/>
+    <!-- Handles -->
+    <path d="M42 16 Q30 16 30 27 Q30 38 42 35" fill="none" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M58 16 Q70 16 70 27 Q70 38 58 35" fill="none" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round"/>
+    <!-- Stem -->
+    <rect x="46" y="50" width="8" height="15" fill="url(#goldGrad)"/>
+    <!-- Base -->
+    <rect x="36" y="65" width="28" height="6" rx="3" fill="url(#goldGrad)"/>
+    <!-- Crown points -->
+    <path d="M42 5 L44 0 L50 4 L56 0 L58 5 Z" fill="url(#goldGrad)"/>
+    <!-- Star on cup -->
+    <path d="M50 20 L51.5 24.5 L56.5 24.5 L52.5 27.5 L54 32 L50 29.5 L46 32 L47.5 27.5 L43.5 24.5 L48.5 24.5 Z" fill="#0a0a0a"/>
+  </g>
+  <!-- RING-FENCED GUARANTEE text arc simulation with straight text -->
+  <text x="100" y="158" font-family="'Inter', Arial, sans-serif" font-size="8.5" fill="#d4af37" letter-spacing="2.5" text-anchor="middle">RING-FENCED GUARANTEE</text>
+  <!-- Brand name -->
+  <text x="100" y="130" font-family="'Playfair Display', Georgia, serif" font-size="13" font-weight="700" fill="url(#goldGrad)" letter-spacing="1.5" text-anchor="middle">LUXE PRIZE DRAWS</text>
+  <!-- Bottom tagline -->
+  <text x="100" y="172" font-family="'Inter', Arial, sans-serif" font-size="7" fill="#c9a84c" letter-spacing="1.5" text-anchor="middle">EST. 2024 · UAE</text>
+</svg>
