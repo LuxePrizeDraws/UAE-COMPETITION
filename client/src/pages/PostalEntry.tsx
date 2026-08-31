@@ -33,15 +33,14 @@ export default function PostalEntry() {
             <div className="step-card">
               <div className="step-num">2</div>
               <h3>Write Your Entry</h3>
-              <p>On a piece of plain paper, write:
-                <ul>
-                  <li>Your full name</li>
-                  <li>Your full address &amp; postcode</li>
-                  <li>Your phone number or email</li>
-                  <li>The competition name or ID</li>
-                  <li>Your prize preference (cash or physical)</li>
-                </ul>
-              </p>
+              <p>On a piece of plain paper, write:</p>
+              <ul>
+                <li>Your full name</li>
+                <li>Your full address &amp; postcode</li>
+                <li>Your phone number or email</li>
+                <li>The competition name or ID</li>
+                <li>Your prize preference (cash or physical)</li>
+              </ul>
             </div>
             <div className="step-card">
               <div className="step-num">3</div>

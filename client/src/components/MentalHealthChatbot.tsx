@@ -7,8 +7,13 @@ interface Message {
   text: string;
 }
 
+let _idCounter = 1;
+function nextId() {
+  return _idCounter++;
+}
+
 const INITIAL_MESSAGE: Message = {
-  id: 0,
+  id: nextId(),
   role: 'bot',
   text: "Hello 👋 I'm here to support you. Competitions and gambling can sometimes be stressful. How are you feeling today? You can talk to me about anything.",
 };
@@ -49,8 +54,8 @@ export default function MentalHealthChatbot({ onClose }: Props) {
     const trimmed = input.trim();
     if (!trimmed) return;
 
-    const userMsg: Message = { id: Date.now(), role: 'user', text: trimmed };
-    const botMsg: Message = { id: Date.now() + 1, role: 'bot', text: getBotResponse(trimmed) };
+    const userMsg: Message = { id: nextId(), role: 'user', text: trimmed };
+    const botMsg: Message = { id: nextId(), role: 'bot', text: getBotResponse(trimmed) };
 
     setMessages((prev) => [...prev, userMsg, botMsg]);
     setInput('');
