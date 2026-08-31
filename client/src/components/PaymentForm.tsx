@@ -83,6 +83,15 @@ export default function PaymentForm({ competition, quantity, onSuccess, onError 
   const [initError, setInitError] = useState<string | null>(null);
 
   useEffect(() => {
+    const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined;
+    if (!publishableKey) {
+      const msg = 'Stripe is not configured. Please contact support.';
+      setInitError(msg);
+      onError(msg);
+      return;
+    }
+    setStripePromise(loadStripe(publishableKey));
+
     const init = async () => {
       try {
         const res = await fetch('/api/payments/create-payment-intent', {
@@ -91,7 +100,6 @@ export default function PaymentForm({ competition, quantity, onSuccess, onError 
           body: JSON.stringify({
             competitionId: competition.id,
             quantity,
-            currency: competition.currency,
           }),
         });
 
@@ -99,7 +107,6 @@ export default function PaymentForm({ competition, quantity, onSuccess, onError 
         if (!res.ok) throw new Error(data.error ?? 'Failed to initialise payment.');
 
         setClientSecret(data.clientSecret);
-        setStripePromise(loadStripe(data.publishableKey));
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Failed to initialise payment.';
         setInitError(msg);

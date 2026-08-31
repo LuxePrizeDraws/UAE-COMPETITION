@@ -5,6 +5,7 @@ import {
   retrievePaymentIntent,
   constructWebhookEvent,
 } from '../services/stripeService.js';
+import { competitions } from '../index.js';
 
 const router = Router();
 
@@ -24,7 +25,7 @@ router.post(
   paymentLimiter,
   async (req: Request, res: Response) => {
     try {
-      const { competitionId, quantity, currency = 'GBP' } = req.body;
+      const { competitionId, quantity } = req.body;
 
       if (!competitionId || !quantity) {
         return res.status(400).json({ error: 'competitionId and quantity are required.' });
@@ -41,15 +42,10 @@ router.post(
         return res.status(400).json({ error: 'competitionId must be a positive integer.' });
       }
 
-      // Fetch competition entry price from the in-memory data via the same request context.
-      // In production this would query the database.
-      const competitionRes = await fetch(
-        `http://localhost:${process.env.PORT || 5000}/api/competitions/${compId}`
-      );
-      if (!competitionRes.ok) {
+      const competition = competitions.find(c => c.id === compId);
+      if (!competition) {
         return res.status(404).json({ error: 'Competition not found.' });
       }
-      const competition = (await competitionRes.json()) as { entryPrice: number; currency: string; status: string };
 
       if (competition.status === 'coming-soon') {
         return res.status(400).json({ error: 'This competition is not yet open for entries.' });
@@ -60,7 +56,7 @@ router.post(
 
       const result = await createPaymentIntent({
         amount: amountInPence,
-        currency: competition.currency || currency,
+        currency: competition.currency,
         competitionId: compId,
         quantity: qty,
       });
@@ -72,7 +68,6 @@ router.post(
         paymentIntentId: result.paymentIntentId,
         amount: result.amount,
         currency: result.currency,
-        publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'An unexpected error occurred.';

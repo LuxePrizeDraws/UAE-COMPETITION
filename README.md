@@ -180,6 +180,7 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | – | Stripe publishable key (safe to expose to browser) |
 
 ---
 

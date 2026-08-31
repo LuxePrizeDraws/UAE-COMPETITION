@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import paymentRoutes from './routes/payments.js';
 
 dotenv.config();
 
@@ -29,7 +30,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // 8 competitions data – transparent structure with cash alternatives
-const competitions = [
+export const competitions = [
   {
     id: 1,
     title: 'Weekly £10K Cash Draw',
@@ -203,7 +204,6 @@ const competitions = [
 ];
 
 // Payment routes – webhook needs raw body for signature verification
-import paymentRoutes from './routes/payments.js';
 app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
 app.use('/api/payments', paymentRoutes);
 

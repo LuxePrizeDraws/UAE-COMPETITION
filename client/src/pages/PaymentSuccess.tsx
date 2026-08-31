@@ -23,7 +23,7 @@ export default function PaymentSuccess() {
       {paymentIntentId && (
         <p className="ref">
           Reference: <code>{paymentIntentId}</code>
-          {status && <span className="status-badge status-badge--{status}"> ({status})</span>}
+          {status && <span className={`status-badge status-badge--${status}`}> ({status})</span>}
         </p>
       )}
       <Link to="/" className="result-btn">Back to Competitions</Link>
