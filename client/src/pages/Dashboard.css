@@ -106,7 +106,7 @@
   text-transform: uppercase;
 }
 
-.dashboard-showcase__ticker {
+.supercar-ticker--showcase {
   display: flex;
   align-items: center;
   gap: 0.9rem;
@@ -119,7 +119,6 @@
   overflow: hidden;
 }
 
-.dashboard-showcase__label,
 .supercar-ticker__label {
   flex-shrink: 0;
   padding: 0.4rem 0.75rem;
@@ -132,7 +131,6 @@
   text-transform: uppercase;
 }
 
-.dashboard-showcase__window,
 .supercar-ticker__window {
   position: relative;
   height: 1.8rem;
@@ -140,24 +138,34 @@
   flex: 1;
 }
 
-.dashboard-showcase__track,
-.supercar-ticker__track {
-  display: flex;
-  flex-direction: column;
-  animation: nameRoll 10s ease-in-out infinite;
-}
-
-.dashboard-showcase__item,
 .supercar-ticker__item {
-  display: flex;
+  position: absolute;
+  inset: 0;
   align-items: center;
-  min-height: 1.8rem;
+  display: flex;
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.02em;
   color: #fff7ed;
   text-shadow: 0 0 16px rgba(251, 191, 36, 0.35);
-  animation: flashGlow 2.5s ease-in-out infinite;
+  opacity: 0;
+  transform: translateY(115%);
+  animation-duration: 9s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* These three phases intentionally match the three featured names in Dashboard.tsx. */
+.supercar-ticker__item:nth-child(1) {
+  animation-name: tickerCycleFirst;
+}
+
+.supercar-ticker__item:nth-child(2) {
+  animation-name: tickerCycleSecond;
+}
+
+.supercar-ticker__item:nth-child(3) {
+  animation-name: tickerCycleThird;
 }
 
 /* Grid */
@@ -288,6 +296,12 @@
   backdrop-filter: blur(8px);
 }
 
+.supercar-ticker--showcase {
+  position: static;
+  z-index: auto;
+  margin-top: 0;
+}
+
 .dash-card__prize .prize-main {
   font-size: 1.4rem;
   font-weight: 900;
@@ -395,6 +409,7 @@
 .dash-card__cta:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.08);
 }
 .dash-card__cta:disabled {
   background: #2a2a2a;
@@ -492,27 +507,61 @@
   .dash-header { padding: 1rem; }
   .dash-title { font-size: 1.4rem; }
   .dash-stats, .dash-grid, .draw-legend, .dashboard-showcase { padding: 0 1rem; }
-  .dashboard-showcase__ticker,
   .supercar-ticker {
     flex-direction: column;
     align-items: flex-start;
   }
-  .dashboard-showcase__window,
   .supercar-ticker__window {
     width: 100%;
   }
   .detail-grid { grid-template-columns: 1fr; }
 }
 
-@keyframes nameRoll {
-  0%, 20% { transform: translateY(0); }
-  25%, 45% { transform: translateY(-1.8rem); }
-  50%, 70% { transform: translateY(-3.6rem); }
-  75%, 95% { transform: translateY(-5.4rem); }
-  100% { transform: translateY(-5.4rem); }
+@keyframes tickerCycleFirst {
+  0%, 22% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: brightness(1.15);
+  }
+  30%, 100% {
+    opacity: 0;
+    transform: translateY(-115%);
+    filter: brightness(0.95);
+  }
 }
 
-@keyframes flashGlow {
-  0%, 100% { opacity: 0.7; filter: brightness(0.96); }
-  50% { opacity: 1; filter: brightness(1.18); }
+@keyframes tickerCycleSecond {
+  0%, 28% {
+    opacity: 0;
+    transform: translateY(115%);
+    filter: brightness(0.95);
+  }
+  34%, 56% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: brightness(1.15);
+  }
+  64%, 100% {
+    opacity: 0;
+    transform: translateY(-115%);
+    filter: brightness(0.95);
+  }
+}
+
+@keyframes tickerCycleThird {
+  0%, 62% {
+    opacity: 0;
+    transform: translateY(115%);
+    filter: brightness(0.95);
+  }
+  68%, 90% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: brightness(1.15);
+  }
+  98%, 100% {
+    opacity: 0;
+    transform: translateY(-115%);
+    filter: brightness(0.95);
+  }
 }

@@ -258,8 +258,19 @@ function CountdownTimer({ timeRemaining }: { timeRemaining: string }) {
   return <span className="countdown">{timeRemaining}</span>;
 }
 
-function getCompetitionTheme(comp: Competition) {
-  return COMPETITION_THEMES[comp.type];
+function SupercarTicker({ variant = 'card' }: { variant?: 'card' | 'showcase' }) {
+  return (
+    <div className={`supercar-ticker supercar-ticker--${variant}`}>
+      <span className="supercar-ticker__label">Featured prizes</span>
+      <div className="supercar-ticker__window">
+        {SUPERCAR_NAMES.map((name) => (
+          <span key={name} className="supercar-ticker__item">
+            {name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function parsePound(str: string): number {
@@ -273,8 +284,8 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
   const statusInfo = getStatusLabel(drawStatus);
   const typeColor = getTypeColor(comp.type);
   const remaining = comp.entriesNeeded - comp.entriesSold;
-  const theme = getCompetitionTheme(comp);
-  const showSupercarTicker = comp.id === 7;
+  const theme = COMPETITION_THEMES[comp.type];
+  const showSupercarTicker = comp.type === 'vehicle';
 
   return (
     <div
@@ -294,17 +305,7 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
       <div className="dash-card__visual">
         <div className="dash-card__visual-badge">{theme.accent}</div>
         {showSupercarTicker && (
-          <div className="supercar-ticker">
-            <span className="supercar-ticker__label">Rolling flash</span>
-            <div className="supercar-ticker__window">
-              <div className="supercar-ticker__track">
-                {SUPERCAR_NAMES.map((name) => (
-                  <span key={name} className="supercar-ticker__item">{name}</span>
-                ))}
-                <span className="supercar-ticker__item" aria-hidden="true">{SUPERCAR_NAMES[0]}</span>
-              </div>
-            </div>
-          </div>
+          <SupercarTicker />
         )}
       </div>
 
@@ -448,17 +449,7 @@ export default function Dashboard() {
 
       <section className="dashboard-showcase" aria-label="Supercar showcase">
         <span className="dashboard-showcase__eyebrow">Featured vehicle competition</span>
-        <div className="dashboard-showcase__ticker">
-          <span className="dashboard-showcase__label">Rolling flash</span>
-          <div className="dashboard-showcase__window">
-            <div className="dashboard-showcase__track">
-              {SUPERCAR_NAMES.map((name) => (
-                <span key={name} className="dashboard-showcase__item">{name}</span>
-              ))}
-              <span className="dashboard-showcase__item" aria-hidden="true">{SUPERCAR_NAMES[0]}</span>
-            </div>
-          </div>
-        </div>
+        <SupercarTicker variant="showcase" />
       </section>
 
       {loading ? (
