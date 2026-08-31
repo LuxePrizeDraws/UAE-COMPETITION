@@ -202,6 +202,33 @@ const competitions = [
   },
 ];
 
+// Postal address configuration
+const postalAddress = {
+  name: 'UAE Competition Platform',
+  line1: 'Freepost LUXEPRIZEDRAWS',
+  line2: 'PO Box 12345',
+  city: 'London',
+  postcode: 'EC1A 1BB',
+  country: 'United Kingdom',
+  email: 'postal@uaecompetition.com',
+  phone: '+44 20 1234 5678',
+};
+
+// In-memory postal entries store (replace with DB in production)
+const postalEntries: {
+  id: string;
+  competitionId: number;
+  reference: string;
+  name: string;
+  address: string;
+  email: string;
+  phone: string;
+  entryType: 'postal';
+  postalEntryStatus: 'pending' | 'received' | 'verified';
+  submittedAt: string;
+  receivedAt?: string;
+}[] = [];
+
 // Routes
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({
@@ -263,6 +290,92 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     drawReadyPercent: competition.drawReadyPercent,
     endsIn: competition.endsIn,
   });
+});
+
+// Basic admin API-key auth middleware
+const adminAuth = (req: Request, res: Response, next: () => void) => {
+  const adminKey = process.env.ADMIN_API_KEY;
+  const providedKey = req.headers['x-admin-key'];
+  if (!adminKey || !providedKey || providedKey !== adminKey) {
+    return res.status(401).json({ error: 'Unauthorised' });
+  }
+  next();
+};
+
+const EMAIL_RE = /^[^@\s]{1,64}@[^@\s]{1,255}$/;
+
+// Postal address endpoint
+app.get('/api/postal-address', (_req: Request, res: Response) => {
+  res.json(postalAddress);
+});
+
+// Submit postal entry (records intent; verified manually when form received)
+app.post('/api/competitions/:id/enter-postal', (req: Request, res: Response) => {
+  const competition = competitions.find(c => c.id === parseInt(req.params.id));
+  if (!competition) {
+    return res.status(404).json({ error: 'Competition not found' });
+  }
+  if (competition.status === 'coming-soon') {
+    return res.status(400).json({ error: 'Competition not yet open.' });
+  }
+
+  const { name, address, email, phone } = req.body;
+  if (!name || !address || !email) {
+    return res.status(400).json({ error: 'Name, address and email are required for postal entry.' });
+  }
+  if (!EMAIL_RE.test(String(email))) {
+    return res.status(400).json({ error: 'Please provide a valid email address.' });
+  }
+
+  const reference = `POST-${competition.id}-${Date.now().toString(36).toUpperCase()}`;
+  const entry = {
+    id: reference,
+    competitionId: competition.id,
+    reference,
+    name: String(name),
+    address: String(address),
+    email: String(email),
+    phone: phone ? String(phone) : '',
+    entryType: 'postal' as const,
+    postalEntryStatus: 'pending' as const,
+    submittedAt: new Date().toISOString(),
+  };
+  postalEntries.push(entry);
+
+  res.json({
+    success: true,
+    reference,
+    message: 'Postal entry registered. Please print and post your entry form.',
+    competitionTitle: competition.title,
+    postalAddress,
+    instructions: [
+      'Print this page or the downloadable entry form.',
+      'Fill in your details: Name, Address, Email, Phone, and your Entry Reference.',
+      'Write the competition name and reference number clearly.',
+      `Post to: ${postalAddress.line1}, ${postalAddress.city}, ${postalAddress.postcode}.`,
+      'Your entry will be confirmed by email when your form is received and verified.',
+      'Postal entries have IDENTICAL ODDS to digital entries — completely fair.',
+    ],
+    equalOddsStatement:
+      'Free postal entries have identical odds to digital entries. No purchase is necessary to enter or win. All entries — postal and digital — are included in the same random draw.',
+  });
+});
+
+// Admin: list postal entries (requires x-admin-key header)
+app.get('/api/admin/postal-entries', adminAuth as any, (_req: Request, res: Response) => {
+  const pending = postalEntries.filter(e => e.postalEntryStatus === 'pending').length;
+  const received = postalEntries.filter(e => e.postalEntryStatus === 'received').length;
+  const verified = postalEntries.filter(e => e.postalEntryStatus === 'verified').length;
+  res.json({ total: postalEntries.length, pending, received, verified, entries: postalEntries });
+});
+
+// Admin: verify a postal entry (requires x-admin-key header)
+app.patch('/api/admin/postal-entries/:reference/verify', adminAuth as any, (req: Request, res: Response) => {
+  const entry = postalEntries.find(e => e.reference === req.params.reference);
+  if (!entry) return res.status(404).json({ error: 'Entry not found' });
+  entry.postalEntryStatus = 'verified';
+  entry.receivedAt = new Date().toISOString();
+  res.json({ success: true, entry });
 });
 
 app.get('/', (req: Request, res: Response) => {

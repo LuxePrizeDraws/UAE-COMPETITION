@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
+import PostalEntryModal from '../components/PostalEntryModal';
 import './Home.css';
 
 interface Competition {
@@ -31,6 +32,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedComp, setSelectedComp] = useState<Competition | null>(null);
+  const [postalComp, setPostalComp] = useState<Competition | null>(null);
 
   useEffect(() => {
     fetch(`${API_URL}/api/competitions`)
@@ -87,6 +89,7 @@ export default function Home() {
             <div className="badge"><span className="badge-icon">📊</span><span className="badge-text">Transparent Odds</span></div>
             <div className="badge"><span className="badge-icon">✅</span><span className="badge-text">Guaranteed Winners</span></div>
             <div className="badge"><span className="badge-icon">🔴</span><span className="badge-text">Live Draws</span></div>
+            <div className="badge badge--postal"><span className="badge-icon">✉️</span><span className="badge-text">Free Postal Entry</span></div>
           </div>
           <a href="#competitions" className="btn-cta">VIEW COMPETITIONS ↓</a>
         </div>
@@ -119,6 +122,10 @@ export default function Home() {
                   onEnter={(id) => {
                     const c = competitions.find((x) => x.id === id);
                     if (c) setSelectedComp(c);
+                  }}
+                  onPostalEnter={(id) => {
+                    const c = competitions.find((x) => x.id === id);
+                    if (c) setPostalComp(c);
                   }}
                 />
               ))}
@@ -157,6 +164,11 @@ export default function Home() {
               <h3>Transparent Odds</h3>
               <p>40% house margin shown publicly. No hidden fees or surprises</p>
             </div>
+            <div className="trust-item">
+              <div className="trust-icon">✉️</div>
+              <h3>Free Postal Entry</h3>
+              <p>Enter by post for free — identical odds to digital entries. No purchase necessary.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -171,6 +183,9 @@ export default function Home() {
 
       {selectedComp && (
         <EntryModal competition={selectedComp} onClose={() => setSelectedComp(null)} />
+      )}
+      {postalComp && (
+        <PostalEntryModal competition={postalComp} onClose={() => setPostalComp(null)} />
       )}
     </div>
   );

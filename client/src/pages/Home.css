@@ -155,6 +155,19 @@
   border-color: var(--color-gold);
 }
 
+.badge--postal {
+  border-color: #10b981;
+}
+
+.badge--postal:hover {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: #10b981;
+}
+
+.badge--postal .badge-text {
+  color: #10b981;
+}
+
 .badge-icon {
   font-size: 1.5rem;
 }
