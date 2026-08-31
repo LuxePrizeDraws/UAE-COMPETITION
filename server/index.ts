@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import { buildCartUrl, verifyWebhookSignature, mapOrderToEntries } from './shopifyService.js';
+import { getAllTournaments, getTournamentById, registerParticipant } from './tournamentService.js';
 
 dotenv.config();
 
@@ -485,6 +486,43 @@ app.post(
     return res.status(200).json({ received: true });
   }
 );
+
+// ---------------------------------------------------------------------------
+// Skill-based Tournament routes
+// ---------------------------------------------------------------------------
+
+// GET /api/tournaments  – list all (optionally filter by game)
+app.get('/api/tournaments', (req: Request, res: Response) => {
+  const { game } = req.query as { game?: string };
+  let tournaments = getAllTournaments();
+  if (game && (game === 'chess' || game === 'connect4')) {
+    tournaments = tournaments.filter((t) => t.game === game);
+  }
+  res.json(tournaments);
+});
+
+// GET /api/tournaments/:id  – single tournament
+app.get('/api/tournaments/:id', (req: Request, res: Response) => {
+  const tournament = getTournamentById(req.params.id);
+  if (!tournament) {
+    return res.status(404).json({ error: 'Tournament not found.' });
+  }
+  res.json(tournament);
+});
+
+// POST /api/tournaments/:id/register  – register a player
+app.post('/api/tournaments/:id/register', (req: Request, res: Response) => {
+  const { name } = req.body as { name?: string };
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Player name is required.' });
+  }
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  const result = registerParticipant(req.params.id, name, clientUrl);
+  if (!result.success) {
+    return res.status(400).json({ error: result.message });
+  }
+  return res.json(result);
+});
 
 // Start server
 app.listen(PORT, () => {
