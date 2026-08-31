@@ -1,358 +1,338 @@
+/* ── Competition Card ──────────────────────── */
 .competition-card {
-  background: linear-gradient(135deg, var(--color-dark-gray) 0%, #141414 100%);
-  border: 2px solid var(--color-border);
-  border-radius: 8px;
+  background: linear-gradient(160deg, #141414 0%, #1a1a1a 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 2rem;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .competition-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold-gradient);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.35s;
 }
 
 .competition-card:hover {
-  border-color: var(--color-gold);
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
-  transform: translateY(-5px);
+  border-color: rgba(201,168,76,0.45);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-6px);
 }
 
-.competition-card:hover::before {
-  opacity: 1;
-}
+.competition-card:hover::before { opacity: 1; }
 
+/* ── Card Header ────────────────────────── */
 .card-header {
-  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .card-badge {
   display: inline-block;
-  padding: 0.5rem 1rem;
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid var(--color-gold);
-  color: var(--color-gold);
-  font-size: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.4);
+  color: var(--gold);
+  font-family: var(--font-accent);
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   border-radius: 4px;
 }
 
-.card-content {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  align-items: flex-start;
+.ring-fenced-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  font-family: var(--font-accent);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  border-radius: 4px;
 }
 
-.prize-section {
-  flex: 1;
+.postal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(183,110,121,0.1);
+  border: 1px solid rgba(183,110,121,0.35);
+  color: var(--gold-rose);
+  font-family: var(--font-accent);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  border-radius: 4px;
 }
 
+/* ── Prize Section ──────────────────────── */
 .prize-label {
-  color: #999;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-  letter-spacing: 1px;
+  font-family: var(--font-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
 }
 
 .prize-amount {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--color-gold);
-  margin-bottom: 0.75rem;
-  letter-spacing: -1px;
+  font-family: var(--font-serif);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--gold);
   line-height: 1.1;
+  margin-bottom: 0.5rem;
 }
 
 .prize-description {
-  font-size: 0.95rem;
-  color: #ccc;
+  font-size: 0.9rem;
+  color: var(--text-muted);
   line-height: 1.6;
-  margin-bottom: 1rem;
 }
 
 .prize-includes {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: rgba(212, 175, 55, 0.05);
-  border-radius: 6px;
-  border-left: 2px solid var(--color-gold);
+  gap: 0.35rem;
+  padding: 0.875rem 1rem;
+  background: rgba(201,168,76,0.04);
+  border-left: 2px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  margin-top: 0.5rem;
 }
 
 .include-item {
-  font-size: 0.85rem;
-  color: #ccc;
+  font-size: 0.83rem;
+  color: var(--text-muted);
 }
 
-.prize-image-placeholder {
-  flex-shrink: 0;
-  width: 150px;
-  height: 150px;
-  background: rgba(212, 175, 55, 0.05);
-  border: 1px dashed var(--color-gold);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.image-placeholder {
-  font-size: 3rem;
-}
-
+/* ── Stats ──────────────────────────────── */
 .card-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
-.stat {
-  display: flex;
-  flex-direction: column;
-}
+.stat { display: flex; flex-direction: column; gap: 0.2rem; }
 
 .stat-label {
-  font-size: 0.75rem;
-  color: #666;
-  letter-spacing: 1px;
-  margin-bottom: 0.5rem;
+  font-family: var(--font-accent);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .stat-value {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  color: var(--color-gold);
-  margin-bottom: 0.25rem;
+  color: var(--gold);
 }
 
 .stat-sublabel {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: #555;
-  letter-spacing: 0.5px;
 }
 
-/* Progress Section */
-.progress-section {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
+/* ── Progress ───────────────────────────── */
 .progress-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
-  color: #999;
-  margin-bottom: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
 }
 
 .progress-bar {
-  height: 8px;
-  background: rgba(212, 175, 55, 0.1);
-  border-radius: 4px;
+  height: 6px;
+  background: rgba(201,168,76,0.1);
+  border-radius: 3px;
   overflow: hidden;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-gold), var(--color-gold-light));
-  transition: width 0.3s ease;
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  background: var(--gold-gradient);
+  transition: width 0.6s ease;
+  box-shadow: 0 0 8px rgba(201,168,76,0.4);
 }
 
 .progress-detail {
-  font-size: 0.8rem;
-  color: #666;
+  font-size: 0.78rem;
+  color: #555;
   text-align: center;
 }
 
-/* Transparency Section */
-.transparency-section {
-  background: rgba(212, 175, 55, 0.08);
-  border: 1px solid rgba(212, 175, 55, 0.15);
-  border-radius: 6px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-}
-
-.transparency-section h4 {
-  color: var(--color-gold);
-  font-size: 0.95rem;
-  margin-bottom: 0.75rem;
-  letter-spacing: 0.5px;
-}
-
-.transparency-text {
-  font-size: 0.85rem;
-  color: #ccc;
-  line-height: 1.5;
-  margin-bottom: 0.5rem;
-}
-
-.transparency-text:last-child {
-  margin-bottom: 0;
-}
-
-/* Tags */
-.card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.tag {
-  font-size: 0.85rem;
-  color: #999;
-  padding: 0.5rem 1rem;
-  background: rgba(212, 175, 55, 0.05);
-  border-radius: 20px;
-  border: 1px solid var(--color-border);
-}
-
-/* Entry Controls */
+/* ── Entry Controls ─────────────────────── */
 .entry-controls {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.quantity-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  padding-top: 0.5rem;
 }
 
 .quantity-selector label {
-  font-size: 0.85rem;
-  color: #999;
-  letter-spacing: 0.5px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-accent);
 }
 
 .quantity-input {
-  padding: 0.75rem;
-  background: rgba(212, 175, 55, 0.05);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  border-radius: 4px;
+  width: 100%;
+  padding: 0.7rem 0.875rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
   font-size: 1rem;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .quantity-input:focus {
   outline: none;
-  border-color: var(--color-gold);
-  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.06);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
 }
 
 .cost-display {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   justify-content: flex-end;
   text-align: right;
 }
 
 .cost-label {
-  font-size: 0.85rem;
-  color: #999;
-  letter-spacing: 0.5px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-accent);
+  margin-bottom: 0.4rem;
 }
 
 .cost-amount {
-  font-size: 1.75rem;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
   font-weight: 700;
-  color: var(--color-gold);
+  color: var(--gold);
 }
 
-/* Button */
+/* ── Tags ───────────────────────────────── */
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 0.3rem 0.75rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* ── Enter Button ───────────────────────── */
 .btn-enter-now {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-light) 100%);
-  color: var(--color-black);
-  font-size: 1rem;
+  background: var(--gold-gradient);
+  color: var(--black);
+  font-family: var(--font-accent);
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
-  margin-bottom: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  box-shadow: 0 4px 18px rgba(201,168,76,0.25);
+  margin-top: auto;
 }
 
 .btn-enter-now:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 28px rgba(201,168,76,0.45);
+  filter: brightness(1.08);
 }
 
-.btn-enter-now:active {
-  transform: translateY(0);
+.btn-enter-now:disabled {
+  background: #2a2a2a;
+  color: #555;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
 }
 
-/* Terms Link */
+/* ── Terms ──────────────────────────────── */
 .terms-link {
   text-align: center;
 }
 
 .terms-link a {
-  font-size: 0.8rem;
-  color: #666;
-  border-bottom: 1px dotted var(--color-gold);
-  transition: all 0.3s ease;
+  font-size: 0.78rem;
+  color: #555;
+  border-bottom: 1px dotted var(--gold);
+  transition: color 0.2s;
 }
 
-.terms-link a:hover {
-  color: var(--color-gold);
+.terms-link a:hover { color: var(--gold); }
+
+/* ── Transparency ───────────────────────── */
+.transparency-section {
+  background: rgba(201,168,76,0.04);
+  border: 1px solid rgba(201,168,76,0.12);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
 }
 
-@media (max-width: 768px) {
-  .competition-card {
-    padding: 1.5rem;
-  }
+.transparency-section h4 {
+  color: var(--gold);
+  font-size: 0.88rem;
+  margin-bottom: 0.5rem;
+}
 
-  .card-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
+.transparency-text {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
 
-  .prize-image-placeholder {
-    width: 100%;
-    height: 200px;
-  }
-
-  .card-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .prize-amount {
-    font-size: 2rem;
-  }
-
-  .entry-controls {
-    grid-template-columns: 1fr;
-  }
-
-  .cost-display {
-    text-align: left;
-  }
+/* ── Responsive ─────────────────────────── */
+@media (max-width: 560px) {
+  .competition-card { padding: 1.5rem; }
+  .card-stats { grid-template-columns: 1fr 1fr; }
+  .entry-controls { grid-template-columns: 1fr; }
+  .cost-display { text-align: left; }
+  .prize-amount { font-size: 2rem; }
 }
