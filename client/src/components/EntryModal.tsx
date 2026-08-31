@@ -239,7 +239,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
             >
               {loading
                 ? '⏳ Processing...'
-                : `${quantity === 1 ? 'ONE-CLICK ENTER' : 'ENTER NOW'} — £${totalCost.toLocaleString()}`}
+                : `${quantity === 1 && termsAccepted ? 'ONE-CLICK ENTER' : 'ENTER NOW'} — £${totalCost.toLocaleString()}`}
             </button>
 
             <p className="entry-modal__disclaimer">

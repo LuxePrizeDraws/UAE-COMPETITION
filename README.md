@@ -197,7 +197,7 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 4. Railway auto-detects `railway.toml`
 
 ### Production Launch Baseline
-- Copy `/home/runner/work/UAE-COMPETITION/UAE-COMPETITION/.env.production.example` to your production secret manager.
+- Copy `.env.production.example` to your production secret manager.
 - Configure trusted frontend domains with `CORS_ORIGINS` (comma-separated).
 - Tune API protection with `RATE_LIMIT_WINDOW_MS` and `RATE_LIMIT_MAX`.
 - Verify `/api/health` returns `environment: "production"` and non-zero uptime after deploy.

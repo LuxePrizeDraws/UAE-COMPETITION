@@ -18,7 +18,9 @@ const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 
 const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 100);
 
 // Middleware
-app.set('trust proxy', 1);
+if (NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
