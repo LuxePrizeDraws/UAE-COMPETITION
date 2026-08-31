@@ -249,7 +249,7 @@ const weekOnePlan = [
 const growthWeeks = [
   {
     title: 'Week 2 · Launch & First Organic Users',
-    targets: 'Users: 300-800 · Revenue/Profit: £1.5K-£4K · Cost: £0',
+    targets: 'Total users: 500-800 · Revenue/Profit: £1.5K-£4K · Cost: £0',
     actions: [
       'Post launch messaging across every owned channel at once and highlight fair, transparent, guaranteed, insurance-backed draws.',
       'Publish Reddit posts in relevant communities while following subreddit rules and doing genuine engagement.',
@@ -259,7 +259,7 @@ const growthWeeks = [
   },
   {
     title: 'Week 3 · Referral Program Activation',
-    targets: 'Users: 800-1.5K · New registrations: 500-700 · Revenue/Profit: £4K-£7.5K',
+    targets: 'Total users: 800-1.5K · New registrations: 500-700 · Revenue/Profit: £4K-£7.5K',
     actions: [
       'Implement referral tracking, referrer/referee pairing, custom URLs, bonus automation, and email notifications.',
       'Launch +£2 referrer and +£2 referee incentives funded from house margin rather than outside capital.',
@@ -357,6 +357,26 @@ const contentCalendar = [
       'Publish user-generated-content compilations',
     ],
   },
+  {
+    title: 'Month 2 · Paid Growth Content Mix',
+    items: [
+      'Turn the best organic videos into TikTok, Meta, Reddit, and YouTube ad creatives',
+      'Post daily winner proof, referral reminders, and fairness explainer snippets',
+      'Publish 2 longer YouTube videos each week answering FAQs and showing transparent draw mechanics',
+      'Create carousel ads highlighting pot size, guaranteed prizes, insurance backing, and how to enter',
+      'Feature user testimonials and community screenshots to support retargeting and email campaigns',
+    ],
+  },
+  {
+    title: 'Month 3 · Scaling & Social Proof',
+    items: [
+      'Double down on top-performing hooks with fresh edits, creators, and captions',
+      'Create milestone posts around user growth, bigger pots, and repeat-winner stories',
+      'Publish influencer/affiliate collaboration clips and community reaction content',
+      'Run comparison-style content that explains why fair, ring-fenced draws outperform weak competitors',
+      'Promote urgency around countdowns, improving odds, and limited-time referral incentives',
+    ],
+  },
 ] as const;
 
 const metrics = {
@@ -385,8 +405,8 @@ const metrics = {
 const milestones = [
   'Week 1: 300-500 users · £1.5K-£2.5K profit',
   'Week 2: 500-800 users · £2.5K-£4K profit',
-  'Week 3: 800-1.2K users · £4K-£6K profit',
-  'Week 4: 1.3K-2.2K users · £6.5K-£12.5K profit',
+  'Week 3: 800-1.5K users · £4K-£6K profit',
+  'Week 4 / Month 1 close: 3K-5K users · £7.5K-£12.5K profit',
   'Month 20: 450K-500K users · £1.125M-£1.25M monthly profit · £10M+ annual run rate',
 ] as const;
 
@@ -534,7 +554,7 @@ export default function Home() {
         <div className="container">
           <h2 className="section-title">🚀 ZERO-FUNDING LAUNCH PLAYBOOK</h2>
           <p className="playbook-intro">
-            Complete 20-month bootstrap roadmap to scale from launch to a £10M annual profit run rate using zero upfront capital, disciplined reinvestment, and ring-fenced draw economics.
+            Complete 20-month operator blueprint to scale from launch to a £10M annual profit run rate using zero upfront capital, disciplined reinvestment, and ring-fenced draw economics.
           </p>
 
           <div className="playbook-grid">
@@ -559,7 +579,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="ring-fence-section">
+      <section className="ring-fence-section" id="ring-fenced-draws">
         <div className="container">
           <h2 className="section-title">💷 RING-FENCED DRAW &amp; PROFIT MARGIN RULES</h2>
           <div className="checklist-card">
@@ -572,7 +592,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="action-plan-section">
+      <section className="action-plan-section" id="week-one-plan">
         <div className="container">
           <h2 className="section-title">📅 WEEK 1 DAILY ACTION PLAN</h2>
           <div className="timeline-grid">
@@ -595,7 +615,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="action-plan-section action-plan-section--alt">
+      <section className="action-plan-section action-plan-section--alt" id="growth-sprints">
         <div className="container">
           <h2 className="section-title">⚡ WEEK 2-4 GROWTH SPRINTS</h2>
           <div className="playbook-grid">
@@ -619,7 +639,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="resources-section">
+      <section className="resources-section" id="free-tools">
         <div className="container">
           <h2 className="section-title">🛠️ FREE TOOLS &amp; RESOURCES</h2>
           <div className="resources-grid">
@@ -637,7 +657,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="resources-section resources-section--alt">
+      <section className="resources-section resources-section--alt" id="content-calendar">
         <div className="container">
           <h2 className="section-title">🎬 MONTH 1-3 CONTENT CALENDAR</h2>
           <div className="resources-grid">
@@ -655,7 +675,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="metrics-section">
+      <section className="metrics-section" id="metrics">
         <div className="container">
           <h2 className="section-title">📈 DAILY METRICS &amp; SUCCESS MILESTONES</h2>
           <div className="metrics-grid">

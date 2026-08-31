@@ -283,12 +283,17 @@
 .resources-section,
 .metrics-section {
   padding: 4rem 2rem;
+}
+
+.playbook-section,
+.action-plan-section,
+.resources-section {
   background: var(--color-black);
 }
 
 .ring-fence-section,
-.action-plan-section--alt,
-.resources-section--alt,
+.action-plan-section.action-plan-section--alt,
+.resources-section.resources-section--alt,
 .metrics-section {
   background: var(--color-dark-gray);
   border-top: 1px solid var(--color-border);
@@ -298,7 +303,7 @@
   max-width: 960px;
   margin: 0 auto 2.5rem;
   text-align: center;
-  color: #b6b6b6;
+  color: var(--color-text-secondary);
   line-height: 1.7;
   font-size: 1rem;
 }
@@ -332,7 +337,7 @@
 }
 
 .playbook-card__eyebrow {
-  color: #f0d060;
+  color: var(--color-gold-light);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -340,7 +345,7 @@
 }
 
 .playbook-card__budget {
-  color: #cfcfcf;
+  color: var(--color-text-secondary);
   margin-bottom: 1rem;
   font-weight: 600;
 }
@@ -354,7 +359,7 @@
 
 .playbook-card li,
 .checklist-list li {
-  color: #bdbdbd;
+  color: var(--color-text-tertiary);
   line-height: 1.6;
   padding-left: 1.5rem;
   position: relative;
@@ -384,7 +389,7 @@
   border-radius: 999px;
   border: 1px solid rgba(212, 175, 55, 0.2);
   background: rgba(212, 175, 55, 0.08);
-  color: #f3e1a5;
+  color: var(--color-gold-soft);
   font-size: 0.88rem;
 }
 
@@ -394,7 +399,7 @@
 }
 
 .timeline-block h4 {
-  color: #f0d060;
+  color: var(--color-gold-light);
   margin-bottom: 0.6rem;
   font-size: 0.95rem;
   letter-spacing: 0.04em;
