@@ -268,7 +268,17 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
 });
 
 app.post('/api/payout-methods', (req: Request, res: Response) => {
-  const { userId, primaryMethod, destinations, preferredCurrency } = req.body;
+  const {
+    userId,
+    primaryMethod,
+    destinations,
+    preferredCurrency,
+    verified = false,
+    autoPayoutEnabled = true,
+    status = 'active',
+    paypalVerified,
+    stripeConnected,
+  } = req.body;
   const allowedMethods: PayoutMethodType[] = ['bank', 'paypal', 'stripe', 'wise', 'applepay', 'googlepay', 'crypto', 'check'];
 
   if (!userId || typeof userId !== 'string') {
@@ -281,19 +291,22 @@ app.post('/api/payout-methods', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'At least one payout destination is required' });
   }
 
-  const method = payoutService.registerWinnerPayoutMethod({
-    userId,
-    primaryMethod,
-    destinations,
-    preferredCurrency,
-    verified: true,
-    autoPayoutEnabled: true,
-    status: 'active',
-    paypalVerified: Boolean(destinations.paypal),
-    stripeConnected: Boolean(destinations.stripe),
-  });
-
-  res.status(201).json(method);
+  try {
+    const method = payoutService.registerWinnerPayoutMethod({
+      userId,
+      primaryMethod,
+      destinations,
+      preferredCurrency,
+      verified: Boolean(verified),
+      autoPayoutEnabled: Boolean(autoPayoutEnabled),
+      status,
+      paypalVerified: typeof paypalVerified === 'boolean' ? paypalVerified : Boolean(destinations.paypal),
+      stripeConnected: typeof stripeConnected === 'boolean' ? stripeConnected : Boolean(destinations.stripe),
+    });
+    res.status(201).json(method);
+  } catch (error) {
+    res.status(400).json({ error: (error as Error).message });
+  }
 });
 
 app.post('/api/draws/:drawId/complete-and-payout', (req: Request, res: Response) => {

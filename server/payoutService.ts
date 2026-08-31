@@ -220,6 +220,9 @@ export class AutomatedPayoutService {
   }
 
   registerWinnerPayoutMethod(input: Omit<WinnerPayoutMethod, 'id' | 'usageCount' | 'totalAmountReceived' | 'createdAt' | 'updatedAt'>): WinnerPayoutMethod {
+    if (this.payoutMethods.has(input.userId)) {
+      throw new Error(`Payout method already exists for user ${input.userId}`);
+    }
     const now = this.now().toISOString();
     const method: WinnerPayoutMethod = {
       id: randomUUID(),
@@ -280,7 +283,7 @@ export class AutomatedPayoutService {
         ringFencedAccountId: params.ringFencedAccount.id,
         ringFencedBalanceBefore: balanceBefore,
         ringFencedBalanceAfter: ringBalance,
-        ringFencedDeductionAmount: totalPayout,
+        ringFencedDeductionAmount: winner.prizeAmount,
         insurancePolicyId: params.insurancePolicy?.id,
         insuranceBacked: Boolean(params.insurancePolicy?.active),
       }),
@@ -375,7 +378,7 @@ export class AutomatedPayoutService {
 
     const now = this.now();
     const payoutId = randomUUID();
-    const fraudScore = Math.abs([...params.winner.userId].reduce((sum, c) => sum + c.charCodeAt(0), 0)) % 20;
+    const fraudScore = Math.abs([...params.winner.userId].reduce((sum, c) => sum + c.charCodeAt(0), 0)) % 100;
     const payout: AutomatedPayout = {
       id: payoutId,
       drawId: params.drawId,
@@ -398,7 +401,7 @@ export class AutomatedPayoutService {
       insurancePolicyId: params.insurancePolicyId,
       insuranceBacked: params.insuranceBacked,
       insuranceVerificationTimestamp: plusSeconds(now, 2),
-      fraudCheckPassed: fraudScore < 50,
+      fraudCheckPassed: fraudScore < 80,
       fraudCheckTimestamp: plusSeconds(now, 3),
       fraudCheckDetails: `Fraud score ${fraudScore}/100`,
       kycVerified: true,
