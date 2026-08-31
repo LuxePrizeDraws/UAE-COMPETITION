@@ -4,11 +4,13 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import { AutomatedPayoutService, PayoutMethodType } from './payoutService.js';
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
+const payoutService = new AutomatedPayoutService();
 
 // Middleware
 app.use(helmet());
@@ -263,6 +265,95 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     drawReadyPercent: competition.drawReadyPercent,
     endsIn: competition.endsIn,
   });
+});
+
+app.post('/api/payout-methods', (req: Request, res: Response) => {
+  const { userId, primaryMethod, destinations, preferredCurrency } = req.body;
+  const allowedMethods: PayoutMethodType[] = ['bank', 'paypal', 'stripe', 'wise', 'applepay', 'googlepay', 'crypto', 'check'];
+
+  if (!userId || typeof userId !== 'string') {
+    return res.status(400).json({ error: 'userId is required' });
+  }
+  if (!allowedMethods.includes(primaryMethod)) {
+    return res.status(400).json({ error: 'Invalid primary payout method' });
+  }
+  if (!destinations || typeof destinations !== 'object' || Object.keys(destinations).length === 0) {
+    return res.status(400).json({ error: 'At least one payout destination is required' });
+  }
+
+  const method = payoutService.registerWinnerPayoutMethod({
+    userId,
+    primaryMethod,
+    destinations,
+    preferredCurrency,
+    verified: true,
+    autoPayoutEnabled: true,
+    status: 'active',
+    paypalVerified: Boolean(destinations.paypal),
+    stripeConnected: Boolean(destinations.stripe),
+  });
+
+  res.status(201).json(method);
+});
+
+app.post('/api/draws/:drawId/complete-and-payout', (req: Request, res: Response) => {
+  const { drawId } = req.params;
+  const { winners, ringFencedAccount, insurancePolicy } = req.body;
+
+  if (!Array.isArray(winners) || winners.length === 0) {
+    return res.status(400).json({ error: 'winners array is required' });
+  }
+  if (!ringFencedAccount?.id || typeof ringFencedAccount.balance !== 'number') {
+    return res.status(400).json({ error: 'ringFencedAccount with id and balance is required' });
+  }
+
+  try {
+    const result = payoutService.completeDrawAndPayout({
+      drawId,
+      winners,
+      ringFencedAccount,
+      insurancePolicy,
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: (error as Error).message });
+  }
+});
+
+app.get('/api/draws/:drawId/payouts', (req: Request, res: Response) => {
+  res.json(payoutService.getPayoutsByDraw(req.params.drawId));
+});
+
+app.get('/api/payouts/:payoutId', (req: Request, res: Response) => {
+  const payout = payoutService.getPayout(req.params.payoutId);
+  if (!payout) {
+    return res.status(404).json({ error: 'Payout not found' });
+  }
+  res.json(payout);
+});
+
+app.get('/api/payouts/:payoutId/audit', (req: Request, res: Response) => {
+  res.json(payoutService.getAuditTrail(req.params.payoutId));
+});
+
+app.get('/api/payouts/:payoutId/recovery', (req: Request, res: Response) => {
+  const recovery = payoutService.getRecovery(req.params.payoutId);
+  if (!recovery) {
+    return res.status(404).json({ error: 'Recovery record not found' });
+  }
+  res.json(recovery);
+});
+
+app.get('/api/draws/:drawId/payout-batch', (req: Request, res: Response) => {
+  const batch = payoutService.getBatch(req.params.drawId);
+  if (!batch) {
+    return res.status(404).json({ error: 'Batch not found' });
+  }
+  res.json(batch);
+});
+
+app.get('/api/draws/:drawId/payout-dashboard', (req: Request, res: Response) => {
+  res.json(payoutService.getDashboard(req.params.drawId));
 });
 
 app.get('/', (req: Request, res: Response) => {
