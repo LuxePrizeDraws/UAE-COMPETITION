@@ -71,6 +71,16 @@ export default function Home() {
 
   return (
     <div className="home">
+      <header className="home-header">
+        <div className="home-header__inner">
+          <div>
+            <h1 className="home-title">🏆 Competition Home</h1>
+            <p className="home-subtitle">Same live draw experience as your dashboard, with premium visuals and fair entry options.</p>
+          </div>
+          <Link to="/dashboard" className="home-header__link">📊 View Dashboard</Link>
+        </div>
+      </header>
+
       {/* Hero */}
       <section className="hero">
         <div className="hero-background">
@@ -93,14 +103,14 @@ export default function Home() {
       </section>
 
       {/* Stats bar */}
-      <div className="home-stats">
-        <div className="container">
-          <div className="home-stats__inner">
-            <div className="home-stat"><strong>{competitions.length}</strong><span>Competitions</span></div>
-            <div className="home-stat"><strong>{liveComps.length}</strong><span>Live Now</span></div>
-            <div className="home-stat"><strong>£18.4M</strong><span>Annual Prizes</span></div>
-            <div className="home-stat"><strong>100%</strong><span>Cash Alternative</span></div>
-          </div>
+      <div className="home-stats-wrap">
+        <div className="home-stats">
+          <div className="home-stat"><strong>{competitions.length}</strong><span>Competitions</span></div>
+          <div className="home-stat"><strong>{liveComps.length}</strong><span>Live Now</span></div>
+          <div className="home-stat"><strong>£18.4M</strong><span>Annual Prizes</span></div>
+          <div className="home-stat"><strong>100%</strong><span>Cash Alternative</span></div>
+          <div className="home-stat"><strong>FREE</strong><span>Postal Entry</span></div>
+          <div className="home-stat"><strong>24/7</strong><span>Online Entry</span></div>
         </div>
       </div>
 
