@@ -171,7 +171,6 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 | `PORT` | `5000` | Server port |
 | `NODE_ENV` | `development` | Environment |
 | `CLIENT_URL` | `http://localhost:5173` | Frontend URL for CORS |
-| `VITE_API_URL` | `http://localhost:5000` | Backend API URL used by the frontend build |
 | `JWT_SECRET` | `your_jwt_secret_key_change_in_production` | JWT signing secret |
 | `STRIPE_SECRET_KEY` | `sk_test_...` | Stripe secret key for checkout session creation |
 | `STRIPE_WEBHOOK_SECRET` | `whsec_...` | Stripe webhook signing secret |
@@ -182,6 +181,8 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 |----------|---------|-------------|
 | `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | `pk_test_...` | Stripe publishable key used by CheckoutModal |
+
+For a full local or production setup, configure both the backend env file and `client/.env` so the server has Stripe/runtime settings and the Vite frontend has its build-time API/Stripe keys.
 
 ### Launch-critical Stripe requirements
 
