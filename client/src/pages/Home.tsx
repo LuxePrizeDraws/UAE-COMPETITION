@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
@@ -24,6 +24,30 @@ interface Competition {
   prizeIncludes?: string[];
 }
 
+interface CardCompetition {
+  id: number;
+  title: string;
+  description: string;
+  prizeType: string;
+  prizeAmount: number;
+  prizeDetails: {
+    currency: string;
+    description: string;
+    includes?: string[];
+  };
+  entryPrice: number;
+  totalEntries: number;
+  soldEntries: number;
+  endsIn: string;
+  tags: string[];
+  profitMargin: string;
+  expectedWinners: number;
+  status: string;
+}
+
+type SortOption = 'entry-low-high' | 'entry-high-low' | 'prize-high-low' | 'progress-most-filled';
+type StatusFilter = 'all' | 'live';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Home() {
@@ -31,6 +55,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedComp, setSelectedComp] = useState<Competition | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOption, setSortOption] = useState<SortOption>('entry-low-high');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
 
   useEffect(() => {
     fetch(`${API_URL}/api/competitions`)
@@ -45,33 +72,61 @@ export default function Home() {
       });
   }, []);
 
-  const liveComps = competitions.filter((c) => c.status === 'live');
-  const comingSoon = competitions.filter((c) => c.status === 'coming-soon');
+  const liveComps = competitions.filter((competition) => competition.status === 'live');
+  const comingSoon = competitions.filter((competition) => competition.status === 'coming-soon');
 
-  const cardCompetitions = competitions.map((c) => ({
-    id: c.id,
-    title: c.title,
-    description: c.description,
-    prizeType: c.prizeType,
-    prizeAmount: c.prizeAmount,
+  const cardCompetitions = useMemo<CardCompetition[]>(() => competitions.map((competition) => ({
+    id: competition.id,
+    title: competition.title,
+    description: competition.description,
+    prizeType: competition.prizeType,
+    prizeAmount: competition.prizeAmount,
     prizeDetails: {
-      currency: c.currency,
-      description: c.prizeType,
-      includes: c.prizeIncludes,
+      currency: competition.currency,
+      description: competition.prizeType,
+      includes: competition.prizeIncludes,
     },
-    entryPrice: c.entryPrice,
-    totalEntries: c.totalEntries,
-    soldEntries: c.soldEntries,
-    endsIn: c.endsIn,
-    tags: c.tags,
-    profitMargin: c.profitMargin,
-    expectedWinners: c.expectedWinners,
-    status: c.status,
-  }));
+    entryPrice: competition.entryPrice,
+    totalEntries: competition.totalEntries,
+    soldEntries: competition.soldEntries,
+    endsIn: competition.endsIn,
+    tags: competition.tags,
+    profitMargin: competition.profitMargin,
+    expectedWinners: competition.expectedWinners,
+    status: competition.status,
+  })), [competitions]);
+
+  const filteredCompetitions = useMemo(() => {
+    const query = searchTerm.trim().toLowerCase();
+
+    return [...cardCompetitions]
+      .filter((competition) => {
+        const matchesStatus = statusFilter === 'all' || competition.status === 'live';
+        const matchesSearch = !query
+          || competition.title.toLowerCase().includes(query)
+          || competition.description.toLowerCase().includes(query);
+
+        return matchesStatus && matchesSearch;
+      })
+      .sort((left, right) => {
+        switch (sortOption) {
+          case 'entry-high-low':
+            return right.entryPrice - left.entryPrice;
+          case 'prize-high-low':
+            return right.prizeAmount - left.prizeAmount;
+          case 'progress-most-filled':
+            return (right.soldEntries / right.totalEntries) - (left.soldEntries / left.totalEntries);
+          case 'entry-low-high':
+          default:
+            return left.entryPrice - right.entryPrice;
+        }
+      });
+  }, [cardCompetitions, searchTerm, sortOption, statusFilter]);
+
+  const filteredComingSoonCount = filteredCompetitions.filter((competition) => competition.status === 'coming-soon').length;
 
   return (
     <div className="home">
-      {/* Hero */}
       <section className="hero">
         <div className="hero-background">
           <div className="hero-gradient" />
@@ -92,7 +147,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats bar */}
       <div className="home-stats">
         <div className="container">
           <div className="home-stats__inner">
@@ -104,35 +158,84 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Competitions */}
       <section className="competitions-section" id="competitions">
         <div className="container">
-          <h2 className="section-title">🎯 LIVE COMPETITIONS</h2>
+          <h2 className="section-title">🎯 COMPETITIONS</h2>
+
+          <div className="competition-toolbar">
+            <div className="competition-toolbar__field competition-toolbar__field--search">
+              <label htmlFor="competition-search">Search</label>
+              <input
+                id="competition-search"
+                type="text"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search title or description"
+              />
+            </div>
+
+            <div className="competition-toolbar__field">
+              <label htmlFor="competition-sort">Sort By</label>
+              <select
+                id="competition-sort"
+                value={sortOption}
+                onChange={(event) => setSortOption(event.target.value as SortOption)}
+              >
+                <option value="entry-low-high">Entry Price (Low-High)</option>
+                <option value="entry-high-low">Entry Price (High-Low)</option>
+                <option value="prize-high-low">Prize Value (High-Low)</option>
+                <option value="progress-most-filled">Progress (Most Filled)</option>
+              </select>
+            </div>
+
+            <div className="competition-toolbar__field">
+              <label htmlFor="competition-filter">Status</label>
+              <select
+                id="competition-filter"
+                value={statusFilter}
+                onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
+              >
+                <option value="all">All</option>
+                <option value="live">Live Only</option>
+              </select>
+            </div>
+          </div>
+
+          <p className="competition-toolbar__summary">
+            Showing <strong>{filteredCompetitions.length}</strong> competition{filteredCompetitions.length === 1 ? '' : 's'}
+            {statusFilter === 'live' ? ' · Live only' : ''}
+          </p>
+
           {loading && <p className="loading">Loading competitions...</p>}
           {error && <p className="loading" style={{ color: '#f87171' }}>{error}</p>}
           {!loading && !error && (
-            <div className="competitions-grid">
-              {cardCompetitions.map((comp) => (
-                <CompetitionCard
-                  key={comp.id}
-                  competition={comp}
-                  onEnter={(id) => {
-                    const c = competitions.find((x) => x.id === id);
-                    if (c) setSelectedComp(c);
-                  }}
-                />
-              ))}
-            </div>
+            filteredCompetitions.length > 0 ? (
+              <div className="competitions-grid">
+                {filteredCompetitions.map((comp) => (
+                  <CompetitionCard
+                    key={comp.id}
+                    competition={comp}
+                    onEnter={(id) => {
+                      const competition = competitions.find((item) => item.id === id);
+                      if (competition) {
+                        setSelectedComp(competition);
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="loading">No competitions matched your search. Try adjusting the filters.</p>
+            )
           )}
-          {comingSoon.length > 0 && (
+          {comingSoon.length > 0 && filteredComingSoonCount > 0 && (
             <p className="coming-soon-note">
-              ⏳ <strong>{comingSoon.length} competition{comingSoon.length > 1 ? 's' : ''} coming soon</strong> — check back shortly!
+              ⏳ <strong>{filteredComingSoonCount} competition{filteredComingSoonCount > 1 ? 's' : ''} coming soon</strong> — check back shortly!
             </p>
           )}
         </div>
       </section>
 
-      {/* Trust Section */}
       <section className="trust-section">
         <div className="container">
           <h2 className="section-title">WHY CHOOSE US</h2>
@@ -161,7 +264,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="home-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>

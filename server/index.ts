@@ -10,6 +10,8 @@ dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
 
+const mentalHealthFallback = `💚 I'm here for you. If you're struggling right now, please reach out to immediate support: UK Emergency 999, Samaritans 116 123 (free, 24/7), Mind Infoline 0300 123 3393, or text SHOUT to 85258. If you feel at risk of harming yourself or someone else, call emergency services now. You deserve support from a qualified professional.`;
+
 // Middleware
 app.use(helmet());
 app.use(morgan('combined'));
@@ -223,6 +225,74 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Competition not found' });
   }
   res.json(competition);
+});
+
+app.post('/api/chat', async (req: Request, res: Response) => {
+  const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
+
+  if (!message) {
+    return res.status(400).json({ error: 'A message is required.' });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res.json({
+      reply: mentalHealthFallback,
+      source: 'fallback',
+    });
+  }
+
+  try {
+    const apiKey = process.env.OPENAI_API_KEY;
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+    });
+    headers.set('Authorization', 'Bearer ' + apiKey);
+
+    const openAiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a compassionate mental health support assistant. Provide empathetic, helpful responses. Always recommend professional help for serious issues. Be warm, supportive, and non-judgmental.',
+          },
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+        temperature: 0.8,
+      }),
+    });
+
+    if (!openAiResponse.ok) {
+      throw new Error(`OpenAI request failed with status ${openAiResponse.status}`);
+    }
+
+    const data = await openAiResponse.json() as {
+      choices?: Array<{
+        message?: {
+          content?: string;
+        };
+      }>;
+    };
+
+    const reply = data.choices?.[0]?.message?.content?.trim();
+
+    if (!reply) {
+      throw new Error('OpenAI response did not contain a reply.');
+    }
+
+    return res.json({ reply, source: 'openai' });
+  } catch (error) {
+    console.error('Mental health chat fallback triggered:', error);
+    return res.json({
+      reply: mentalHealthFallback,
+      source: 'fallback',
+    });
+  }
 });
 
 app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
