@@ -287,15 +287,30 @@ Guidelines:
 
 You are here to listen, support, and guide — not to diagnose or treat.`;
 
-app.post('/api/mental-health/chat', async (req: Request, res: Response) => {
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
+
+const mentalHealthLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: 'Too many chat requests. Please try again later.',
+});
+
+const MAX_CHAT_MESSAGES = 50;
+
+app.post('/api/mental-health/chat', mentalHealthLimiter, async (req: Request, res: Response) => {
   const { messages } = req.body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'Messages array is required.' });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
+  if (messages.length > MAX_CHAT_MESSAGES) {
+    return res.status(400).json({ error: 'Too many messages in conversation. Please start a new chat.' });
+  }
+
+  if (!openai) {
     return res.status(503).json({
       error: 'AI support is currently unavailable. Please use the helplines shown in the Resources tab.',
     });
@@ -310,7 +325,6 @@ app.post('/api/mental-health/chat', async (req: Request, res: Response) => {
   }
 
   try {
-    const openai = new OpenAI({ apiKey });
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
