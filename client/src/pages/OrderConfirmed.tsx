@@ -1,31 +1,14 @@
-import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import './OrderConfirmed.css';
 
-interface DemoEntry {
-  competition_id: string;
-  quantity: string;
-  prize_option: string;
-  demo?: string;
-}
-
 export default function OrderConfirmed() {
   const [params] = useSearchParams();
-  const [entryNums, setEntryNums] = useState<string[]>([]);
 
   const competitionId = params.get('competition_id') || params.get('attributes[competition_id]') || '';
   const quantity = parseInt(params.get('quantity') || params.get('attributes[quantity]') || '1');
   const prizeOption = params.get('prize_option') || params.get('attributes[prize_option]') || 'cash';
   const orderId = params.get('order_id') || params.get('checkout[order_id]') || '';
   const isDemo = params.get('demo') === '1';
-
-  useEffect(() => {
-    // Generate display entry numbers (in production, these come from the webhook-reconciled backend)
-    const nums = Array.from({ length: Math.min(quantity, 20) }, (_, i) =>
-      `${competitionId || 'X'}-${Math.random().toString(36).slice(2, 9).toUpperCase()}`
-    );
-    setEntryNums(nums);
-  }, [competitionId, quantity]);
 
   return (
     <div className="order-confirmed">
@@ -68,24 +51,8 @@ export default function OrderConfirmed() {
           </div>
         </div>
 
-        {entryNums.length > 0 && (
-          <div className="order-confirmed__entries">
-            <p className="order-confirmed__entries-label">Your Entry Numbers:</p>
-            <div className="order-confirmed__tickets">
-              {entryNums.map((n) => (
-                <span key={n} className="order-confirmed__ticket">{n}</span>
-              ))}
-              {quantity > 20 && (
-                <span className="order-confirmed__ticket order-confirmed__ticket--more">
-                  +{quantity - 20} more
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
         <p className="order-confirmed__note">
-          ✅ The draw will be conducted live and fairly once all entries are sold. Results will be announced publicly.
+          ✅ The draw will be conducted live and fairly once all entries are sold. Results will be announced publicly. Your entry confirmation email will be sent by Shopify shortly.
         </p>
 
         <div className="order-confirmed__actions">

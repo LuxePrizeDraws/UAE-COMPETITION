@@ -473,9 +473,8 @@ app.post(
     if (topic === 'orders/paid') {
       const entries = mapOrderToEntries(order);
       // In a full implementation, persist entries to a database here.
-      // For now, log and acknowledge.
-      console.log(`[Shopify] orders/paid – mapped ${entries.length} entry record(s)`, entries);
-      return res.status(200).json({ received: true, entries });
+      console.log(`[Shopify] orders/paid – mapped ${entries.length} entry record(s)`);
+      return res.status(200).json({ received: true });
     }
 
     if (topic === 'orders/cancelled' || topic === 'refunds/create') {

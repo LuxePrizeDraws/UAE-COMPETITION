@@ -202,7 +202,7 @@ export function mapOrderToEntries(order: Record<string, unknown>): CompetitionEn
       totalCost: parseFloat((price * quantity).toFixed(2)),
       currency: String(order.currency || 'GBP'),
       entryNumbers,
-      createdAt: new Date().toISOString(),
+      createdAt: String((order.created_at as string | undefined) || new Date().toISOString()),
     });
   }
 

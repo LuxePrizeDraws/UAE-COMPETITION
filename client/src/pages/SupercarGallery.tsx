@@ -22,7 +22,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const CATEGORIES = ['all', 'Sports', 'Hypercar', 'Grand Tourer', 'Luxury'];
 
 export default function SupercarGallery() {
-  const [cars, setCars] = useState<Supercar[]>([]);
   const [filtered, setFiltered] = useState<Supercar[]>([]);
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
@@ -31,10 +30,13 @@ export default function SupercarGallery() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${API_URL}/api/supercars`)
+    const qs = new URLSearchParams();
+    if (category !== 'all') qs.set('category', category);
+    if (search.trim()) qs.set('search', search.trim());
+    const url = `${API_URL}/api/supercars${qs.toString() ? `?${qs}` : ''}`;
+    fetch(url)
       .then((r) => r.json())
       .then((data: Supercar[]) => {
-        setCars(data);
         setFiltered(data);
         setLoading(false);
       })
@@ -42,24 +44,7 @@ export default function SupercarGallery() {
         setError('Could not load supercars. Please try again.');
         setLoading(false);
       });
-  }, []);
-
-  useEffect(() => {
-    let result = cars;
-    if (category !== 'all') {
-      result = result.filter((c) => c.category === category);
-    }
-    if (search.trim()) {
-      const term = search.toLowerCase();
-      result = result.filter(
-        (c) =>
-          c.make.toLowerCase().includes(term) ||
-          c.model.toLowerCase().includes(term) ||
-          c.color.toLowerCase().includes(term)
-      );
-    }
-    setFiltered(result);
-  }, [cars, category, search]);
+  }, [category, search]);
 
   return (
     <div className="supercar-gallery">

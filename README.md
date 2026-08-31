@@ -251,6 +251,8 @@ If `SHOPIFY_STORE_DOMAIN` is not set, the checkout endpoint returns a local `/or
 
 
 
+## 🔧 Troubleshooting
+
 **Port already in use**
 ```bash
 lsof -i :5000   # find PID
