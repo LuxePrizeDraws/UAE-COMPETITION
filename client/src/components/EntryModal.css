@@ -308,3 +308,81 @@
   .prize-options { flex-direction: column; }
   .confirmation-grid { grid-template-columns: 1fr; }
 }
+
+/* Ring-fencing breakdown in checkout */
+.entry-modal__rf-breakdown {
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  font-size: 0.82rem;
+}
+.rf-breakdown-title {
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+.rf-breakdown-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #cbd5e1;
+}
+.rf-chk { margin-right: 4px; }
+.rf-breakdown-list em { color: #64748b; }
+.rf-guarantees {
+  border-top: 1px solid rgba(34, 211, 238, 0.15);
+  padding-top: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+.rf-cert-link {
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.rf-cert-link:hover { text-decoration: underline; }
+
+/* Ring-fencing guarantees in confirmation */
+.confirmation-rf {
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  text-align: left;
+  font-size: 0.82rem;
+}
+.rf-confirm-title {
+  font-weight: 700;
+  color: #22d3ee;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+.rf-confirm-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #cbd5e1;
+}
+.rf-verified { color: #4ade80; }
+.rf-confirm-links { display: flex; gap: 12px; flex-wrap: wrap; }
+.rf-confirm-link {
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.rf-confirm-link:hover { text-decoration: underline; }

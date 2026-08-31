@@ -22,6 +22,7 @@ interface Competition {
   profitMargin: string;
   expectedWinners: number;
   prizeIncludes?: string[];
+  ringFencedPercent?: number;
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -87,6 +88,7 @@ export default function Home() {
             <div className="badge"><span className="badge-icon">📊</span><span className="badge-text">Transparent Odds</span></div>
             <div className="badge"><span className="badge-icon">✅</span><span className="badge-text">Guaranteed Winners</span></div>
             <div className="badge"><span className="badge-icon">🔴</span><span className="badge-text">Live Draws</span></div>
+            <div className="badge"><span className="badge-icon">🛡️</span><span className="badge-text">Ring-Fenced Prizes</span></div>
           </div>
           <a href="#competitions" className="btn-cta">VIEW COMPETITIONS ↓</a>
         </div>
@@ -165,7 +167,10 @@ export default function Home() {
       <footer className="home-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+          <div className="footer-links">
+            <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+            <Link to="/ring-fencing" className="footer-dash-link">🛡️ Ring-Fencing Guarantees →</Link>
+          </div>
         </div>
       </footer>
 
