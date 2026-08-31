@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { SUPERCAR_TICKER, getCompetitionVisualImage } from '../constants/competitionVisuals';
+import '../styles/supercarTicker.css';
 import './CompetitionCard.css';
 
 interface Competition {
@@ -34,13 +36,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
   const isVehicleCompetition = competition.id === 7;
-  const visualImage = isVehicleCompetition
-    ? 'https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&w=1200&q=70'
-    : [1, 3, 4, 5, 6].includes(competition.id)
-      ? 'https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?auto=format&fit=crop&w=1200&q=70'
-      : [2, 8].includes(competition.id)
-        ? 'https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=1200&q=70'
-        : '';
+  const visualImage = getCompetitionVisualImage(competition.id);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
@@ -65,14 +61,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
       {isVehicleCompetition && (
         <div className="supercar-ticker" aria-label="Featured supercars">
           <div className="supercar-ticker__track">
-            {[
-              'Porsche 911 Turbo S',
-              'Lamborghini Huracán',
-              'Ferrari 488 GTB',
-              'Porsche 911 Turbo S',
-              'Lamborghini Huracán',
-              'Ferrari 488 GTB',
-            ].map((name, index) => (
+            {[...SUPERCAR_TICKER, ...SUPERCAR_TICKER].map((name, index) => (
               <span key={`${name}-${index}`} className="supercar-ticker__item">
                 {name}
               </span>

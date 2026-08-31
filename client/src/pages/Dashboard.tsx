@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
+import { SUPERCAR_TICKER, getCompetitionVisualImage } from '../constants/competitionVisuals';
+import '../styles/supercarTicker.css';
 import './Dashboard.css';
 
 interface Competition {
@@ -146,8 +148,6 @@ const COMPETITIONS: Competition[] = [
   },
 ];
 
-const SUPERCAR_TICKER = ['Porsche 911 Turbo S', 'Lamborghini Huracán', 'Ferrari 488 GTB'];
-
 type DrawStatus = 'ready' | 'almost' | 'in-progress' | 'coming-soon';
 
 function getDrawStatus(percent: number): DrawStatus {
@@ -190,13 +190,7 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
   const statusInfo = getStatusLabel(drawStatus);
   const typeColor = getTypeColor(comp.type);
   const remaining = comp.entriesNeeded - comp.entriesSold;
-  const visualImage = comp.id === 7
-    ? 'https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&w=1200&q=70'
-    : [1, 3, 4, 5, 6].includes(comp.id)
-      ? 'https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?auto=format&fit=crop&w=1200&q=70'
-      : [2, 8].includes(comp.id)
-        ? 'https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=1200&q=70'
-        : '';
+  const visualImage = getCompetitionVisualImage(comp.id);
 
   return (
     <div
