@@ -110,6 +110,9 @@
   display: flex;
   align-items: center;
   gap: 0.9rem;
+  position: static;
+  z-index: auto;
+  margin-top: 0;
   padding: 1rem 1.2rem;
   border: 1px solid rgba(249, 115, 22, 0.28);
   border-radius: 18px;
@@ -296,12 +299,6 @@
   backdrop-filter: blur(8px);
 }
 
-.supercar-ticker--showcase {
-  position: static;
-  z-index: auto;
-  margin-top: 0;
-}
-
 .dash-card__prize .prize-main {
   font-size: 1.4rem;
   font-weight: 900;
@@ -393,6 +390,7 @@
 /* CTA button */
 .dash-card__cta {
   margin-top: auto;
+  background: linear-gradient(135deg, #c9a84c, #a07830);
   color: #0a0a0a;
   font-weight: 900;
   font-size: 0.9rem;
@@ -419,18 +417,30 @@
 
 .dash-card__cta--cash {
   background: linear-gradient(135deg, #86efac, #22c55e);
+  color: #052e16;
 }
 
 .dash-card__cta--vehicle {
   background: linear-gradient(135deg, #fdba74, #f97316);
+  color: #431407;
 }
 
 .dash-card__cta--package {
   background: linear-gradient(135deg, #c4b5fd, #8b5cf6);
+  color: #ffffff;
 }
 
 .dash-card__cta--experience {
   background: linear-gradient(135deg, #67e8f9, #06b6d4);
+  color: #083344;
+}
+
+.dash-card__cta--cash:disabled,
+.dash-card__cta--vehicle:disabled,
+.dash-card__cta--package:disabled,
+.dash-card__cta--experience:disabled {
+  background: #2a2a2a;
+  color: #555;
 }
 
 /* Modal */
@@ -523,45 +533,70 @@
     transform: translateY(0);
     filter: brightness(1.15);
   }
-  30%, 100% {
+  30% {
     opacity: 0;
     transform: translateY(-115%);
     filter: brightness(0.95);
   }
-}
-
-@keyframes tickerCycleSecond {
-  0%, 28% {
+  30.01%, 92% {
     opacity: 0;
     transform: translateY(115%);
     filter: brightness(0.95);
   }
-  34%, 56% {
+  100% {
     opacity: 1;
     transform: translateY(0);
     filter: brightness(1.15);
   }
-  64%, 100% {
+}
+
+@keyframes tickerCycleSecond {
+  0%, 24% {
+    opacity: 0;
+    transform: translateY(115%);
+    filter: brightness(0.95);
+  }
+  26% {
+    opacity: 0.35;
+    transform: translateY(60%);
+    filter: brightness(1.02);
+  }
+  30%, 56% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: brightness(1.15);
+  }
+  64% {
     opacity: 0;
     transform: translateY(-115%);
+    filter: brightness(0.95);
+  }
+  64.01%, 100% {
+    opacity: 0;
+    transform: translateY(115%);
     filter: brightness(0.95);
   }
 }
 
 @keyframes tickerCycleThird {
-  0%, 62% {
+  0%, 58% {
     opacity: 0;
     transform: translateY(115%);
     filter: brightness(0.95);
   }
-  68%, 90% {
+  64%, 90% {
     opacity: 1;
     transform: translateY(0);
     filter: brightness(1.15);
   }
-  98%, 100% {
+  98% {
     opacity: 0;
     transform: translateY(-115%);
+    filter: brightness(0.95);
+  }
+  98.01%, 100% {
+    opacity: 0;
+    transform: translateY(115%);
     filter: brightness(0.95);
   }
 }

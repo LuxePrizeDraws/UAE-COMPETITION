@@ -286,7 +286,6 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
   const typeColor = getTypeColor(comp.type);
   const remaining = comp.entriesNeeded - comp.entriesSold;
   const theme = COMPETITION_THEMES[comp.type];
-  const showSupercarTicker = comp.type === 'vehicle';
 
   return (
     <div
@@ -305,7 +304,7 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
 
       <div className="dash-card__visual">
         <div className="dash-card__visual-badge">{theme.accent}</div>
-        {showSupercarTicker && (
+        {comp.type === 'vehicle' && (
           <SupercarTicker />
         )}
       </div>
