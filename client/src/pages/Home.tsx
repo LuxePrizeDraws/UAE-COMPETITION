@@ -711,7 +711,11 @@ export default function Home() {
       <footer className="home-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+          <div className="footer-links">
+            <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+            <Link to="/mission" className="footer-dash-link">🧠 Mission &amp; Impact</Link>
+            <Link to="/terms" className="footer-dash-link">Terms &amp; Conditions</Link>
+          </div>
         </div>
       </footer>
 
