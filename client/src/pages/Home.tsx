@@ -77,29 +77,43 @@ export default function Home() {
           <div className="hero-gradient" />
         </div>
         <div className="hero-content">
-          <span className="hero-badge">🏆 UAE Premium Competitions</span>
-          <h1 className="hero-title">Win Life-Changing Prizes</h1>
+          <span className="hero-badge">💎 Premium Competitions — UAE &amp; UK</span>
+          <h1 className="hero-title">Premium Competitions.<br />Guaranteed Prizes.</h1>
           <p className="hero-subtitle">
-            Fair draws · Cash alternatives · Transparent odds · Guaranteed winners
+            Your chance to win life-changing prizes — with equal odds for every entrant.<br />
+            Digital or free postal entry. Always fair. Always transparent.
           </p>
           <div className="hero-badges">
-            <div className="badge"><span className="badge-icon">💰</span><span className="badge-text">Cash Alternatives</span></div>
-            <div className="badge"><span className="badge-icon">📊</span><span className="badge-text">Transparent Odds</span></div>
+            <div className="badge"><span className="badge-icon">🛡️</span><span className="badge-text">Ring-Fenced Prizes</span></div>
+            <div className="badge"><span className="badge-icon">📮</span><span className="badge-text">Free Postal Entry</span></div>
             <div className="badge"><span className="badge-icon">✅</span><span className="badge-text">Guaranteed Winners</span></div>
-            <div className="badge"><span className="badge-icon">🔴</span><span className="badge-text">Live Draws</span></div>
+            <div className="badge"><span className="badge-icon">🔒</span><span className="badge-text">Secure &amp; Regulated</span></div>
           </div>
-          <a href="#competitions" className="btn-cta">VIEW COMPETITIONS ↓</a>
+          <a href="#competitions" className="btn-cta">View Competitions ↓</a>
         </div>
       </section>
 
       {/* Stats bar */}
       <div className="home-stats">
+        <div className="home-stats__inner">
+          <div className="home-stat"><strong>{competitions.length}</strong><span>Competitions</span></div>
+          <div className="home-stat"><strong>{liveComps.length}</strong><span>Live Now</span></div>
+          <div className="home-stat"><strong>£18.4M</strong><span>Annual Prizes</span></div>
+          <div className="home-stat"><strong>100%</strong><span>Prize Guaranteed</span></div>
+        </div>
+      </div>
+
+      {/* Ring-fenced guarantee banner */}
+      <div className="guarantee-banner">
         <div className="container">
-          <div className="home-stats__inner">
-            <div className="home-stat"><strong>{competitions.length}</strong><span>Competitions</span></div>
-            <div className="home-stat"><strong>{liveComps.length}</strong><span>Live Now</span></div>
-            <div className="home-stat"><strong>£18.4M</strong><span>Annual Prizes</span></div>
-            <div className="home-stat"><strong>100%</strong><span>Cash Alternative</span></div>
+          <div className="guarantee-icon">🛡️</div>
+          <div className="guarantee-text">
+            <h3>Ring-Fenced Prize Guarantee</h3>
+            <p>
+              Every prize is 100% ring-fenced before a competition opens. This means the prize money or
+              physical prize is secured and held in trust — guaranteed to be paid out to a winner, no matter what.
+              You can enter with complete confidence.
+            </p>
           </div>
         </div>
       </div>
@@ -107,8 +121,8 @@ export default function Home() {
       {/* Competitions */}
       <section className="competitions-section" id="competitions">
         <div className="container">
-          <h2 className="section-title">🎯 LIVE COMPETITIONS</h2>
-          {loading && <p className="loading">Loading competitions...</p>}
+          <h2 className="section-title">Live <span>Competitions</span></h2>
+          {loading && <p className="loading">Loading competitions…</p>}
           {error && <p className="loading" style={{ color: '#f87171' }}>{error}</p>}
           {!loading && !error && (
             <div className="competitions-grid">
@@ -135,27 +149,27 @@ export default function Home() {
       {/* Trust Section */}
       <section className="trust-section">
         <div className="container">
-          <h2 className="section-title">WHY CHOOSE US</h2>
+          <h2 className="section-title">Why <span>Choose Us</span></h2>
           <div className="trust-grid">
+            <div className="trust-item">
+              <div className="trust-icon">🛡️</div>
+              <h3>Ring-Fenced Prizes</h3>
+              <p>Every prize is secured in trust before the competition opens. Your win is guaranteed.</p>
+            </div>
+            <div className="trust-item">
+              <div className="trust-icon">📮</div>
+              <h3>Free Postal Entry</h3>
+              <p>Enter any competition for free by post. Identical odds to paid digital entries — completely equal.</p>
+            </div>
             <div className="trust-item">
               <div className="trust-icon">🔒</div>
               <h3>Secure Platform</h3>
-              <p>Bank-grade security and SSL encryption on all transactions</p>
-            </div>
-            <div className="trust-item">
-              <div className="trust-icon">📡</div>
-              <h3>Live Fair Draws</h3>
-              <p>Every draw is conducted live and verifiably fair</p>
-            </div>
-            <div className="trust-item">
-              <div className="trust-icon">💰</div>
-              <h3>Cash Alternative</h3>
-              <p>Every prize has a cash equivalent — you always have the choice</p>
+              <p>Bank-grade security and SSL encryption on all transactions via Stripe.</p>
             </div>
             <div className="trust-item">
               <div className="trust-icon">📊</div>
               <h3>Transparent Odds</h3>
-              <p>40% house margin shown publicly. No hidden fees or surprises</p>
+              <p>40% house margin shown publicly. No hidden fees or surprises — ever.</p>
             </div>
           </div>
         </div>
@@ -164,8 +178,14 @@ export default function Home() {
       {/* Footer */}
       <footer className="home-footer">
         <div className="container">
-          <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+          <div className="footer-links">
+            <Link to="/postal-entry">Free Postal Entry</Link>
+            <Link to="/dashboard">Live Dashboard</Link>
+            <a href="#">Terms &amp; Conditions</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Responsible Gaming</a>
+          </div>
+          <p>© {new Date().getFullYear()} LuxePrize · Ring-Fenced · Fair · Regulated</p>
         </div>
       </footer>
 

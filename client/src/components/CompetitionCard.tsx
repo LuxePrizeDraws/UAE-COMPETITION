@@ -45,42 +45,38 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
     <div className="competition-card">
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
+        <span className="ring-fenced-badge">🛡️ Ring-Fenced Prize</span>
+        <span className="postal-badge">📮 Free Postal Entry</span>
       </div>
 
-      <div className="card-content">
-        <div className="prize-section">
-          <p className="prize-label">WIN</p>
-          <h3 className="prize-amount">
-            {competition.prizeAmount.toLocaleString()} {competition.prizeDetails.currency}
-          </h3>
-          <p className="prize-description">{competition.description}</p>
-          {competition.prizeDetails.includes && (
-            <div className="prize-includes">
-              {competition.prizeDetails.includes.map((item, idx) => (
-                <span key={idx} className="include-item">✓ {item}</span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="prize-image-placeholder">
-          <div className="image-placeholder">💎</div>
-        </div>
+      <div>
+        <p className="prize-label">Prize Value</p>
+        <h3 className="prize-amount">
+          £{competition.prizeAmount.toLocaleString()}
+        </h3>
+        <p className="prize-description">{competition.description}</p>
+        {competition.prizeDetails.includes && (
+          <div className="prize-includes">
+            {competition.prizeDetails.includes.map((item, idx) => (
+              <span key={idx} className="include-item">✓ {item}</span>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="card-stats">
         <div className="stat">
-          <span className="stat-label">TICKET PRICE</span>
-          <span className="stat-value">{competition.entryPrice} AED</span>
-          <span className="stat-sublabel">PER ENTRY</span>
+          <span className="stat-label">Ticket Price</span>
+          <span className="stat-value">£{competition.entryPrice}</span>
+          <span className="stat-sublabel">per entry</span>
         </div>
         <div className="stat">
-          <span className="stat-label">ODDS (Each Entry)</span>
+          <span className="stat-label">Your Odds</span>
           <span className="stat-value">1 in {remainingEntries.toLocaleString()}</span>
           <span className="stat-sublabel">{odds}%</span>
         </div>
         <div className="stat">
-          <span className="stat-label">ENTRIES AVAILABLE</span>
+          <span className="stat-label">Available</span>
           <span className="stat-value">{remainingEntries.toLocaleString()}</span>
           <span className="stat-sublabel">of {competition.totalEntries.toLocaleString()}</span>
         </div>
@@ -92,7 +88,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
           <span>{progressPercent.toFixed(1)}%</span>
         </div>
         <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${progressPercent}%` }}></div>
+          <div className="progress-fill" style={{ width: `${progressPercent}%` }} />
         </div>
         <div className="progress-detail">
           {competition.soldEntries.toLocaleString()} / {competition.totalEntries.toLocaleString()} sold
@@ -113,8 +109,9 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
 
       <div className="entry-controls">
         <div className="quantity-selector">
-          <label>Number of Tickets:</label>
+          <label htmlFor={`qty-${competition.id}`}>Number of Tickets</label>
           <input
+            id={`qty-${competition.id}`}
             type="number"
             min="1"
             max="100"
@@ -124,8 +121,8 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
           />
         </div>
         <div className="cost-display">
-          <span className="cost-label">Total Cost:</span>
-          <span className="cost-amount">{totalCost} AED</span>
+          <span className="cost-label">Total Cost</span>
+          <span className="cost-amount">£{totalCost}</span>
         </div>
       </div>
 
@@ -134,11 +131,11 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         disabled={competition.status === 'coming-soon'}
         onClick={() => onEnter?.(competition.id)}
       >
-        {competition.status === 'coming-soon' ? '⏳ COMING SOON' : `ENTER NOW - ${totalCost} AED`}
+        {competition.status === 'coming-soon' ? '⏳ Coming Soon' : `Enter Now — £${totalCost}`}
       </button>
 
       <div className="terms-link">
-        <a href="#">View Full Terms & Conditions</a>
+        <a href="#">View Full Terms &amp; Conditions</a>
       </div>
     </div>
   );
