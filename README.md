@@ -197,7 +197,59 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 
 ---
 
-## 🔧 Troubleshooting
+## 🛒 Shopify Integration
+
+The platform uses Shopify as the commerce/checkout layer. The backend generates Shopify checkout URLs and processes webhook events; the React frontend redirects buyers into Shopify checkout and shows a post-purchase confirmation screen.
+
+### How the flow works
+
+1. **User browses** a competition and clicks **CHECKOUT**.
+2. **Backend** (`POST /api/shopify/checkout`) validates the request and builds a Shopify cart URL containing the variant ID mapped to that competition, plus metadata (competition ID, prize option).
+3. **User is redirected** to Shopify checkout to pay securely.
+4. After payment, Shopify redirects the buyer back to `/order-confirmed`.
+5. **Shopify fires a webhook** (`orders/paid`) to `POST /api/shopify/webhook`. The backend verifies the HMAC signature, maps line items back to competition entries, and persists the records.
+
+### Required environment variables
+
+| Variable | Description |
+|---|---|
+| `SHOPIFY_STORE_DOMAIN` | Your store domain, e.g. `my-store.myshopify.com` |
+| `SHOPIFY_STOREFRONT_TOKEN` | Storefront API public access token |
+| `SHOPIFY_ADMIN_TOKEN` | Admin API token (for reading orders) |
+| `SHOPIFY_WEBHOOK_SECRET` | HMAC secret from Shopify webhook config |
+| `SHOPIFY_API_VERSION` | API version (default `2024-10`) |
+| `SHOPIFY_VARIANT_MAP` | JSON mapping competition IDs → variant IDs, e.g. `{"1":"12345","2":"67890"}` |
+
+### Shopify setup steps
+
+1. Create a **Shopify store** (free trial or Partners sandbox).
+2. For each competition, create a **Product** with a single variant priced in GBP.
+3. Copy each variant's ID (from the URL in admin, or Storefront API).
+4. Build the `SHOPIFY_VARIANT_MAP` JSON and add to your backend `.env`.
+5. In **Settings → Notifications → Webhooks**, add:
+   - Topic: `orders/paid` → URL: `https://your-backend.railway.app/api/shopify/webhook`
+   - Topic: `orders/cancelled` → same URL
+   - Copy the **webhook signing secret** to `SHOPIFY_WEBHOOK_SECRET`.
+6. Create a **Storefront API** app (Apps → Develop apps) with `unauthenticated_read_checkouts` scope and copy the public access token to `SHOPIFY_STOREFRONT_TOKEN`.
+7. Restart the backend.
+
+### Development without a Shopify store
+
+If `SHOPIFY_STORE_DOMAIN` is not set, the checkout endpoint returns a local `/order-confirmed` URL so the full UI flow can be tested without a real store. A banner on the confirmation page indicates demo mode.
+
+---
+
+## 📊 New pages and API routes
+
+| Route | Description |
+|---|---|
+| `/gallery/supercars` | Supercar prize gallery with search + category filter |
+| `/order-confirmed` | Post-checkout confirmation (receives Shopify return params) |
+| `POST /api/shopify/checkout` | Generate Shopify checkout URL |
+| `POST /api/shopify/webhook` | Receive and verify Shopify webhook events |
+| `GET /api/supercars` | Supercar data with optional `?category=` and `?search=` |
+
+
 
 **Port already in use**
 ```bash

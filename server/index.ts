@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import { buildCartUrl, verifyWebhookSignature, mapOrderToEntries } from './shopifyService.js';
 
 dotenv.config();
 
@@ -269,10 +270,228 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
 });
 
+// ---------------------------------------------------------------------------
+// Supercars gallery endpoint
+// ---------------------------------------------------------------------------
+const supercars = [
+  {
+    id: 1,
+    make: 'Ferrari',
+    model: '488 GTB',
+    year: 2023,
+    color: 'Rosso Corsa',
+    horsepower: 660,
+    topSpeed: 205,
+    zeroToSixty: 3.0,
+    value: 280000,
+    currency: 'GBP',
+    category: 'Sports',
+    image: '🏎️',
+    available: true,
+    competitionId: 7,
+  },
+  {
+    id: 2,
+    make: 'Lamborghini',
+    model: 'Huracán EVO',
+    year: 2023,
+    color: 'Arancio Borealis',
+    horsepower: 640,
+    topSpeed: 202,
+    zeroToSixty: 2.9,
+    value: 220000,
+    currency: 'GBP',
+    category: 'Sports',
+    image: '🏎️',
+    available: true,
+    competitionId: 7,
+  },
+  {
+    id: 3,
+    make: 'Porsche',
+    model: '911 Turbo S',
+    year: 2024,
+    color: 'GT Silver',
+    horsepower: 650,
+    topSpeed: 205,
+    zeroToSixty: 2.7,
+    value: 200000,
+    currency: 'GBP',
+    category: 'Sports',
+    image: '🚗',
+    available: true,
+    competitionId: 7,
+  },
+  {
+    id: 4,
+    make: 'McLaren',
+    model: '720S',
+    year: 2023,
+    color: 'Papaya Spark',
+    horsepower: 710,
+    topSpeed: 212,
+    zeroToSixty: 2.8,
+    value: 250000,
+    currency: 'GBP',
+    category: 'Hypercar',
+    image: '🏎️',
+    available: false,
+    competitionId: null,
+  },
+  {
+    id: 5,
+    make: 'Bentley',
+    model: 'Continental GT Speed',
+    year: 2024,
+    color: 'Midnight Emerald',
+    horsepower: 659,
+    topSpeed: 208,
+    zeroToSixty: 3.2,
+    value: 270000,
+    currency: 'GBP',
+    category: 'Grand Tourer',
+    image: '🚙',
+    available: true,
+    competitionId: 8,
+  },
+  {
+    id: 6,
+    make: 'Rolls-Royce',
+    model: 'Ghost Black Badge',
+    year: 2024,
+    color: 'Black Diamond',
+    horsepower: 591,
+    topSpeed: 155,
+    zeroToSixty: 4.6,
+    value: 350000,
+    currency: 'GBP',
+    category: 'Luxury',
+    image: '🚗',
+    available: true,
+    competitionId: 8,
+  },
+];
+
+app.get('/api/supercars', (req: Request, res: Response) => {
+  const { category, search } = req.query as Record<string, string | undefined>;
+  let result = supercars;
+  if (category && category !== 'all') {
+    result = result.filter((c) => c.category.toLowerCase() === category.toLowerCase());
+  }
+  if (search) {
+    const term = search.toLowerCase();
+    result = result.filter(
+      (c) =>
+        c.make.toLowerCase().includes(term) ||
+        c.model.toLowerCase().includes(term) ||
+        c.color.toLowerCase().includes(term)
+    );
+  }
+  res.json(result);
+});
+
+// ---------------------------------------------------------------------------
+// Shopify checkout endpoint
+// POST /api/shopify/checkout
+// Body: { competitionId, quantity, prizeOption, termsAccepted }
+// ---------------------------------------------------------------------------
+app.post('/api/shopify/checkout', (req: Request, res: Response) => {
+  const { competitionId, quantity, prizeOption, termsAccepted } = req.body as {
+    competitionId?: number;
+    quantity?: number;
+    prizeOption?: string;
+    termsAccepted?: boolean;
+  };
+
+  if (!termsAccepted) {
+    return res.status(400).json({ error: 'You must accept the terms and conditions to enter.' });
+  }
+
+  const competition = competitions.find((c) => c.id === Number(competitionId));
+  if (!competition) {
+    return res.status(404).json({ error: 'Competition not found.' });
+  }
+  if (competition.status === 'coming-soon') {
+    return res.status(400).json({ error: 'Competition not yet open. Please check back soon.' });
+  }
+
+  const qty = Number(quantity);
+  if (!Number.isInteger(qty) || qty < 1 || qty > 1000) {
+    return res.status(400).json({ error: 'Quantity must be a whole number between 1 and 1000.' });
+  }
+
+  const validPrizeOptions = ['cash', 'physical'];
+  const selectedPrize = prizeOption && validPrizeOptions.includes(prizeOption) ? prizeOption : 'cash';
+
+  try {
+    const checkoutUrl = buildCartUrl({
+      competitionId: competition.id,
+      quantity: qty,
+      prizeOption: selectedPrize,
+    });
+
+    return res.json({
+      success: true,
+      checkoutUrl,
+      competitionId: competition.id,
+      competitionTitle: competition.title,
+      quantity: qty,
+      totalCost: qty * competition.entryPrice,
+      currency: competition.currency,
+      prizeOption: selectedPrize,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Could not create checkout.';
+    return res.status(500).json({ error: message });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Shopify webhook endpoint
+// POST /api/shopify/webhook
+// Headers: X-Shopify-Topic, X-Shopify-Hmac-Sha256
+// ---------------------------------------------------------------------------
+app.post(
+  '/api/shopify/webhook',
+  express.raw({ type: 'application/json' }),
+  (req: Request, res: Response) => {
+    const hmacHeader = (req.headers['x-shopify-hmac-sha256'] as string) || '';
+    const topic = (req.headers['x-shopify-topic'] as string) || '';
+    const rawBody: Buffer = req.body as Buffer;
+
+    if (!verifyWebhookSignature(rawBody, hmacHeader)) {
+      return res.status(401).json({ error: 'Webhook signature verification failed.' });
+    }
+
+    let order: Record<string, unknown>;
+    try {
+      order = JSON.parse(rawBody.toString('utf-8')) as Record<string, unknown>;
+    } catch {
+      return res.status(400).json({ error: 'Invalid JSON payload.' });
+    }
+
+    if (topic === 'orders/paid') {
+      const entries = mapOrderToEntries(order);
+      // In a full implementation, persist entries to a database here.
+      // For now, log and acknowledge.
+      console.log(`[Shopify] orders/paid – mapped ${entries.length} entry record(s)`, entries);
+      return res.status(200).json({ received: true, entries });
+    }
+
+    if (topic === 'orders/cancelled' || topic === 'refunds/create') {
+      console.log(`[Shopify] ${topic} – order ${order.id} cancelled/refunded`);
+      return res.status(200).json({ received: true });
+    }
+
+    return res.status(200).json({ received: true });
+  }
+);
+
 // Start server
 app.listen(PORT, () => {
   console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
   console.log(`📡 CORS enabled for http://localhost:5173`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);
+  console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions`);
+  console.log(`🛒 Shopify checkout: POST http://localhost:${PORT}/api/shopify/checkout\n`);
 });
