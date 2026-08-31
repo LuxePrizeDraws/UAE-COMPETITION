@@ -86,6 +86,89 @@
 }
 .legend-item { display: flex; align-items: center; gap: 0.4rem; }
 
+.world-record-strip {
+  max-width: 1400px;
+  margin: 0 auto 1.5rem;
+  padding: 0 2rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.world-record-strip h2 {
+  font-size: 1.2rem;
+  color: #d4af37;
+}
+
+.world-record-strip p,
+.world-record-strip span {
+  color: #aaa;
+  font-size: 0.88rem;
+}
+
+.world-record-strip__progress {
+  height: 10px;
+  border-radius: 999px;
+  background: #1f1f1f;
+  overflow: hidden;
+}
+
+.world-record-strip__progress div {
+  height: 100%;
+  background: linear-gradient(90deg, #c9a84c, #f0d060);
+}
+
+.dash-supercars {
+  max-width: 1400px;
+  margin: 0 auto 2rem;
+  padding: 0 2rem;
+}
+
+.dash-supercars__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.dash-supercars__header h2 {
+  color: #d4af37;
+  font-size: 1.2rem;
+}
+
+.dash-supercars__header a {
+  color: #c9a84c;
+}
+
+.dash-supercars__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.dash-supercars__grid article {
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #111;
+}
+
+.dash-supercars__grid img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.dash-supercars__grid h3 {
+  font-size: 0.95rem;
+  padding: 0.7rem 0.8rem 0.25rem;
+}
+
+.dash-supercars__grid p {
+  color: #d4af37;
+  font-size: 0.82rem;
+  padding: 0 0.8rem 0.8rem;
+}
+
 /* Grid */
 .dash-grid {
   display: grid;
@@ -333,6 +416,6 @@
 @media (max-width: 600px) {
   .dash-header { padding: 1rem; }
   .dash-title { font-size: 1.4rem; }
-  .dash-stats, .dash-grid, .draw-legend { padding: 0 1rem; }
+  .dash-stats, .dash-grid, .draw-legend, .world-record-strip, .dash-supercars { padding: 0 1rem; }
   .detail-grid { grid-template-columns: 1fr; }
 }

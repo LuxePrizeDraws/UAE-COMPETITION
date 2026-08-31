@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
+import { Supercar } from '../types/supercar';
 import './Dashboard.css';
 
 interface Competition {
@@ -262,14 +263,23 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
 }
 
 export default function Dashboard() {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [entryCompId, setEntryCompId] = useState<number | null>(null);
+  const [supercars, setSupercars] = useState<Supercar[]>([]);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 800);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/supercars`)
+      .then((res) => res.json())
+      .then((data: Supercar[]) => setSupercars(data.slice(0, 4)))
+      .catch(() => setSupercars([]));
+  }, [API_URL]);
 
   const liveCount = COMPETITIONS.filter(c => c.status === 'live').length;
   const comingSoonCount = COMPETITIONS.filter(c => c.status === 'coming-soon').length;
@@ -330,6 +340,33 @@ export default function Dashboard() {
           <span className="stat-label">Avg Monthly Revenue</span>
         </div>
       </section>
+
+      <section className="world-record-strip">
+        <h2>🌍 World Record Prize Pool (Ongoing)</h2>
+        <p>No timer. Continuous push to beat the all-time app prize record.</p>
+        <div className="world-record-strip__progress">
+          <div style={{ width: '74.7%' }} />
+        </div>
+        <span>£1,120,000 of £1,500,000 target</span>
+      </section>
+
+      {supercars.length > 0 && (
+        <section className="dash-supercars">
+          <div className="dash-supercars__header">
+            <h2>Featured Prize Supercars</h2>
+            <Link to="/gallery/supercars">View full gallery →</Link>
+          </div>
+          <div className="dash-supercars__grid">
+            {supercars.map((car) => (
+              <article key={car.id}>
+                <img src={car.images[0]} alt={`${car.brand} ${car.model}`} loading="lazy" />
+                <h3>{car.brand} {car.model}</h3>
+                <p>{car.price_range}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="draw-legend">
         <span className="legend-item"><span style={{ color: '#22c55e' }}>🟢</span> Draw Ready (100%)</span>

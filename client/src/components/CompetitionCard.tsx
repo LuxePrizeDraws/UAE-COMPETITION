@@ -20,6 +20,8 @@ interface Competition {
   profitMargin: string;
   expectedWinners: number;
   status?: string;
+  featuredImage?: string;
+  featuredHeadline?: string;
 }
 
 interface CompetitionCardProps {
@@ -64,9 +66,22 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         </div>
 
         <div className="prize-image-placeholder">
-          <div className="image-placeholder">💎</div>
+          {competition.featuredImage ? (
+            <img
+              src={competition.featuredImage}
+              alt={competition.featuredHeadline || competition.title}
+              className="prize-image"
+              loading="lazy"
+            />
+          ) : (
+            <div className="image-placeholder">💎</div>
+          )}
         </div>
       </div>
+
+      {competition.featuredHeadline && (
+        <p className="featured-headline">{competition.featuredHeadline}</p>
+      )}
 
       <div className="card-stats">
         <div className="stat">

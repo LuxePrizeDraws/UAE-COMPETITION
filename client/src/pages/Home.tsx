@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
+import SupercarCarousel from '../components/supercars/SupercarCarousel';
+import { Supercar } from '../types/supercar';
 import './Home.css';
 
 interface Competition {
@@ -22,12 +24,15 @@ interface Competition {
   profitMargin: string;
   expectedWinners: number;
   prizeIncludes?: string[];
+  featuredImage?: string;
+  featuredHeadline?: string;
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Home() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [supercars, setSupercars] = useState<Supercar[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedComp, setSelectedComp] = useState<Competition | null>(null);
@@ -43,6 +48,13 @@ export default function Home() {
         setError('Could not load competitions. Please try again later.');
         setLoading(false);
       });
+  }, []);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/supercars`)
+      .then((res) => res.json())
+      .then((data) => setSupercars(data))
+      .catch(() => setSupercars([]));
   }, []);
 
   const liveComps = competitions.filter((c) => c.status === 'live');
@@ -67,6 +79,8 @@ export default function Home() {
     profitMargin: c.profitMargin,
     expectedWinners: c.expectedWinners,
     status: c.status,
+    featuredImage: c.featuredImage,
+    featuredHeadline: c.featuredHeadline,
   }));
 
   return (
@@ -91,6 +105,12 @@ export default function Home() {
           <a href="#competitions" className="btn-cta">VIEW COMPETITIONS ↓</a>
         </div>
       </section>
+
+      {supercars.length > 0 && (
+        <section className="home-supercar-carousel container">
+          <SupercarCarousel cars={supercars} />
+        </section>
+      )}
 
       {/* Stats bar */}
       <div className="home-stats">
@@ -131,6 +151,41 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      <section className="world-record-section">
+        <div className="container">
+          <h2 className="section-title">🌍 Ongoing World Record Prize Push</h2>
+          <p className="world-record-subtitle">No countdown — this is a long-term global effort to set the biggest prize history record.</p>
+          <div className="world-record-panel">
+            <div className="world-record-row">
+              <span>Current Prize Pool</span>
+              <strong>£1,120,000</strong>
+            </div>
+            <div className="world-record-row">
+              <span>Record Target</span>
+              <strong>£1,500,000</strong>
+            </div>
+            <div className="world-record-progress">
+              <div className="world-record-progress__fill" style={{ width: '74.7%' }} />
+            </div>
+            <p>74.7% complete • Keep entering to break the world record.</p>
+            <Link to="/gallery/supercars" className="world-record-cta">Browse our supercar collection</Link>
+          </div>
+        </div>
+      </section>
+
+      {supercars[0] && (
+        <section className="winner-spotlight">
+          <div className="container winner-spotlight__inner">
+            <img src={supercars[0].images[0]} alt={`Winning ${supercars[0].brand} ${supercars[0].model}`} loading="lazy" />
+            <div>
+              <p className="winner-spotlight__eyebrow">Winner Spotlight</p>
+              <h3>They won this {supercars[0].brand} {supercars[0].model}!</h3>
+              <p>Recent winner: Alex M. — celebration mode unlocked.</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Trust Section */}
       <section className="trust-section">

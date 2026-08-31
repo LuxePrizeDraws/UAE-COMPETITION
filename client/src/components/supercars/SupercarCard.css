@@ -1,0 +1,64 @@
+.supercar-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 300ms ease, box-shadow 300ms ease, filter 300ms ease, border-color 300ms ease;
+  text-align: left;
+  color: #f5f5f0;
+}
+
+.supercar-card:hover,
+.supercar-card:focus-visible {
+  transform: scale(1.05);
+  border-color: #d4af37;
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+  filter: brightness(1.08);
+}
+
+.supercar-card__image-wrap {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.supercar-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.supercar-card__content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.supercar-card__meta {
+  display: flex;
+  justify-content: space-between;
+  color: #c9a84c;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.supercar-card h3 {
+  font-size: 1.15rem;
+}
+
+.supercar-card__price {
+  color: #d4af37;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.supercar-card__type {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid #c9a84c;
+  border-radius: 999px;
+}

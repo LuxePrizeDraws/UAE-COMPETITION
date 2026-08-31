@@ -62,6 +62,10 @@
   width: 100%;
 }
 
+.home-supercar-carousel {
+  margin-top: 2rem;
+}
+
 /* Hero Section */
 .hero {
   position: relative;
@@ -277,6 +281,89 @@
   color: #999;
 }
 
+.world-record-section {
+  padding: 4rem 2rem;
+  background: #0d0d0d;
+}
+
+.world-record-subtitle {
+  text-align: center;
+  margin: -1.5rem auto 2rem;
+  max-width: 720px;
+  color: #aaa;
+}
+
+.world-record-panel {
+  max-width: 760px;
+  margin: 0 auto;
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.world-record-row {
+  display: flex;
+  justify-content: space-between;
+  color: #f5f5f0;
+}
+
+.world-record-row strong {
+  color: #d4af37;
+}
+
+.world-record-progress {
+  width: 100%;
+  height: 12px;
+  background: #1f1f1f;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.world-record-progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c9a84c, #f0d060);
+}
+
+.world-record-cta {
+  justify-self: start;
+  margin-top: 0.4rem;
+  color: #111;
+  background: #d4af37;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.winner-spotlight {
+  padding: 3rem 2rem;
+  background: #121212;
+  border-top: 1px solid #2a2a2a;
+}
+
+.winner-spotlight__inner {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+.winner-spotlight img {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #2a2a2a;
+}
+
+.winner-spotlight__eyebrow {
+  color: #d4af37;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.6rem;
+}
+
 /* Gallery Section */
 .gallery-section {
   padding: 4rem 2rem;
@@ -324,7 +411,13 @@
 
   .competitions-section,
   .trust-section,
-  .gallery-section {
+  .gallery-section,
+  .world-record-section,
+  .winner-spotlight {
     padding: 2rem 1rem;
+  }
+
+  .winner-spotlight__inner {
+    grid-template-columns: 1fr;
   }
 }
