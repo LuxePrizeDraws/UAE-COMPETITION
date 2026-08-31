@@ -1,0 +1,193 @@
+/* Mental Health Leaflet */
+.mhl {
+  padding: 24px;
+  color: #e0e0e0;
+}
+
+.mhl__hero {
+  text-align: center;
+  padding: 16px 0 24px;
+}
+
+.mhl__hero-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.mhl__title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 8px;
+  letter-spacing: 0.02em;
+}
+
+.mhl__subtitle {
+  font-size: 1rem;
+  color: #aaa;
+  margin: 0;
+}
+
+.mhl__section {
+  margin-bottom: 28px;
+}
+
+.mhl__section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ccc;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+  margin: 0 0 16px;
+}
+
+/* Hotlines */
+.mhl__hotlines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mhl__hotline {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.mhl__hotline-flag {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.mhl__hotline strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #ddd;
+  margin-bottom: 4px;
+}
+
+.mhl__hotline-num {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+}
+
+.mhl__hotline-num:hover {
+  text-decoration: underline;
+}
+
+/* Tips */
+.mhl__tips {
+  display: grid;
+  gap: 10px;
+}
+
+.mhl__tip {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.mhl__tip-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.mhl__tip strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #ddd;
+  margin-bottom: 4px;
+}
+
+.mhl__tip p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #999;
+  line-height: 1.5;
+}
+
+/* Warning list */
+.mhl__warning-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mhl__warning-list li {
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #ddd;
+}
+
+.mhl__warning-list li::before {
+  content: '• ';
+  color: #f87171;
+}
+
+/* CTA */
+.mhl__cta-section {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.mhl__cta-text {
+  font-size: 0.95rem;
+  color: #bbb;
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+.mhl__chat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(145deg, #2a2a2a 0%, #0a0a0a 50%, #1a1a1a 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mhl__chat-btn:hover {
+  background: linear-gradient(145deg, #3a3a3a 0%, #181818 50%, #2a2a2a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.mhl__disclaimer {
+  font-size: 0.75rem;
+  color: #666;
+  margin: 14px 0 0;
+  line-height: 1.5;
+}

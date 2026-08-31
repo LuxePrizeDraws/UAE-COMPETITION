@@ -1,0 +1,79 @@
+/* Luxury black glossy "Get Help" button */
+.mh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: linear-gradient(145deg, #2a2a2a 0%, #0a0a0a 50%, #1a1a1a 100%);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.6),
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.mh-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.mh-btn:hover::before {
+  left: 150%;
+}
+
+.mh-btn:hover {
+  background: linear-gradient(145deg, #3a3a3a 0%, #181818 50%, #2a2a2a 100%);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.7),
+    0 2px 5px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+  transform: translateY(-1px);
+}
+
+.mh-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.mh-btn__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.mh-btn__text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+/* Compact variant (for cards) */
+.mh-btn--compact {
+  padding: 8px 12px;
+}
+
+.mh-btn--compact .mh-btn__icon {
+  font-size: 0.9rem;
+}

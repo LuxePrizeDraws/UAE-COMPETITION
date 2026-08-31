@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import MentalHealthButton from './components/MentalHealthButton';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
           <nav>
             <Link to="/" className={`nav-link${!isDashboard ? ' nav-link--active' : ''}`}>Home</Link>
             <Link to="/dashboard" className={`nav-link${isDashboard ? ' nav-link--highlight' : ''}`}>📊 Live Dashboard</Link>
+            <MentalHealthButton />
           </nav>
         </div>
       </header>

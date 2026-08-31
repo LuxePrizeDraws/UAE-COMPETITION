@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
+import MentalHealthButton from '../components/MentalHealthButton';
 import './Home.css';
 
 interface Competition {
@@ -165,7 +166,10 @@ export default function Home() {
       <footer className="home-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+          <div className="footer-links">
+            <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+            <MentalHealthButton />
+          </div>
         </div>
       </footer>
 

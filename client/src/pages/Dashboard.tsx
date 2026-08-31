@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
+import MentalHealthButton from '../components/MentalHealthButton';
 import './Dashboard.css';
 
 interface Competition {
@@ -304,7 +305,10 @@ export default function Dashboard() {
             <h1 className="dash-title">🏆 Competition Dashboard</h1>
             <p className="dash-subtitle">Live draw tracking — Cash or Prize — Your choice</p>
           </div>
-          <Link to="/" className="back-link">← Home</Link>
+          <div className="dash-header__actions">
+            <MentalHealthButton />
+            <Link to="/" className="back-link">← Home</Link>
+          </div>
         </div>
       </header>
 

@@ -18,6 +18,12 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.dash-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .dash-title {
   font-size: 2rem;
   color: #c9a84c;

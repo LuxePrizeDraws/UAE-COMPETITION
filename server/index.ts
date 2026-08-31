@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import OpenAI from 'openai';
 
 dotenv.config();
 
@@ -267,6 +268,88 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
+});
+
+// Mental health chat endpoint
+const MENTAL_HEALTH_SYSTEM_PROMPT = `You are a compassionate and empathetic mental health support assistant. Your role is to provide emotional support, coping strategies, and mental health information to people who reach out to you.
+
+Guidelines:
+- Always respond with warmth, empathy, and without judgment
+- Acknowledge the person's feelings before offering advice
+- Provide practical coping strategies when appropriate
+- Encourage professional help when the person seems to be in serious distress
+- NEVER provide medical diagnoses or prescribe treatments
+- NEVER claim to be a therapist or replace professional mental health care
+- If someone mentions self-harm or suicidal thoughts, ALWAYS urge them to contact emergency services or a crisis helpline immediately
+- Keep responses concise and conversational — avoid overwhelming walls of text
+- Ask gentle follow-up questions to understand the person better
+- Use a warm, supportive tone throughout
+
+You are here to listen, support, and guide — not to diagnose or treat.`;
+
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
+
+const mentalHealthLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: 'Too many chat requests. Please try again later.',
+});
+
+const MAX_CHAT_MESSAGES = 50;
+
+app.post('/api/mental-health/chat', mentalHealthLimiter, async (req: Request, res: Response) => {
+  const { messages } = req.body;
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'Messages array is required.' });
+  }
+
+  if (messages.length > MAX_CHAT_MESSAGES) {
+    return res.status(400).json({ error: 'Too many messages in conversation. Please start a new chat.' });
+  }
+
+  if (!openai) {
+    return res.status(503).json({
+      error: 'AI support is currently unavailable. Please use the helplines shown in the Resources tab.',
+    });
+  }
+
+  // Validate message format
+  const validRoles = ['user', 'assistant'];
+  for (const msg of messages) {
+    if (!validRoles.includes(msg.role) || typeof msg.content !== 'string') {
+      return res.status(400).json({ error: 'Invalid message format.' });
+    }
+  }
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: MENTAL_HEALTH_SYSTEM_PROMPT },
+        ...messages.map((m: { role: string; content: string }) => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+        })),
+      ],
+      max_tokens: 400,
+      temperature: 0.7,
+    });
+
+    const reply = completion.choices[0]?.message?.content;
+    if (!reply) {
+      return res.status(500).json({ error: 'No response from AI. Please try again.' });
+    }
+
+    res.json({ message: reply });
+  } catch (err: unknown) {
+    console.error('OpenAI error:', err);
+    res.status(500).json({
+      error: 'AI support is temporarily unavailable. Please try again later or use the crisis helplines.',
+    });
+  }
 });
 
 // Start server
