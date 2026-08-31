@@ -1,0 +1,254 @@
+.tlist {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 3rem;
+}
+
+/* Hero */
+.tlist__hero {
+  text-align: center;
+  padding: 2.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 1.5rem;
+}
+
+.tlist__hero-title {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #d4af37;
+  margin-bottom: 0.5rem;
+}
+
+.tlist__hero-sub {
+  color: #cfcfcf;
+  font-size: 1rem;
+  margin-bottom: 1.25rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Game tabs */
+.tlist__game-tabs {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tlist__game-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  border: 1.5px solid #2a2a2a;
+  background: #141414;
+  color: #cfcfcf;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.tlist__game-tab:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+}
+
+.tlist__game-tab--active {
+  background: #d4af37;
+  border-color: #d4af37;
+  color: #000 !important;
+}
+
+.tlist__game-tab--chess:not(.tlist__game-tab--active):hover {
+  border-color: #c9a84c;
+  color: #c9a84c;
+}
+
+.tlist__game-tab--connect4:not(.tlist__game-tab--active):hover {
+  border-color: #e05555;
+  color: #e05555;
+}
+
+/* Legal note */
+.tlist__legal {
+  background: #0f0f0f;
+  border: 1px solid #2a2a2a;
+  border-left: 3px solid #d4af37;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: #888;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.tlist__loading,
+.tlist__error,
+.tlist__empty {
+  text-align: center;
+  color: #888;
+  padding: 3rem;
+}
+
+/* Grid */
+.tlist__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Tournament card */
+.tcard {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-top: 3px solid var(--game-color, #d4af37);
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tcard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.tcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tcard__game-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.tcard__badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.badge--open   { background: rgba(80, 200, 120, 0.15); color: #50c878; border: 1px solid #50c878; }
+.badge--full   { background: rgba(200, 80, 80, 0.15);  color: #e05555; border: 1px solid #e05555; }
+.badge--progress { background: rgba(212, 175, 55, 0.15); color: #d4af37; border: 1px solid #d4af37; }
+.badge--done   { background: rgba(100, 100, 100, 0.15); color: #888; border: 1px solid #555; }
+
+.tcard__title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #e8d5b7;
+  line-height: 1.3;
+}
+
+.tcard__desc {
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1.5;
+}
+
+.tcard__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  background: #0d0d0d;
+  border-radius: 8px;
+  padding: 0.9rem;
+}
+
+.tcard__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.tcard__stat span {
+  font-size: 0.68rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.tcard__stat strong {
+  font-size: 0.9rem;
+  color: #e8d5b7;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+/* Prize breakdown */
+.tcard__prizes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tcard__prize-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: #cfcfcf;
+}
+
+.tcard__prize-row strong {
+  color: #d4af37;
+  font-weight: 700;
+}
+
+/* Progress */
+.tcard__progress-wrap { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.tcard__progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #555;
+}
+
+.tcard__progress-bar {
+  height: 5px;
+  background: #222;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.tcard__progress-fill {
+  height: 100%;
+  background: var(--game-color, #d4af37);
+  border-radius: 99px;
+  transition: width 0.4s;
+}
+
+/* CTA */
+.tcard__cta {
+  display: block;
+  text-align: center;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  background: var(--game-color, #d4af37);
+  color: #000;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  margin-top: auto;
+}
+
+.tcard__cta:hover { opacity: 0.85; }
+
+.tcard__cta--disabled {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #555;
+  cursor: default;
+  pointer-events: none;
+}

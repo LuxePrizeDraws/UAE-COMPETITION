@@ -1,0 +1,157 @@
+.order-confirmed {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.order-confirmed__card {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+}
+
+.order-confirmed__icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.order-confirmed__title {
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: #d4af37;
+  margin-bottom: 0.5rem;
+}
+
+.order-confirmed__demo-badge {
+  display: inline-block;
+  background: #1e1a00;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  margin: 0.75rem 0;
+}
+
+.order-confirmed__demo-badge code {
+  font-family: monospace;
+  background: rgba(212, 175, 55, 0.15);
+  border-radius: 3px;
+  padding: 0 3px;
+}
+
+.order-confirmed__sub {
+  color: #cfcfcf;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.order-confirmed__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  background: #0d0d0d;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.order-confirmed__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.order-confirmed__stat span {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.order-confirmed__stat strong {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e8d5b7;
+}
+
+.order-confirmed__entries {
+  margin-bottom: 1.5rem;
+}
+
+.order-confirmed__entries-label {
+  font-size: 0.85rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.order-confirmed__tickets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.order-confirmed__ticket {
+  background: #1a1a1a;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  font-family: monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+}
+
+.order-confirmed__ticket--more {
+  background: #0d0d0d;
+  border-color: #555;
+  color: #888;
+}
+
+.order-confirmed__note {
+  font-size: 0.88rem;
+  color: #888;
+  margin-bottom: 1.75rem;
+  line-height: 1.5;
+}
+
+.order-confirmed__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.order-confirmed__btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.order-confirmed__btn:hover {
+  opacity: 0.85;
+}
+
+.order-confirmed__btn--primary {
+  background: #d4af37;
+  color: #000;
+}
+
+.order-confirmed__btn--secondary {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #e8d5b7;
+}
