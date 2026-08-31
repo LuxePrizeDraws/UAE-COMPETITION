@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
+import { useButtonSound } from '../hooks/useButtonSound';
 import './Home.css';
 
 interface Competition {
@@ -415,6 +416,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedComp, setSelectedComp] = useState<Competition | null>(null);
+  const playSound = useButtonSound();
 
   useEffect(() => {
     fetch(`${API_URL}/api/competitions`)
@@ -472,7 +474,7 @@ export default function Home() {
             <div className="badge"><span className="badge-icon">✅</span><span className="badge-text">Guaranteed Winners</span></div>
             <div className="badge"><span className="badge-icon">🔴</span><span className="badge-text">Live Draws</span></div>
           </div>
-          <a href="#competitions" className="btn-cta">VIEW COMPETITIONS ↓</a>
+          <a href="#competitions" className="btn-cta btn-interactive" onMouseDown={playSound}>VIEW COMPETITIONS ↓</a>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
+import { useButtonSound } from '../hooks/useButtonSound';
 import './Dashboard.css';
 
 interface Competition {
@@ -184,6 +185,7 @@ function parsePound(str: string): number {
 
 function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSelect: (id: number) => void; onEnter: (id: number) => void }) {
   const [cashMode, setCashMode] = useState(false);
+  const playSound = useButtonSound();
   const drawStatus = getDrawStatus(comp.drawReadyPercent);
   const statusInfo = getStatusLabel(drawStatus);
   const typeColor = getTypeColor(comp.type);
@@ -251,8 +253,9 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
       )}
 
       <button
-        className="dash-card__cta"
+        className="dash-card__cta btn-interactive"
         disabled={comp.status === 'coming-soon'}
+        onMouseDown={playSound}
         onClick={(e) => { e.stopPropagation(); onEnter(comp.id); }}
       >
         {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}
@@ -265,6 +268,7 @@ export default function Dashboard() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [entryCompId, setEntryCompId] = useState<number | null>(null);
+  const playSound = useButtonSound();
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 800);
@@ -381,8 +385,9 @@ export default function Dashboard() {
                 </div>
               )}
               <button
-                className="dash-card__cta detail-cta"
+                className="dash-card__cta detail-cta btn-interactive"
                 disabled={comp.status === 'coming-soon'}
+                onMouseDown={playSound}
                 onClick={() => { setSelectedId(null); setEntryCompId(comp.id); }}
               >
                 {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}

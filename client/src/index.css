@@ -33,3 +33,14 @@ button {
   cursor: pointer;
   font-family: inherit;
 }
+
+/* Shared interactive button press state — futuristic glow + scale */
+.btn-interactive {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.btn-interactive:active {
+  transform: scale(0.96) !important;
+  filter: brightness(1.35);
+  box-shadow: 0 0 18px 4px rgba(212, 175, 55, 0.75), 0 0 40px 8px rgba(240, 208, 96, 0.35) !important;
+}
