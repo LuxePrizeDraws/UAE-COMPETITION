@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
+import AdBanner from '../components/AdBanner';
+import AdSidebar from '../components/AdSidebar';
+import AffiliateWidget from '../components/AffiliateWidget';
 import './Home.css';
 
 interface Competition {
@@ -71,6 +74,9 @@ export default function Home() {
 
   return (
     <div className="home">
+      {/* Top banner ad */}
+      <AdBanner placement="HOME_TOP" />
+
       {/* Hero */}
       <section className="hero">
         <div className="hero-background">
@@ -112,15 +118,23 @@ export default function Home() {
           {error && <p className="loading" style={{ color: '#f87171' }}>{error}</p>}
           {!loading && !error && (
             <div className="competitions-grid">
-              {cardCompetitions.map((comp) => (
-                <CompetitionCard
-                  key={comp.id}
-                  competition={comp}
-                  onEnter={(id) => {
-                    const c = competitions.find((x) => x.id === id);
-                    if (c) setSelectedComp(c);
-                  }}
-                />
+              {cardCompetitions.map((comp, idx) => (
+                <>
+                  <CompetitionCard
+                    key={comp.id}
+                    competition={comp}
+                    onEnter={(id) => {
+                      const c = competitions.find((x) => x.id === id);
+                      if (c) setSelectedComp(c);
+                    }}
+                  />
+                  {/* Insert interstitial ad every 3 competition cards */}
+                  {(idx + 1) % 3 === 0 && idx < cardCompetitions.length - 1 && (
+                    <div key={`ad-${idx}`} className="competitions-grid__ad-row">
+                      <AdBanner placement="BETWEEN_COMPETITIONS" />
+                    </div>
+                  )}
+                </>
               ))}
             </div>
           )}
@@ -130,6 +144,11 @@ export default function Home() {
             </p>
           )}
         </div>
+      </section>
+
+      {/* Affiliate widget — contextual luxury products */}
+      <section className="container">
+        <AffiliateWidget category="default" title="Recommended — Luxury Products & Services" />
       </section>
 
       {/* Trust Section */}
@@ -160,6 +179,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Footer ad banner */}
+      <div className="container">
+        <AdBanner placement="HOME_FOOTER" />
+      </div>
 
       {/* Footer */}
       <footer className="home-footer">

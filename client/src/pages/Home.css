@@ -224,6 +224,11 @@
   margin-bottom: 2rem;
 }
 
+/* Ad row spans the full grid width */
+.competitions-grid__ad-row {
+  grid-column: 1 / -1;
+}
+
 .loading {
   text-align: center;
   font-size: 1.2rem;
