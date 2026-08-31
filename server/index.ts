@@ -218,7 +218,6 @@ app.get('/api/health', (req: Request, res: Response) => {
     status: 'ok',
     message: 'Premium Competitions API is running',
     timestamp: new Date().toISOString(),
-    environment: NODE_ENV,
     uptimeSeconds: Math.floor(process.uptime()),
     competitions: competitions.length,
     live: competitions.filter(c => c.status === 'live').length,

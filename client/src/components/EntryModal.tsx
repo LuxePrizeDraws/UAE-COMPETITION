@@ -44,7 +44,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [prizeOption, setPrizeOption] = useState<'cash' | 'physical'>('cash');
   const [termsAccepted, setTermsAccepted] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return window.localStorage.getItem(TERMS_PREF_KEY) === 'true';
+    return window.sessionStorage.getItem(TERMS_PREF_KEY) === 'true';
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -219,7 +219,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                   const checked = e.target.checked;
                   setTermsAccepted(checked);
                   if (typeof window !== 'undefined') {
-                    window.localStorage.setItem(TERMS_PREF_KEY, checked ? 'true' : 'false');
+                    window.sessionStorage.setItem(TERMS_PREF_KEY, checked ? 'true' : 'false');
                   }
                 }}
               />
