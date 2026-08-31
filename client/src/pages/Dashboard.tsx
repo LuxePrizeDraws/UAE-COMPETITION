@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
+import { POSTAL_ENTRY_ADDRESS, SUPERCAR_NAMES, getVisualTypeFromIdAndType } from '../constants/competitionVisuals';
 import './Dashboard.css';
 
 interface Competition {
@@ -173,12 +174,6 @@ function getTypeColor(type: Competition['type']) {
   }
 }
 
-function getVisualType(comp: Competition) {
-  if (comp.id === 7 || comp.type === 'vehicle') return 'vehicle';
-  if ([1, 3, 4, 5, 6].includes(comp.id) || comp.type === 'cash') return 'cash';
-  return 'lifestyle';
-}
-
 function CountdownTimer({ timeRemaining }: { timeRemaining: string }) {
   return <span className="countdown">{timeRemaining}</span>;
 }
@@ -194,9 +189,9 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
   const drawStatus = getDrawStatus(comp.drawReadyPercent);
   const statusInfo = getStatusLabel(drawStatus);
   const typeColor = getTypeColor(comp.type);
-  const visualType = getVisualType(comp);
+  const visualType = getVisualTypeFromIdAndType(comp.id, comp.type);
   const remaining = comp.entriesNeeded - comp.entriesSold;
-  const isVehicle = comp.id === 7 || comp.type === 'vehicle';
+  const isVehicle = visualType === 'vehicle';
 
   return (
     <div
@@ -215,12 +210,7 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
       {isVehicle && (
         <div className="supercar-ticker" aria-label="Supercar prizes">
           <div className="supercar-ticker__track">
-            <span>Porsche 911 Turbo S</span>
-            <span>Lamborghini Huracán</span>
-            <span>Ferrari 488 GTB</span>
-            <span>Porsche 911 Turbo S</span>
-            <span>Lamborghini Huracán</span>
-            <span>Ferrari 488 GTB</span>
+            {[...SUPERCAR_NAMES, ...SUPERCAR_NAMES].map((name, index) => <span key={`${name}-${index}`}>{name}</span>)}
           </div>
         </div>
       )}
@@ -273,14 +263,16 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
         </ul>
       )}
 
-      <div className="dash-card__entry-tabs" role="tablist" aria-label="Entry method">
+      <div className="dash-card__entry-tabs" aria-label="Entry method">
         <button
+          aria-pressed={entryMode === 'online'}
           className={`dash-card__entry-tab ${entryMode === 'online' ? 'dash-card__entry-tab--active' : ''}`}
           onClick={(e) => { e.stopPropagation(); setEntryMode('online'); }}
         >
           Online Entry
         </button>
         <button
+          aria-pressed={entryMode === 'postal'}
           className={`dash-card__entry-tab ${entryMode === 'postal' ? 'dash-card__entry-tab--active' : ''}`}
           onClick={(e) => { e.stopPropagation(); setEntryMode('postal'); }}
         >
@@ -289,25 +281,26 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
       </div>
 
       <div className="dash-card__actions">
-        <button
-          className="dash-card__cta dash-card__cta--online"
-          disabled={comp.status === 'coming-soon'}
-          onClick={(e) => { e.stopPropagation(); setEntryMode('online'); onEnter(comp.id); }}
-        >
-          {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER ONLINE →'}
-        </button>
-        <button
-          className="dash-card__cta dash-card__cta--postal"
-          disabled={comp.status === 'coming-soon'}
-          onClick={(e) => { e.stopPropagation(); setEntryMode('postal'); }}
-        >
-          {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'POSTAL ENTRY DETAILS'}
-        </button>
+        {entryMode === 'online' ? (
+          <button
+            className="dash-card__cta dash-card__cta--online"
+            disabled={comp.status === 'coming-soon'}
+            onClick={(e) => { e.stopPropagation(); onEnter(comp.id); }}
+          >
+            {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER ONLINE →'}
+          </button>
+        ) : (
+          <button
+            className="dash-card__cta dash-card__cta--postal"
+          >
+            FREE POSTAL ENTRY ACTIVE
+          </button>
+        )}
       </div>
 
       <div className={`dash-card__postal-terms ${entryMode === 'postal' ? 'dash-card__postal-terms--active' : ''}`}>
         <strong>FREE POSTAL ENTRY</strong>
-        <p>Send your full name, mobile number, email, and competition title on a postcard to: Luxe Prize Draws, PO Box 911, London, UK.</p>
+        <p>Send your full name, mobile number, email, and competition title on a postcard to {POSTAL_ENTRY_ADDRESS}.</p>
         <p>One postcard = one entry. Postal entries are free and have equal chance, but must arrive before the draw closes.</p>
       </div>
     </div>
