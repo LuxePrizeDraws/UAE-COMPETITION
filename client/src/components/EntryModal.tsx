@@ -37,11 +37,15 @@ interface EntryModalProps {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const TERMS_PREF_KEY = 'uae_competition_terms_accepted';
 
 export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [quantity, setQuantity] = useState(1);
   const [prizeOption, setPrizeOption] = useState<'cash' | 'physical'>('cash');
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem(TERMS_PREF_KEY) === 'true';
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EntryResult | null>(null);
@@ -211,7 +215,13 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
               <input
                 type="checkbox"
                 checked={termsAccepted}
-                onChange={(e) => setTermsAccepted(e.target.checked)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setTermsAccepted(checked);
+                  if (typeof window !== 'undefined') {
+                    window.localStorage.setItem(TERMS_PREF_KEY, checked ? 'true' : 'false');
+                  }
+                }}
               />
               <span>
                 I am 18+ and accept the{' '}
@@ -227,7 +237,9 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
               onClick={handleSubmit}
               disabled={loading || competition.status === 'coming-soon'}
             >
-              {loading ? '⏳ Processing...' : `ENTER NOW — £${totalCost.toLocaleString()}`}
+              {loading
+                ? '⏳ Processing...'
+                : `${quantity === 1 ? 'ONE-CLICK ENTER' : 'ENTER NOW'} — £${totalCost.toLocaleString()}`}
             </button>
 
             <p className="entry-modal__disclaimer">

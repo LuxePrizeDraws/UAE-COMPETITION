@@ -9,12 +9,20 @@ dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const CORS_ORIGINS = (process.env.CORS_ORIGINS || process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
+const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 100);
 
 // Middleware
+app.set('trust proxy', 1);
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: CORS_ORIGINS,
   credentials: true,
 }));
 app.use(express.json());
@@ -22,8 +30,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  max: RATE_LIMIT_MAX,
   message: 'Too many requests from this IP',
 });
 app.use(limiter);
@@ -208,6 +216,8 @@ app.get('/api/health', (req: Request, res: Response) => {
     status: 'ok',
     message: 'Premium Competitions API is running',
     timestamp: new Date().toISOString(),
+    environment: NODE_ENV,
+    uptimeSeconds: Math.floor(process.uptime()),
     competitions: competitions.length,
     live: competitions.filter(c => c.status === 'live').length,
   });
