@@ -106,10 +106,11 @@ UAE-COMPETITION/
 │   ├── index.html
 │   ├── vite.config.ts
 │   ├── package.json
-│   └── vercel.json            # Vercel deployment config
+│   └── vercel.json            # Optional client-only Vercel config
 ├── .env.example
 ├── .env.staging
 ├── .env.production
+├── vercel.json                # Root Vercel config for repo imports
 ├── railway.toml               # Railway deployment config
 ├── UAE-Competition-API.postman_collection.json
 └── README.md
@@ -185,7 +186,7 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 ### Deploy Frontend → Vercel (Free)
 1. Sign in at [vercel.com](https://vercel.com)
 2. **New Project** → Import `UAE-COMPETITION` repo
-3. Set **Root Directory** to `client`
+3. Keep the repo root as-is — the root `vercel.json` builds `client/` automatically
 4. Add env var: `VITE_API_URL=https://your-backend.railway.app`
 5. Deploy
 
