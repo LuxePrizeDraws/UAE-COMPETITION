@@ -26,6 +26,7 @@ interface CompetitionTheme {
   image: string;
 }
 
+// Keep this featured list in sync with the three-phase CSS ticker in Dashboard.css.
 const SUPERCAR_NAMES = [
   'Porsche 911 Turbo S',
   'Lamborghini Huracán',
@@ -87,8 +88,8 @@ const COMPETITION_THEMES: Record<Competition['type'], CompetitionTheme> = {
     `),
   },
   experience: {
-    accent: 'Luxury escape',
-    highlight: 'Lifestyle escape',
+    accent: 'Luxury travel experience',
+    highlight: 'Exclusive lifestyle escape',
     image: createSvgDataUri(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 240">
         <rect width="420" height="240" rx="28" fill="#082f49"/>
