@@ -221,7 +221,7 @@ export default function AffiliateWidget({
       <div className="affiliate-widget__grid">
         {products.map((p) => (
           <a
-            key={p.url}
+            key={`${p.name}-${p.url}`}
             href={withUtm(p.url)}
             target="_blank"
             rel="noopener noreferrer sponsored"

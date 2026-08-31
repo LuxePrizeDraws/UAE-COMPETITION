@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
@@ -119,9 +119,8 @@ export default function Home() {
           {!loading && !error && (
             <div className="competitions-grid">
               {cardCompetitions.map((comp, idx) => (
-                <>
+                <React.Fragment key={comp.id}>
                   <CompetitionCard
-                    key={comp.id}
                     competition={comp}
                     onEnter={(id) => {
                       const c = competitions.find((x) => x.id === id);
@@ -130,11 +129,11 @@ export default function Home() {
                   />
                   {/* Insert interstitial ad every 3 competition cards */}
                   {(idx + 1) % 3 === 0 && idx < cardCompetitions.length - 1 && (
-                    <div key={`ad-${idx}`} className="competitions-grid__ad-row">
+                    <div className="competitions-grid__ad-row">
                       <AdBanner placement="BETWEEN_COMPETITIONS" />
                     </div>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </div>
           )}

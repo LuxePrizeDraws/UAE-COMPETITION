@@ -1,7 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useAdSlot } from './useAdSlot';
 import './Ads.css';
-
-const AD_CLIENT = import.meta.env.VITE_GOOGLE_AD_CLIENT_ID || '';
 
 interface AdSidebarProps {
   adSlot?: string;
@@ -15,39 +13,13 @@ interface AdSidebarProps {
  * Shows nothing if VITE_GOOGLE_AD_CLIENT_ID is not configured.
  */
 export default function AdSidebar({ adSlot, placement = 'sidebar', className = '' }: AdSidebarProps) {
-  const adRef = useRef<HTMLModElement>(null);
-  const pushed = useRef(false);
+  const { adRef, resolvedSlot, isConfigured, adClient } = useAdSlot({
+    placement,
+    adSlot,
+    fallbackEnvKey: 'VITE_AD_UNIT_SIDEBAR',
+  });
 
-  const envKey = `VITE_AD_UNIT_${placement.toUpperCase().replace(/-/g, '_')}`;
-  const resolvedSlot = (import.meta.env[envKey] as string | undefined) || adSlot || import.meta.env.VITE_AD_UNIT_SIDEBAR || '';
-
-  useEffect(() => {
-    if (!AD_CLIENT || !resolvedSlot) return;
-    if (pushed.current) return;
-
-    try {
-      const el = adRef.current;
-      if (!el) return;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting && !pushed.current) {
-            pushed.current = true;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-            observer.disconnect();
-          }
-        },
-        { rootMargin: '200px' }
-      );
-      observer.observe(el);
-      return () => observer.disconnect();
-    } catch {
-      // Ignore ad errors
-    }
-  }, [resolvedSlot]);
-
-  if (!AD_CLIENT || !resolvedSlot) return null;
+  if (!isConfigured) return null;
 
   return (
     <div className={`ad-sidebar ${className}`} aria-label="Advertisement">
@@ -57,7 +29,7 @@ export default function AdSidebar({ adSlot, placement = 'sidebar', className = '
           ref={adRef}
           className="adsbygoogle"
           style={{ display: 'block' }}
-          data-ad-client={AD_CLIENT}
+          data-ad-client={adClient}
           data-ad-slot={resolvedSlot}
           data-ad-format="auto"
           data-full-width-responsive="true"
