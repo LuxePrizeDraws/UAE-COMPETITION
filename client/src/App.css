@@ -51,6 +51,23 @@ nav {
   color: #c9a84c;
 }
 
+.nav-link--legends {
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  color: #c9a84c;
+  font-weight: 700;
+}
+
+.nav-link--legends:hover {
+  background: rgba(201, 168, 76, 0.18);
+  border-color: #c9a84c;
+}
+
+.nav-link--legends-active {
+  background: rgba(201, 168, 76, 0.2);
+  border-color: #c9a84c;
+}
+
 .competitions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));

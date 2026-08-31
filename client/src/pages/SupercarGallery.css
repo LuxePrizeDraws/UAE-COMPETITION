@@ -1,0 +1,336 @@
+/* ===== Supercar Gallery Page ===== */
+.sg-page {
+  width: 100%;
+  background: #0a0a0a;
+  color: #e8d5b7;
+}
+
+/* Hero */
+.sg-hero {
+  position: relative;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 5rem 2rem;
+  background: linear-gradient(135deg, #0a0a0a 0%, #150500 50%, #0a0a0a 100%);
+  text-align: center;
+}
+
+.sg-hero-glow {
+  position: absolute;
+  width: 1000px;
+  height: 1000px;
+  background: radial-gradient(circle, rgba(255, 80, 0, 0.1) 0%, rgba(201, 168, 76, 0.07) 40%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.sg-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+}
+
+.sg-hero-badge {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.5);
+  border-radius: 50px;
+  color: #c9a84c;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.sg-hero-title {
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: 3px;
+  margin-bottom: 1.25rem;
+  background: linear-gradient(180deg, #ffffff 0%, #c9a84c 60%, #ff6b00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sg-hero-sub {
+  font-size: 1.1rem;
+  color: #888;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sg-cta {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #c9a84c 0%, #f5e198 100%);
+  color: #0a0a0a;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  border-radius: 4px;
+  box-shadow: 0 8px 25px rgba(201, 168, 76, 0.3);
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.sg-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(201, 168, 76, 0.45);
+}
+
+.sg-cta--large {
+  font-size: 1.1rem;
+  padding: 1.2rem 3rem;
+}
+
+/* Stats */
+.sg-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  padding: 1.5rem 2rem;
+  background: #111;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.sg-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.sg-stat strong {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #c9a84c;
+}
+
+.sg-stat span {
+  font-size: 0.75rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Section title */
+.sg-section-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #c9a84c;
+  margin-bottom: 3rem;
+}
+
+/* Gallery */
+.sg-gallery {
+  padding: 5rem 2rem;
+  background: #0a0a0a;
+}
+
+.sg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* Car card */
+.sg-card {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.sg-card:hover {
+  border-color: #c9a84c;
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.sg-card-visual {
+  position: relative;
+  background: linear-gradient(135deg, #1a0d00, #0f0f0f);
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sg-car-emoji {
+  font-size: 6rem;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5));
+  transform: scaleX(-1);
+  transition: transform 0.4s;
+}
+
+.sg-card:hover .sg-car-emoji {
+  transform: scaleX(-1) scale(1.08);
+}
+
+.sg-value-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(201, 168, 76, 0.15);
+  border: 1px solid #c9a84c;
+  border-radius: 4px;
+  padding: 0.3rem 0.75rem;
+  color: #c9a84c;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.sg-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.sg-car-make {
+  font-size: 0.8rem;
+  color: #c9a84c;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.sg-car-model {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #e8d5b7;
+  margin: 0;
+}
+
+.sg-car-year {
+  font-size: 0.82rem;
+  color: #666;
+}
+
+/* Specs grid */
+.sg-car-specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.sg-spec {
+  background: #1e1e1e;
+  border-radius: 6px;
+  padding: 0.6rem 0.5rem;
+  text-align: center;
+}
+
+.sg-spec-label {
+  display: block;
+  font-size: 0.68rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.sg-spec-val {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e8d5b7;
+}
+
+/* Tags */
+.sg-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.sg-tag {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid #2a2a2a;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  color: #888;
+  font-weight: 600;
+}
+
+/* Enter button */
+.sg-enter-btn {
+  display: block;
+  text-align: center;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, #c9a84c 0%, #f5e198 100%);
+  color: #0a0a0a;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  border-radius: 6px;
+  transition: all 0.3s;
+  text-decoration: none;
+  margin-top: auto;
+}
+
+.sg-enter-btn:hover {
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Bottom CTA */
+.sg-bottom-cta {
+  padding: 5rem 2rem;
+  background: linear-gradient(135deg, #150500, #1a1a1a);
+  text-align: center;
+  border-top: 1px solid #2a2a2a;
+}
+
+.sg-bottom-cta h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #c9a84c;
+  margin-bottom: 1rem;
+}
+
+.sg-bottom-cta p {
+  color: #777;
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+}
+
+/* Container utility */
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .sg-hero-title { font-size: 3rem; }
+  .sg-grid { grid-template-columns: 1fr; }
+  .sg-stats { gap: 1.5rem; }
+}
