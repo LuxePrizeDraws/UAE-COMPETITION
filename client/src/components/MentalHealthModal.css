@@ -1,0 +1,230 @@
+.mental-health-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+}
+
+.mental-health-modal {
+  position: relative;
+  width: min(100%, 720px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  border-radius: 18px;
+  border: 1px solid rgba(201, 168, 76, 0.55);
+  background: linear-gradient(180deg, rgba(18, 18, 18, 0.98), rgba(7, 7, 7, 0.98));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55), 0 0 35px rgba(201, 168, 76, 0.12);
+}
+
+.mental-health-modal__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 168, 76, 0.6);
+  background: rgba(201, 168, 76, 0.08);
+  color: #c9a84c;
+}
+
+.mental-health-badge {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  background: rgba(201, 168, 76, 0.08);
+  color: #c9a84c;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mental-health-leaflet h2,
+.mental-health-chat h2 {
+  color: #f4df9b;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.mental-health-subtitle,
+.mental-health-chat__header p {
+  color: #cfcfcf;
+  margin-bottom: 1.5rem;
+}
+
+.mental-health-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mental-health-card {
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(201, 168, 76, 0.06));
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.mental-health-card strong {
+  color: #ffffff;
+}
+
+.mental-health-card span,
+.mental-health-copy,
+.mental-health-note {
+  color: #b5b5b5;
+  line-height: 1.6;
+}
+
+.mental-health-copy {
+  margin-bottom: 1rem;
+}
+
+.mental-health-note {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 3px solid #22c55e;
+  background: rgba(34, 197, 94, 0.08);
+  border-radius: 10px;
+}
+
+.mental-health-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.mental-health-primary,
+.mental-health-secondary,
+.mental-health-back,
+.mental-health-send {
+  border-radius: 999px;
+  padding: 0.85rem 1.3rem;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.mental-health-primary,
+.mental-health-send {
+  color: #121212;
+  background: linear-gradient(135deg, #c9a84c, #f4df9b);
+  box-shadow: 0 10px 30px rgba(201, 168, 76, 0.25);
+}
+
+.mental-health-secondary,
+.mental-health-back {
+  color: #e8d5b7;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(201, 168, 76, 0.32);
+}
+
+.mental-health-primary:hover,
+.mental-health-secondary:hover,
+.mental-health-back:hover,
+.mental-health-send:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.mental-health-chat__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mental-health-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-height: 280px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(201, 168, 76, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.mental-health-message {
+  max-width: 85%;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  line-height: 1.55;
+}
+
+.mental-health-message--assistant {
+  align-self: flex-start;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.22);
+  color: #dcfce7;
+}
+
+.mental-health-message--user {
+  align-self: flex-end;
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  color: #f5e8c8;
+}
+
+.mental-health-message--loading {
+  opacity: 0.85;
+}
+
+.mental-health-form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.mental-health-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.95rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 168, 76, 0.24);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f5e8c8;
+}
+
+.mental-health-input:focus {
+  outline: none;
+  border-color: #c9a84c;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
+}
+
+.mental-health-send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .mental-health-modal {
+    padding: 1.25rem;
+  }
+
+  .mental-health-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .mental-health-chat__header,
+  .mental-health-form,
+  .mental-health-actions {
+    flex-direction: column;
+  }
+
+  .mental-health-message {
+    max-width: 100%;
+  }
+}

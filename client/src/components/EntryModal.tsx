@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Confetti from './Confetti';
 import './EntryModal.css';
 
 interface Competition {
@@ -82,6 +83,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
 
   return (
     <div className="entry-overlay" onClick={onClose}>
+      <Confetti active={Boolean(result)} />
       <div className="entry-modal" onClick={(e) => e.stopPropagation()}>
         <button className="entry-modal__close" onClick={onClose} aria-label="Close">✕</button>
 
