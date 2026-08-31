@@ -6,6 +6,24 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import { buildCartUrl, verifyWebhookSignature, mapOrderToEntries } from './shopifyService.js';
 import { getAllTournaments, getTournamentById, registerParticipant } from './tournamentService.js';
+import {
+  bootstrapSchema,
+  createUser,
+  findUserByEmail,
+  createEntry,
+  updateEntryStatus,
+  getEntriesByUser,
+  createTournamentRegistration,
+  countPaidEntries,
+} from './db.js';
+import {
+  hashPassword,
+  verifyPassword,
+  signToken,
+  optionalAuth,
+  authenticate,
+} from './authService.js';
+import type { TokenPayload } from './authService.js';
 
 dotenv.config();
 
@@ -30,6 +48,15 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// ---------------------------------------------------------------------------
+// Helper: produce a deadline ISO timestamp N days from server start
+// ---------------------------------------------------------------------------
+function daysFromNow(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString();
+}
+
 // 8 competitions data – transparent structure with cash alternatives
 const competitions = [
   {
@@ -45,7 +72,7 @@ const competitions = [
     totalEntries: 25000,
     soldEntries: 15625,
     drawReadyPercent: 62.5,
-    endsIn: '2 days 14 hours 36 minutes',
+    deadline: daysFromNow(2),
     status: 'live',
     annualProfitPotential: 780000,
     tags: ['Guaranteed Winner', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
@@ -65,7 +92,7 @@ const competitions = [
     totalEntries: 72000,
     soldEntries: 45000,
     drawReadyPercent: 62.5,
-    endsIn: '5 days 8 hours 12 minutes',
+    deadline: daysFromNow(5),
     status: 'live',
     annualProfitPotential: 1800000,
     prizeIncludes: ['5-star Dubai resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
@@ -86,7 +113,7 @@ const competitions = [
     totalEntries: 90000,
     soldEntries: 56250,
     drawReadyPercent: 62.5,
-    endsIn: '12 days 6 hours',
+    deadline: daysFromNow(12),
     status: 'live',
     annualProfitPotential: 900000,
     tags: ['Monthly Draw', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
@@ -106,7 +133,7 @@ const competitions = [
     totalEntries: 300000,
     soldEntries: 187500,
     drawReadyPercent: 62.5,
-    endsIn: '28 days',
+    deadline: daysFromNow(28),
     status: 'live',
     annualProfitPotential: 3000000,
     tags: ['Quarterly Draw', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
@@ -126,7 +153,7 @@ const competitions = [
     totalEntries: 1000000,
     soldEntries: 0,
     drawReadyPercent: 0,
-    endsIn: 'Coming Soon',
+    deadline: daysFromNow(180),
     status: 'coming-soon',
     annualProfitPotential: 7500000,
     tags: ['Annual Draw', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
@@ -146,7 +173,7 @@ const competitions = [
     totalEntries: 30000,
     soldEntries: 18750,
     drawReadyPercent: 62.5,
-    endsIn: '6 days 22 hours 15 minutes',
+    deadline: daysFromNow(6),
     status: 'live',
     annualProfitPotential: 780000,
     tags: ['Weekly Draw', 'Guaranteed Winner', 'Fair Live Draw', 'Cash Alternative Available'],
@@ -166,7 +193,7 @@ const competitions = [
     totalEntries: 33750,
     soldEntries: 21094,
     drawReadyPercent: 62.5,
-    endsIn: '18 days 4 hours 30 minutes',
+    deadline: daysFromNow(18),
     status: 'live',
     annualProfitPotential: 2430000,
     prizeIncludes: ['Porsche 911 Turbo S', 'Lamborghini Huracán', 'Ferrari 488 GTB', 'OR take £135,000 cash'],
@@ -187,7 +214,7 @@ const competitions = [
     totalEntries: 32000,
     soldEntries: 20000,
     drawReadyPercent: 62.5,
-    endsIn: '28 days',
+    deadline: daysFromNow(28),
     status: 'live',
     annualProfitPotential: 1920000,
     prizeIncludes: [
@@ -263,12 +290,127 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     prizeOption: competition.cashAlternative ? selectedPrizeOption : 'physical',
     entryNumbers: Array.from({ length: qty }, () => `${competition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`),
     drawReadyPercent: competition.drawReadyPercent,
-    endsIn: competition.endsIn,
+    deadline: competition.deadline,
   });
 });
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
+});
+
+// ---------------------------------------------------------------------------
+// Auth routes
+// ---------------------------------------------------------------------------
+
+// POST /api/auth/register
+app.post('/api/auth/register', async (req: Request, res: Response) => {
+  const { email, password, name } = req.body as { email?: string; password?: string; name?: string };
+  if (!email || !password || !name) {
+    return res.status(400).json({ error: 'email, password and name are required.' });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  }
+  try {
+    const hashed = await hashPassword(password);
+    const user = await createUser(email.toLowerCase().trim(), hashed, name.trim());
+    const token = signToken({ userId: user.id, email: user.email, role: user.role });
+    return res.status(201).json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : '';
+    if (msg.includes('unique') || msg.includes('duplicate')) {
+      return res.status(409).json({ error: 'An account with that email already exists.' });
+    }
+    console.error('[auth/register]', err);
+    return res.status(500).json({ error: 'Registration failed. Please try again.' });
+  }
+});
+
+// POST /api/auth/login
+app.post('/api/auth/login', async (req: Request, res: Response) => {
+  const { email, password } = req.body as { email?: string; password?: string };
+  if (!email || !password) {
+    return res.status(400).json({ error: 'email and password are required.' });
+  }
+  try {
+    const user = await findUserByEmail(email.toLowerCase().trim());
+    if (!user) return res.status(401).json({ error: 'Invalid email or password.' });
+    const valid = await verifyPassword(password, user.password);
+    if (!valid) return res.status(401).json({ error: 'Invalid email or password.' });
+    const token = signToken({ userId: user.id, email: user.email, role: user.role });
+    return res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+  } catch (err) {
+    console.error('[auth/login]', err);
+    return res.status(500).json({ error: 'Login failed. Please try again.' });
+  }
+});
+
+// GET /api/auth/me – returns current user profile
+app.get('/api/auth/me', authenticate, async (req: Request, res: Response) => {
+  const user = (req as Request & { user: TokenPayload }).user;
+  try {
+    const entries = await getEntriesByUser(user.userId);
+    return res.json({ id: user.userId, email: user.email, role: user.role, entries });
+  } catch (err) {
+    console.error('[auth/me]', err);
+    // If DB not available, return minimal profile
+    return res.json({ id: user.userId, email: user.email, role: user.role, entries: [] });
+  }
+});
+
+// POST /api/competitions/:id/enter – persist entry to DB when possible
+app.post('/api/competitions/:id/enter-db', optionalAuth, async (req: Request, res: Response) => {
+  const { quantity, termsAccepted, prizeOption } = req.body as {
+    quantity?: number; termsAccepted?: boolean; prizeOption?: string;
+  };
+  const competition = competitions.find(c => c.id === parseInt(req.params.id));
+  if (!competition) return res.status(404).json({ error: 'Competition not found.' });
+  if (competition.status === 'coming-soon') return res.status(400).json({ error: 'Competition not yet open.' });
+  if (!termsAccepted) return res.status(400).json({ error: 'You must accept the terms and conditions.' });
+  const qty = Number(quantity);
+  if (!Number.isInteger(qty) || qty < 1 || qty > 1000) {
+    return res.status(400).json({ error: 'Quantity must be a whole number between 1 and 1000.' });
+  }
+  const totalCost = qty * competition.entryPrice;
+  const validPrizeOptions = ['physical', 'cash'];
+  const selectedPrize = prizeOption && validPrizeOptions.includes(prizeOption) ? prizeOption : 'cash';
+  const entryNumbers = Array.from({ length: qty }, () =>
+    `${competition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`
+  );
+  const authUser = (req as Request & { user?: TokenPayload }).user;
+  try {
+    const entry = await createEntry({
+      competitionId: competition.id,
+      userId: authUser?.userId ?? null,
+      quantity: qty,
+      prizeOption: selectedPrize,
+      totalCost,
+      currency: competition.currency,
+      entryNumbers,
+      status: 'pending',
+    });
+    return res.json({
+      success: true,
+      entryId: entry.id,
+      entryNumbers,
+      quantity: qty,
+      totalCost,
+      currency: competition.currency,
+      prizeOption: selectedPrize,
+    });
+  } catch (err) {
+    console.error('[enter-db]', err);
+    // Fallback – return entry numbers even if DB is not available
+    return res.json({
+      success: true,
+      entryId: null,
+      entryNumbers,
+      quantity: qty,
+      totalCost,
+      currency: competition.currency,
+      prizeOption: selectedPrize,
+    });
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -510,8 +652,8 @@ app.get('/api/tournaments/:id', (req: Request, res: Response) => {
   res.json(tournament);
 });
 
-// POST /api/tournaments/:id/register  – register a player
-app.post('/api/tournaments/:id/register', (req: Request, res: Response) => {
+// POST /api/tournaments/:id/register  – register a player and persist to DB
+app.post('/api/tournaments/:id/register', optionalAuth, async (req: Request, res: Response) => {
   const { name } = req.body as { name?: string };
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Player name is required.' });
@@ -521,14 +663,35 @@ app.post('/api/tournaments/:id/register', (req: Request, res: Response) => {
   if (!result.success) {
     return res.status(400).json({ error: result.message });
   }
-  return res.json(result);
+  // Persist registration to DB (best-effort)
+  const authUser = (req as Request & { user?: TokenPayload }).user;
+  try {
+    await createTournamentRegistration({
+      tournamentId: req.params.id,
+      userId: authUser?.userId ?? null,
+      playerName: name.trim(),
+    });
+  } catch (err) {
+    console.warn('[tournament register] DB persist failed (non-fatal):', err);
+  }
+  return res.json({
+    ...result,
+    paymentNote: `Entry fee payment instructions: please send your entry fee via bank transfer or PayPal to the details in your confirmation email. Your spot is reserved for 24 hours.`,
+  });
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
-  console.log(`📡 CORS enabled for http://localhost:5173`);
-  console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions`);
-  console.log(`🛒 Shopify checkout: POST http://localhost:${PORT}/api/shopify/checkout\n`);
-});
+async function start() {
+  // Bootstrap database schema (safe to run even without DATABASE_URL)
+  await bootstrapSchema().catch((err) => console.warn('[db bootstrap]', err));
+
+  app.listen(PORT, () => {
+    console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
+    console.log(`📡 CORS enabled for ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
+    console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
+    console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions`);
+    console.log(`🛒 Shopify checkout: POST http://localhost:${PORT}/api/shopify/checkout\n`);
+  });
+}
+
+start();
