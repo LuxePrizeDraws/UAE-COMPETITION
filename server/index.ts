@@ -4,11 +4,16 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import { randomBytes } from 'crypto';
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
+
+function generateSecureCode(prefix: string, size = 6): string {
+  return `${prefix}${randomBytes(size).toString('hex').toUpperCase()}`;
+}
 
 // Middleware
 app.use(helmet());
@@ -259,7 +264,7 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     totalCost,
     currency: competition.currency,
     prizeOption: competition.cashAlternative ? selectedPrizeOption : 'physical',
-    entryNumbers: Array.from({ length: qty }, () => `${competition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`),
+    entryNumbers: Array.from({ length: qty }, () => generateSecureCode(`${competition.id}-`, 5)),
     drawReadyPercent: competition.drawReadyPercent,
     endsIn: competition.endsIn,
   });
@@ -267,6 +272,23 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
+});
+
+app.post('/api/create-payment-intent', (req: Request, res: Response) => {
+  const { quantity } = req.body;
+  const validQtys = [1, 5, 10, 20];
+  const qty = validQtys.includes(Number(quantity)) ? Number(quantity) : 1;
+  const amount = qty * 500;
+  res.json({
+    clientSecret: generateSecureCode('demo_', 8).toLowerCase(),
+    amount,
+    currency: 'gbp',
+    quantity: qty,
+    entryNumbers: Array.from(
+      { length: qty },
+      () => generateSecureCode('ENT-', 4),
+    ),
+  });
 });
 
 // Start server
