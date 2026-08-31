@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { POSTAL_ENTRY_ADDRESS, SUPERCAR_NAMES, getVisualTypeFromIdAndType } from '../constants/competitionVisuals';
 import './CompetitionCard.css';
 
 interface Competition {
@@ -29,10 +30,13 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
+  const [entryMode, setEntryMode] = useState<'online' | 'postal'>('online');
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
+  const visualType = getVisualTypeFromIdAndType(competition.id, competition.prizeType);
+  const isVehicle = visualType === 'vehicle';
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
@@ -42,7 +46,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   };
 
   return (
-    <div className="competition-card">
+    <div className={`competition-card competition-card--${visualType}`}>
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
       </div>
@@ -64,9 +68,18 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         </div>
 
         <div className="prize-image-placeholder">
-          <div className="image-placeholder">💎</div>
+          <div className="image-placeholder">{isVehicle ? '🏎️' : visualType === 'cash' ? '💵' : '✨'}</div>
+          <div className="image-caption">{isVehicle ? 'Supercar' : visualType === 'cash' ? 'Cash Draw' : 'Luxury Package'}</div>
         </div>
       </div>
+
+      {isVehicle && (
+        <div className="supercar-ticker" aria-label="Supercar prizes">
+          <div className="supercar-ticker__track">
+            {[...SUPERCAR_NAMES, ...SUPERCAR_NAMES].map((name, index) => <span key={`${name}-${index}`}>{name}</span>)}
+          </div>
+        </div>
+      )}
 
       <div className="card-stats">
         <div className="stat">
@@ -85,6 +98,8 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
           <span className="stat-sublabel">of {competition.totalEntries.toLocaleString()}</span>
         </div>
       </div>
+
+      <div className="postal-highlight">📮 FREE POSTAL ENTRY</div>
 
       <div className="progress-section">
         <div className="progress-header">
@@ -129,13 +144,46 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         </div>
       </div>
 
-      <button
-        className="btn-enter-now"
-        disabled={competition.status === 'coming-soon'}
-        onClick={() => onEnter?.(competition.id)}
-      >
-        {competition.status === 'coming-soon' ? '⏳ COMING SOON' : `ENTER NOW - ${totalCost} AED`}
-      </button>
+      <div className="entry-tablist" aria-label="Entry method">
+        <button
+          aria-pressed={entryMode === 'online'}
+          className={`entry-tab ${entryMode === 'online' ? 'entry-tab--active' : ''}`}
+          onClick={() => setEntryMode('online')}
+        >
+          Online Entry
+        </button>
+        <button
+          aria-pressed={entryMode === 'postal'}
+          className={`entry-tab ${entryMode === 'postal' ? 'entry-tab--active' : ''}`}
+          onClick={() => setEntryMode('postal')}
+        >
+          FREE POSTAL ENTRY
+        </button>
+      </div>
+
+      <div className="entry-actions">
+        {entryMode === 'online' ? (
+          <button
+            className="btn-enter-now"
+            disabled={competition.status === 'coming-soon'}
+            onClick={() => onEnter?.(competition.id)}
+          >
+            {competition.status === 'coming-soon' ? '⏳ COMING SOON' : `ENTER ONLINE - ${totalCost} AED`}
+          </button>
+        ) : (
+          <button
+            className="btn-enter-now btn-postal"
+          >
+            FREE POSTAL ENTRY ACTIVE
+          </button>
+        )}
+      </div>
+
+      <div className={`postal-terms ${entryMode === 'postal' ? 'postal-terms--active' : ''}`}>
+        <strong>FREE POSTAL ENTRY</strong>
+        <p>Send your full name, mobile number, email, and competition title on a postcard to {POSTAL_ENTRY_ADDRESS}.</p>
+        <p>One postcard equals one entry. Postal entries are free and get the same draw treatment as paid online entries.</p>
+      </div>
 
       <div className="terms-link">
         <a href="#">View Full Terms & Conditions</a>
