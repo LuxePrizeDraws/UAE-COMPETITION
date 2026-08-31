@@ -7,7 +7,7 @@
   "main": "server/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "nodemon --exec node --loader ts-node/esm server/index.ts",
+    "dev:server": "tsx watch server/index.ts",
     "dev:client": "cd client && vite",
     "build": "cd client && vite build",
     "preview": "cd client && vite preview",
@@ -27,7 +27,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.1.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
     "uuid": "^9.0.1",
     "express-rate-limit": "^7.1.5",
@@ -48,6 +48,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.2.0",
-    "vitest": "^0.34.6"
+    "vitest": "^0.34.6",
+    "tsx": "^4.20.5"
   }
 }
