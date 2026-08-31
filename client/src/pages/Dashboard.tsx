@@ -126,7 +126,7 @@ const COMPETITIONS: Competition[] = [
     type: 'vehicle',
     icon: '🏎️',
     status: 'live',
-    details: ['Porsche 911 Turbo', 'Lamborghini Huracán', 'Ferrari 488', 'OR take £135K cash'],
+    details: ['Porsche 911 Turbo S', 'Lamborghini Huracán', 'Ferrari 488 GTB', 'OR take £135K cash'],
   },
   {
     id: 8,
@@ -145,6 +145,8 @@ const COMPETITIONS: Competition[] = [
     details: ['£80K cash', 'Premium Supercar', 'Ltd Company setup', 'Digital business package', 'Luxury lifestyle bundle', 'OR take £320K cash'],
   },
 ];
+
+const SUPERCAR_TICKER = ['Porsche 911 Turbo S', 'Lamborghini Huracán', 'Ferrari 488 GTB'];
 
 type DrawStatus = 'ready' | 'almost' | 'in-progress' | 'coming-soon';
 
@@ -188,6 +190,13 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
   const statusInfo = getStatusLabel(drawStatus);
   const typeColor = getTypeColor(comp.type);
   const remaining = comp.entriesNeeded - comp.entriesSold;
+  const visualImage = comp.id === 7
+    ? 'https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&w=1200&q=70'
+    : [1, 3, 4, 5, 6].includes(comp.id)
+      ? 'https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?auto=format&fit=crop&w=1200&q=70'
+      : [2, 8].includes(comp.id)
+        ? 'https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=1200&q=70'
+        : '';
 
   return (
     <div
@@ -195,6 +204,13 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
       onClick={() => onSelect(comp.id)}
       style={{ '--type-color': typeColor } as React.CSSProperties}
     >
+      {visualImage && (
+        <div
+          className="dash-card__visual"
+          style={{ backgroundImage: `url(${visualImage})` }}
+          aria-hidden="true"
+        />
+      )}
       <div className="dash-card__header">
         <span className="dash-card__icon">{comp.icon}</span>
         <span className="dash-card__type" style={{ color: typeColor }}>{comp.type.toUpperCase()}</span>
@@ -202,6 +218,18 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
       </div>
 
       <h3 className="dash-card__title">{comp.title}</h3>
+
+      {comp.id === 7 && (
+        <div className="supercar-ticker" aria-label="Featured supercars">
+          <div className="supercar-ticker__track">
+            {[...SUPERCAR_TICKER, ...SUPERCAR_TICKER].map((name, index) => (
+              <span key={`${name}-${index}`} className="supercar-ticker__item">
+                {name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="dash-card__prize">
         {cashMode ? (

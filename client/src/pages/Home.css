@@ -60,6 +60,23 @@
 
 .home {
   width: 100%;
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #e8d5b7;
+}
+
+.home-page-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.home-dash-stats {
+  margin-top: 1.5rem;
+}
+
+.home-draw-legend {
+  margin-bottom: 2rem;
 }
 
 /* Hero Section */
@@ -185,7 +202,7 @@
 
 /* Competitions Section */
 .competitions-section {
-  padding: 4rem 2rem;
+  padding: 2rem;
   background: var(--color-black);
 }
 
@@ -219,7 +236,7 @@
 
 .competitions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
   margin-bottom: 2rem;
 }
@@ -308,6 +325,10 @@
 }
 
 @media (max-width: 768px) {
+  .home-page-header {
+    position: static;
+  }
+
   .hero {
     min-height: 400px;
     padding: 2rem 1rem;

@@ -6,6 +6,25 @@
   transition: all 0.3s ease;
   overflow: hidden;
   position: relative;
+  isolation: isolate;
+}
+.competition-card > * {
+  position: relative;
+  z-index: 1;
+}
+.competition-card__visual {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.18;
+  z-index: 0;
+}
+.competition-card__visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(170deg, rgba(3, 3, 3, 0.35) 20%, rgba(3, 3, 3, 0.9) 75%);
 }
 
 .competition-card::before {
@@ -32,6 +51,37 @@
 
 .card-header {
   margin-bottom: 1.5rem;
+}
+
+.supercar-ticker {
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.08);
+  margin-bottom: 1.2rem;
+}
+.supercar-ticker__track {
+  display: flex;
+  width: max-content;
+  animation: ticker-slide 12s linear infinite;
+}
+.supercar-ticker__item {
+  color: #f4d98b;
+  font-size: 0.73rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  padding: 0.38rem 1.1rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+  animation: ticker-flash 1.5s ease-in-out infinite alternate;
+}
+@keyframes ticker-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes ticker-flash {
+  from { text-shadow: 0 0 0 rgba(212, 175, 55, 0.1); opacity: 0.88; }
+  to { text-shadow: 0 0 14px rgba(212, 175, 55, 0.65); opacity: 1; }
 }
 
 .card-badge {
@@ -294,7 +344,8 @@
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 1.5px;
-  border-radius: 4px;
+  border: 2px solid #d4af37;
+  border-radius: 999px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
   margin-bottom: 1rem;
@@ -307,6 +358,12 @@
 
 .btn-enter-now:active {
   transform: translateY(0);
+}
+
+.btn-enter-now:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
 }
 
 /* Terms Link */

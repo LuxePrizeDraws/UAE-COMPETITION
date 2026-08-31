@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
+import './Dashboard.css';
 import './Home.css';
 
 interface Competition {
@@ -71,6 +72,16 @@ export default function Home() {
 
   return (
     <div className="home">
+      <header className="dash-header home-page-header">
+        <div className="dash-header__inner">
+          <div>
+            <h1 className="dash-title">🏆 UAE Competition Platform</h1>
+            <p className="dash-subtitle">Luxury draws with transparent progress and premium rewards</p>
+          </div>
+          <Link to="/dashboard" className="back-link">📊 Dashboard</Link>
+        </div>
+      </header>
+
       {/* Hero */}
       <section className="hero">
         <div className="hero-background">
@@ -93,15 +104,30 @@ export default function Home() {
       </section>
 
       {/* Stats bar */}
-      <div className="home-stats">
-        <div className="container">
-          <div className="home-stats__inner">
-            <div className="home-stat"><strong>{competitions.length}</strong><span>Competitions</span></div>
-            <div className="home-stat"><strong>{liveComps.length}</strong><span>Live Now</span></div>
-            <div className="home-stat"><strong>£18.4M</strong><span>Annual Prizes</span></div>
-            <div className="home-stat"><strong>100%</strong><span>Cash Alternative</span></div>
-          </div>
+      <section className="dash-stats home-dash-stats">
+        <div className="stat-card">
+          <span className="stat-num">{competitions.length}</span>
+          <span className="stat-label">Total Competitions</span>
         </div>
+        <div className="stat-card">
+          <span className="stat-num">{liveComps.length}</span>
+          <span className="stat-label">Competitions Live</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-num">£18.4M</span>
+          <span className="stat-label">Annual Prizes</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-num">100%</span>
+          <span className="stat-label">Cash Alternative</span>
+        </div>
+      </section>
+
+      <div className="draw-legend home-draw-legend">
+        <span className="legend-item"><span style={{ color: '#22c55e' }}>🟢</span> Draw Ready (100%)</span>
+        <span className="legend-item"><span style={{ color: '#eab308' }}>🟡</span> Almost Ready (75–99%)</span>
+        <span className="legend-item"><span style={{ color: '#3b82f6' }}>🔵</span> In Progress (50–74%)</span>
+        <span className="legend-item"><span style={{ color: '#6b7280' }}>⚪</span> Coming Soon (0–49%)</span>
       </div>
 
       {/* Competitions */}

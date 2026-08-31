@@ -33,6 +33,14 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
+  const isVehicleCompetition = competition.id === 7;
+  const visualImage = isVehicleCompetition
+    ? 'https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&w=1200&q=70'
+    : [1, 3, 4, 5, 6].includes(competition.id)
+      ? 'https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?auto=format&fit=crop&w=1200&q=70'
+      : [2, 8].includes(competition.id)
+        ? 'https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=1200&q=70'
+        : '';
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
@@ -43,9 +51,35 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
 
   return (
     <div className="competition-card">
+      {visualImage && (
+        <div
+          className="competition-card__visual"
+          style={{ backgroundImage: `url(${visualImage})` }}
+          aria-hidden="true"
+        />
+      )}
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
       </div>
+
+      {isVehicleCompetition && (
+        <div className="supercar-ticker" aria-label="Featured supercars">
+          <div className="supercar-ticker__track">
+            {[
+              'Porsche 911 Turbo S',
+              'Lamborghini Huracán',
+              'Ferrari 488 GTB',
+              'Porsche 911 Turbo S',
+              'Lamborghini Huracán',
+              'Ferrari 488 GTB',
+            ].map((name, index) => (
+              <span key={`${name}-${index}`} className="supercar-ticker__item">
+                {name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="card-content">
         <div className="prize-section">
