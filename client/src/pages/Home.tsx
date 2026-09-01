@@ -140,22 +140,24 @@ export default function Home() {
       </section>
 
       <div className="home-stats">
-        <div className="container home-stats__inner">
-          <div className="home-stat">
-            <strong>{competitions.length}</strong>
-            <span>Total competitions</span>
-          </div>
-          <div className="home-stat">
-            <strong>{liveComps.length}</strong>
-            <span>Live now</span>
-          </div>
-          <div className="home-stat">
-            <strong>{comingSoon.length}</strong>
-            <span>Coming soon</span>
-          </div>
-          <div className="home-stat">
-            <strong>{cashAlternativeCount}</strong>
-            <span>Cash alternatives</span>
+        <div className="container">
+          <div className="home-stats__inner">
+            <div className="home-stat">
+              <strong>{competitions.length}</strong>
+              <span>Total competitions</span>
+            </div>
+            <div className="home-stat">
+              <strong>{liveComps.length}</strong>
+              <span>Live now</span>
+            </div>
+            <div className="home-stat">
+              <strong>{comingSoon.length}</strong>
+              <span>Coming soon</span>
+            </div>
+            <div className="home-stat">
+              <strong>{cashAlternativeCount}</strong>
+              <span>Cash alternatives</span>
+            </div>
           </div>
         </div>
       </div>
