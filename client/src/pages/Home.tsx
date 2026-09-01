@@ -413,6 +413,15 @@ const milestones = [
   'Month 20: 450K-500K users · £1.125M-£1.25M monthly profit · £10M+ annual run rate',
 ] as const;
 
+const experienceLinks = [
+  { to: '/competitions', title: 'Competitions', description: 'Explore all active prize competitions.', icon: '🎯' },
+  { to: '/chess-tournament', title: 'Chess Tournament', description: 'Register for the UAE Chess Masters bracket.', icon: '♟️' },
+  { to: '/connect4-tournament', title: 'Connect 4 Tournament', description: 'Join fast-paced Connect 4 elimination rounds.', icon: '🔴' },
+  { to: '/gallery', title: 'Gallery', description: 'View featured highlights and event snapshots.', icon: '🖼️' },
+  { to: '/mental-health', title: 'Mental Health Support', description: 'Access AI guidance and support-worker handoff.', icon: '🧠' },
+  { to: '/help', title: 'Contact & Help', description: 'Get help with platform and tournament questions.', icon: '🆘' },
+] as const;
+
 export default function Home() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -492,6 +501,21 @@ export default function Home() {
             <div className="home-stat"><strong>100%</strong><span>Cash Alternative</span></div>
           </div>
         </div>
+
+        <section className="experience-section">
+          <div className="container">
+            <h2 className="section-title">🌟 EXPLORE EXPERIENCES</h2>
+            <div className="experience-grid">
+              {experienceLinks.map((item) => (
+                <Link key={item.to} to={item.to} className="experience-card">
+                  <span className="experience-card__icon">{item.icon}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* Competitions */}
@@ -734,7 +758,7 @@ export default function Home() {
       <footer className="home-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+          <Link to="/competitions" className="footer-dash-link">📊 View Live Dashboard →</Link>
           <Link to="/investor-summary" className="footer-dash-link">💼 Investor Summary &amp; Valuation Notes →</Link>
         </div>
       </footer>
