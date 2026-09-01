@@ -9,7 +9,8 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon --exec node --loader ts-node/esm server/index.ts",
     "dev:client": "cd client && vite",
-    "build": "cd client && vite build",
+    "build:server": "tsc",
+    "build": "npm run build:server && cd client && vite build",
     "preview": "cd client && vite preview",
     "type-check": "tsc --noEmit",
     "test": "vitest"
