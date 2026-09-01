@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
+import AdBanner from '../components/AdBanner';
+import AdSidebar from '../components/AdSidebar';
+import AffiliateWidget from '../components/AffiliateWidget';
 import './Dashboard.css';
 
 interface Competition {
@@ -331,6 +334,9 @@ export default function Dashboard() {
         </div>
       </section>
 
+      {/* Ad banner between stats and grid */}
+      <AdBanner placement="DASHBOARD_TOP" />
+
       <div className="draw-legend">
         <span className="legend-item"><span style={{ color: '#22c55e' }}>🟢</span> Draw Ready (100%)</span>
         <span className="legend-item"><span style={{ color: '#eab308' }}>🟡</span> Almost Ready (75–99%)</span>
@@ -395,6 +401,12 @@ export default function Dashboard() {
       {entryComp && (
         <EntryModal competition={entryComp} onClose={() => setEntryCompId(null)} />
       )}
+
+      {/* Affiliate widget below dashboard */}
+      <div style={{ padding: '0 16px 32px' }}>
+        <AffiliateWidget category="cash" title="Make the Most of Your Winnings 💰" />
+        <AdBanner placement="DASHBOARD_FOOTER" />
+      </div>
     </div>
   );
 }
