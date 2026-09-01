@@ -273,6 +273,8 @@ export default function Dashboard() {
 
   const liveCount = COMPETITIONS.filter(c => c.status === 'live').length;
   const comingSoonCount = COMPETITIONS.filter(c => c.status === 'coming-soon').length;
+  const cashAlternativeCount = COMPETITIONS.filter(c => c.cashAlternative).length;
+  const prizeFormatCount = new Set(COMPETITIONS.map(c => c.type)).size;
 
   const entryComp = entryCompId !== null
     ? (() => {
@@ -302,11 +304,19 @@ export default function Dashboard() {
         <div className="dash-header__inner">
           <div>
             <h1 className="dash-title">🏆 Competition Dashboard</h1>
-            <p className="dash-subtitle">Live draw tracking — Cash or Prize — Your choice</p>
+            <p className="dash-subtitle">Interactive demo of draw states, prize options, and entry flow</p>
           </div>
           <Link to="/" className="back-link">← Home</Link>
         </div>
       </header>
+
+      <div className="dash-note">
+        <p>
+          Demo note: this dashboard is intended to showcase the current frontend experience. Any
+          figures shown here should be treated as illustrative product data rather than published
+          financial performance.
+        </p>
+      </div>
 
       <section className="dash-stats">
         <div className="stat-card">
@@ -322,12 +332,12 @@ export default function Dashboard() {
           <span className="stat-label">Coming Soon</span>
         </div>
         <div className="stat-card">
-          <span className="stat-num">£18.4M</span>
-          <span className="stat-label">Annual Profit Potential</span>
+          <span className="stat-num">{cashAlternativeCount}</span>
+          <span className="stat-label">Cash Alternatives</span>
         </div>
         <div className="stat-card">
-          <span className="stat-num">£1.53M</span>
-          <span className="stat-label">Avg Monthly Revenue</span>
+          <span className="stat-num">{prizeFormatCount}</span>
+          <span className="stat-label">Prize Formats</span>
         </div>
       </section>
 

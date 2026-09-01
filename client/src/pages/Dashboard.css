@@ -39,6 +39,21 @@
 }
 .back-link:hover { background: rgba(201,168,76,0.15); }
 
+.dash-note {
+  max-width: 1400px;
+  margin: 1.5rem auto 0;
+  padding: 0 2rem;
+}
+
+.dash-note p {
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 12px;
+  background: rgba(201, 168, 76, 0.06);
+  color: #cfcfcf;
+  line-height: 1.7;
+  padding: 1rem 1.25rem;
+}
+
 /* Stats strip */
 .dash-stats {
   display: flex;
@@ -333,6 +348,6 @@
 @media (max-width: 600px) {
   .dash-header { padding: 1rem; }
   .dash-title { font-size: 1.4rem; }
-  .dash-stats, .dash-grid, .draw-legend { padding: 0 1rem; }
+  .dash-note, .dash-stats, .dash-grid, .draw-legend { padding: 0 1rem; }
   .detail-grid { grid-template-columns: 1fr; }
 }
