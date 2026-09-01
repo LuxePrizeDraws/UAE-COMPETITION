@@ -11,9 +11,11 @@
     "dev:server": "nodemon --exec ts-node-esm server/index.ts",
     "dev:client": "npm --prefix client run dev",
     "build": "npm --prefix client run build",
+    "build:server": "tsc -p tsconfig.server.json",
     "preview": "npm --prefix client run preview",
     "type-check": "tsc -p client/tsconfig.json --noEmit",
-    "test": "vitest --passWithNoTests"
+    "test": "vitest --passWithNoTests",
+    "start": "node dist/server/index.js"
   },
   "keywords": [
     "competition",
