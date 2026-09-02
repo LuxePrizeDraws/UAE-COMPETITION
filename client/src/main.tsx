@@ -10,6 +10,8 @@ import Connect4Tournament from './pages/Connect4Tournament';
 import Gallery from './pages/Gallery';
 import MentalHealthSupport from './pages/MentalHealthSupport';
 import Help from './pages/Help';
+import TermsAndConditions from './pages/TermsAndConditions';
+import MissionImpact from './pages/MissionImpact';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -26,6 +28,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="gallery" element={<Gallery />} />
           <Route path="mental-health" element={<MentalHealthSupport />} />
           <Route path="help" element={<Help />} />
+          <Route path="terms" element={<TermsAndConditions />} />
+          <Route path="mission" element={<MissionImpact />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -12,6 +12,8 @@ const NAV_ITEMS = [
   { label: 'Gallery', to: '/gallery' },
   ...(SHOW_MENTAL_HEALTH_SUPPORT ? [{ label: 'Mental Health Support', to: '/mental-health' }] : []),
   { label: 'Contact / Help', to: '/help' },
+  { label: '🧠 Mission', to: '/mission' },
+  { label: 'Terms', to: '/terms' },
 ];
 
 function NavigationLinks() {
