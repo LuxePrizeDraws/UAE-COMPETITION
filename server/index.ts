@@ -13,6 +13,11 @@ const app: Express = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
+const postalEntryAddress = (process.env.POSTAL_ENTRY_ADDRESS || '')
+  .split(/\r?\n|\|/)
+  .map((line) => line.trim())
+  .filter(Boolean);
+const postalEntrySupportEmail = process.env.POSTAL_ENTRY_SUPPORT_EMAIL || null;
 
 // Middleware
 app.use(helmet());
@@ -227,6 +232,33 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Competition not found' });
   }
   res.json(competition);
+});
+
+app.get('/api/competitions/:id/postal-entry', (req: Request, res: Response) => {
+  const competition = competitions.find(c => c.id === parseInt(req.params.id));
+  if (!competition) {
+    return res.status(404).json({ error: 'Competition not found' });
+  }
+
+  res.json({
+    available: true,
+    competitionId: competition.id,
+    competitionTitle: competition.title,
+    price: 0,
+    currency: competition.currency,
+    addressConfigured: postalEntryAddress.length > 0,
+    addressLines: postalEntryAddress,
+    supportEmail: postalEntrySupportEmail,
+    summary: 'Free postal entry is supported for eligible participants.',
+    steps: [
+      'Review the official competition terms and postal-entry rules before sending your entry.',
+      'Send one postal entry per envelope with your full name, contact details, competition title, and preferred prize option.',
+      'Make sure your postal entry arrives before the published draw cutoff and meets the age and eligibility requirements.',
+    ],
+    note: postalEntryAddress.length > 0
+      ? 'Use the postal address shown below and follow the official terms for formatting and eligibility.'
+      : 'Postal entry address is not configured in this environment yet. Publish the verified address in the official terms before accepting live postal entries.',
+  });
 });
 
 app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
