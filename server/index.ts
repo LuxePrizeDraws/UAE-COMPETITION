@@ -5,17 +5,20 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import Stripe from 'stripe';
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
 // Middleware
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: CLIENT_URL,
   credentials: true,
 }));
 app.use(express.json());
@@ -226,7 +229,7 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
   res.json(competition);
 });
 
-app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
+app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
   const { quantity, termsAccepted, prizeOption } = req.body;
   const competition = competitions.find(c => c.id === parseInt(req.params.id));
   
@@ -250,9 +253,54 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
   const totalCost = qty * competition.entryPrice;
   const validPrizeOptions = ['physical', 'cash'];
   const selectedPrizeOption = prizeOption && validPrizeOptions.includes(prizeOption) ? prizeOption : 'cash';
-  
+
+  if (stripe) {
+    try {
+      const checkoutBaseUrl = CLIENT_URL || req.get('origin') || 'http://localhost:5173';
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        line_items: [
+          {
+            quantity: qty,
+            price_data: {
+              currency: competition.currency.toLowerCase(),
+              unit_amount: Math.round(competition.entryPrice * 100),
+              product_data: {
+                name: competition.title,
+                description: competition.description,
+              },
+            },
+          },
+        ],
+        success_url: `${checkoutBaseUrl}/dashboard?checkout=success&competitionId=${competition.id}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${checkoutBaseUrl}/dashboard?checkout=cancel&competitionId=${competition.id}`,
+        metadata: {
+          competitionId: String(competition.id),
+          competitionTitle: competition.title,
+          quantity: String(qty),
+          prizeOption: competition.cashAlternative ? selectedPrizeOption : 'physical',
+        },
+      });
+
+      if (!session.url) {
+        return res.status(502).json({ error: 'Stripe checkout session was created without a redirect URL.' });
+      }
+
+      return res.json({
+        success: true,
+        mode: 'stripe',
+        message: 'Secure Stripe checkout created successfully.',
+        checkoutUrl: session.url,
+      });
+    } catch (error) {
+      console.error('Stripe checkout error', error);
+      return res.status(502).json({ error: 'Could not create a Stripe checkout session. Please try again later.' });
+    }
+  }
+
   res.json({
     success: true,
+    mode: 'demo',
     message: 'Entry processed successfully (demo mode)',
     competitionId: competition.id,
     competitionTitle: competition.title,
@@ -273,7 +321,8 @@ app.get('/', (req: Request, res: Response) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
-  console.log(`📡 CORS enabled for http://localhost:5173`);
+  console.log(`📡 CORS enabled for ${CLIENT_URL}`);
+  console.log(`💳 Stripe checkout ${stripe ? 'enabled' : 'not configured (demo mode)'}`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
   console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions\n`);
 });

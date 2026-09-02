@@ -20,6 +20,8 @@ interface Competition {
 interface EntryResult {
   success: boolean;
   message: string;
+  mode?: 'demo' | 'stripe';
+  checkoutUrl?: string;
   competitionId: number;
   competitionTitle: string;
   quantity: number;
@@ -70,6 +72,8 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Something went wrong. Please try again.');
+      } else if (data.checkoutUrl) {
+        window.location.assign(data.checkoutUrl);
       } else {
         setResult(data);
       }
@@ -231,7 +235,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
             </button>
 
             <p className="entry-modal__disclaimer">
-              🔒 Secure entry · 40% house margin transparent · Fair live draw guaranteed
+              🔒 Secure entry{competition.status !== 'coming-soon' ? ' · Stripe checkout when configured' : ''} · 40% house margin transparent · Fair live draw guaranteed
             </p>
           </>
         )}

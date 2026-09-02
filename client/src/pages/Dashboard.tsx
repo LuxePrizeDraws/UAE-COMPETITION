@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
 import './Dashboard.css';
 
@@ -262,9 +262,16 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
 }
 
 export default function Dashboard() {
+  const location = useLocation();
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [entryCompId, setEntryCompId] = useState<number | null>(null);
+  const checkoutState = new URLSearchParams(location.search).get('checkout');
+  const checkoutNotice = checkoutState === 'success'
+    ? 'Stripe checkout completed. Review the dashboard while payment confirmation is processed.'
+    : checkoutState === 'cancel'
+      ? 'Stripe checkout was canceled. You can review the draw and try again whenever you are ready.'
+      : null;
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 800);
@@ -317,6 +324,12 @@ export default function Dashboard() {
           financial performance.
         </p>
       </div>
+
+      {checkoutNotice && (
+        <div className={`dash-alert dash-alert--${checkoutState}`}>
+          <p>{checkoutNotice}</p>
+        </div>
+      )}
 
       <section className="dash-stats">
         <div className="stat-card">

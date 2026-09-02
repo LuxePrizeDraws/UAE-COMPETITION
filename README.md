@@ -192,7 +192,7 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 ### Deploy Backend → Railway (Free)
 1. Sign in at [railway.app](https://railway.app)
 2. **New Project** → Deploy from GitHub → `UAE-COMPETITION`
-3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`
+3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`, `STRIPE_SECRET_KEY=sk_live_or_test_...`
 4. Railway auto-detects `railway.toml`, runs `npm run build:server`, and starts with `npm run start`
 
 ---
