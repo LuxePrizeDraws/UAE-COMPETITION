@@ -62,6 +62,49 @@
   width: 100%;
 }
 
+.experience-section {
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: #111;
+}
+
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.experience-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.03);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.experience-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-gold);
+}
+
+.experience-card__icon {
+  font-size: 1.3rem;
+}
+
+.experience-card h3 {
+  color: var(--color-gold);
+  font-size: 1.05rem;
+}
+
+.experience-card p {
+  color: var(--color-text-tertiary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 /* Hero Section */
 .hero {
   position: relative;
@@ -470,6 +513,7 @@
   }
 
   .competitions-section,
+  .experience-section,
   .trust-section,
   .playbook-section,
   .ring-fence-section,
