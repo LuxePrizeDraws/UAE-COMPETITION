@@ -7,6 +7,7 @@ function App() {
   const isInvestorSummary = location.pathname === '/investor-summary';
   const isFeatureCentre = location.pathname === '/feature-centre';
   const isEntryOptions = location.pathname === '/entry-options';
+  const isGameChallenges = location.pathname === '/game-challenges';
   const isWellbeingSupport = location.pathname === '/wellbeing-support';
   const isHome = location.pathname === '/';
 
@@ -19,6 +20,7 @@ function App() {
             <Link to="/" className={`nav-link${isHome ? ' nav-link--active' : ''}`}>Home</Link>
             <Link to="/dashboard" className={`nav-link${isDashboard ? ' nav-link--highlight' : ''}`}>📊 Live Dashboard</Link>
             <Link to="/feature-centre" className={`nav-link${isFeatureCentre ? ' nav-link--highlight' : ''}`}>✨ Feature Centre</Link>
+            <Link to="/game-challenges" className={`nav-link${isGameChallenges ? ' nav-link--highlight' : ''}`}>🎮 Game Challenges</Link>
             <Link to="/entry-options" className={`nav-link${isEntryOptions ? ' nav-link--highlight' : ''}`}>🎟️ Entry Options</Link>
             <Link to="/wellbeing-support" className={`nav-link${isWellbeingSupport ? ' nav-link--highlight' : ''}`}>🧠 Support</Link>
             <Link to="/investor-summary" className={`nav-link${isInvestorSummary ? ' nav-link--highlight' : ''}`}>💼 Investor Summary</Link>

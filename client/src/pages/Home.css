@@ -8,6 +8,7 @@
 .trust-section,
 .walkthrough-section,
 .feature-section,
+.game-section,
 .competitions-section {
   padding: 4rem 2rem;
 }
@@ -181,7 +182,8 @@
 
 .demo-section,
 .walkthrough-section,
-.feature-section {
+.feature-section,
+.game-section {
   background: var(--color-black);
 }
 
@@ -207,7 +209,8 @@
 .demo-grid,
 .trust-grid,
 .walkthrough-grid,
-.feature-grid {
+.feature-grid,
+.game-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
@@ -216,7 +219,8 @@
 .demo-card,
 .trust-item,
 .walkthrough-card,
-.feature-card {
+.feature-card,
+.game-card {
   height: 100%;
   padding: 1.5rem;
   border: 1px solid var(--color-border);
@@ -227,7 +231,8 @@
 
 .demo-card h3,
 .walkthrough-card h3,
-.feature-card h3 {
+.feature-card h3,
+.game-card h3 {
   margin-bottom: 0.75rem;
   color: var(--color-gold);
   font-size: 1.2rem;
@@ -271,6 +276,57 @@
   z-index: 1;
   color: var(--color-text-secondary);
   line-height: 1.7;
+}
+
+.game-card {
+  background:
+    linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0%, rgba(212, 175, 55, 0.04) 100%),
+    rgba(8, 8, 8, 0.86);
+}
+
+.game-card__status {
+  display: inline-flex;
+  margin-bottom: 0.9rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  background: rgba(96, 165, 250, 0.08);
+  color: #bfdbfe;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.game-card p {
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.game-card__meta {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.game-card__meta div {
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(240, 208, 96, 0.12);
+}
+
+.game-card__meta dt {
+  margin-bottom: 0.25rem;
+  color: #9ca3af;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.game-card__meta dd {
+  color: var(--color-gold-soft);
+  font-weight: 700;
 }
 
 .demo-link,
@@ -351,6 +407,7 @@
   .trust-section,
   .walkthrough-section,
   .feature-section,
+  .game-section,
   .competitions-section {
     padding: 2.5rem 1rem;
   }

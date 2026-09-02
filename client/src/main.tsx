@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import InvestorSummary from './pages/InvestorSummary';
 import FeatureCentre from './pages/FeatureCentre';
+import GameChallenges from './pages/GameChallenges';
 import EntryOptions from './pages/EntryOptions';
 import WellbeingSupport from './pages/WellbeingSupport';
 import './index.css';
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route index element={<Home />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="feature-centre" element={<FeatureCentre />} />
+          <Route path="game-challenges" element={<GameChallenges />} />
           <Route path="entry-options" element={<EntryOptions />} />
           <Route path="wellbeing-support" element={<WellbeingSupport />} />
           <Route path="investor-summary" element={<InvestorSummary />} />

@@ -71,6 +71,13 @@ const walkthroughSteps = [
 
 const surfacedFeatures = [
   {
+    title: 'Cash prize game challenges',
+    description: 'Connect 4, chess, and draughts are now grouped under a dedicated challenge layer so skill-based cash-prize formats are visible in the demo too.',
+    detail: 'Game Challenges tab',
+    href: '/game-challenges',
+    cta: 'Open game challenges',
+  },
+  {
     title: 'Live competition catalogue',
     description: 'Browse all current draws from the homepage with entry price, availability, progress, and prize presentation already visible.',
     detail: 'Homepage catalogue',
@@ -118,6 +125,30 @@ const surfacedFeatures = [
     detail: 'Support tab',
     href: '/wellbeing-support',
     cta: 'Open support layer',
+  },
+] as const;
+
+const gameChallenges = [
+  {
+    title: 'Connect 4 Cash Clash',
+    prize: '£2,500 winner prize',
+    format: '1v1 knockout ladder',
+    status: 'Live sign-up',
+    summary: 'Fast-turn tournament play designed for quick demo rounds, visible brackets, and simple cash-prize positioning.',
+  },
+  {
+    title: 'Chess Masters Cash Open',
+    prize: '£7,500 total prize pool',
+    format: 'Timed Swiss + finals',
+    status: 'Featured challenge',
+    summary: 'Strategy-led cash tournament format with ranked rounds, finalist spotlighting, and premium presentation value.',
+  },
+  {
+    title: 'Draughts Gold Cup',
+    prize: '£3,000 champion payout',
+    format: 'Group stage + elimination',
+    status: 'Coming next',
+    summary: 'Classic board-play challenge positioned as a skill-based cash event inside the broader competition platform.',
   },
 ] as const;
 
@@ -182,6 +213,7 @@ export default function Home() {
           <div className="hero-actions">
             <Link to="/dashboard" className="btn-cta">Open Live Dashboard</Link>
             <Link to="/feature-centre" className="btn-secondary">Explore Feature Centre</Link>
+            <Link to="/game-challenges" className="btn-secondary">Cash Prize Games</Link>
             <Link to="/entry-options" className="btn-secondary">View Entry Options</Link>
             <Link to="/investor-summary" className="btn-secondary">Review Investor Summary</Link>
             <a href="#competitions" className="btn-secondary">Browse Competitions</a>
@@ -281,6 +313,36 @@ export default function Home() {
                 ) : (
                   <a href={feature.href} className="demo-link">{feature.cta} →</a>
                 )}
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="game-section">
+        <div className="container">
+          <h2 className="section-title">Cash prize game challenges</h2>
+          <p className="section-copy">
+            This section surfaces the requested skill-game layer with Connect 4, chess, and draughts
+            shown as challenge formats inside the demo rather than left hidden or implied.
+          </p>
+          <div className="game-grid">
+            {gameChallenges.map((challenge) => (
+              <article key={challenge.title} className="game-card">
+                <span className="game-card__status">{challenge.status}</span>
+                <h3>{challenge.title}</h3>
+                <p>{challenge.summary}</p>
+                <dl className="game-card__meta">
+                  <div>
+                    <dt>Prize</dt>
+                    <dd>{challenge.prize}</dd>
+                  </div>
+                  <div>
+                    <dt>Format</dt>
+                    <dd>{challenge.format}</dd>
+                  </div>
+                </dl>
+                <Link to="/game-challenges" className="demo-link">View challenge section →</Link>
               </article>
             ))}
           </div>

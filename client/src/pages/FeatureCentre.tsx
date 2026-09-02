@@ -8,6 +8,11 @@ const surfacedIntegrations = [
     location: 'Home + Dashboard',
   },
   {
+    title: 'Cash prize game challenges',
+    description: 'Connect 4, chess, and draughts now sit under a dedicated game-challenges section so cash-prize skill formats are visible in the demo.',
+    location: 'Game Challenges',
+  },
+  {
     title: 'Prize or cash selection',
     description: 'Eligible competitions already expose user choice between a physical prize and a cash alternative.',
     location: 'Dashboard + Entry modal',
@@ -59,6 +64,7 @@ export default function FeatureCentre() {
           </p>
           <div className="feature-centre__actions">
             <Link to="/dashboard" className="feature-centre__btn feature-centre__btn--primary">Open dashboard</Link>
+            <Link to="/game-challenges" className="feature-centre__btn">Open game challenges</Link>
             <Link to="/entry-options" className="feature-centre__btn">Review entry options</Link>
           </div>
         </div>
