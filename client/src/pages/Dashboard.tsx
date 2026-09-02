@@ -146,6 +146,25 @@ const COMPETITIONS: Competition[] = [
   },
 ];
 
+const dashboardFeatureCards = [
+  {
+    title: 'Interactive entry flow',
+    description: 'Every live card supports a direct entry action with quantity, prize selection, and modal-based confirmation.',
+  },
+  {
+    title: 'Stripe-ready checkout',
+    description: 'When payment keys are configured the same entry flow can hand off to Stripe; otherwise demo mode stays available.',
+  },
+  {
+    title: 'Free postal entry',
+    description: 'The entry modal also exposes a postal-entry route so compliance-friendly alternatives are visible during the demo.',
+  },
+  {
+    title: 'Prize and cash comparison',
+    description: 'Eligible competitions can be toggled between prize and cash views to show users both fulfillment paths clearly.',
+  },
+] as const;
+
 type DrawStatus = 'ready' | 'almost' | 'in-progress' | 'coming-soon';
 
 function getDrawStatus(percent: number): DrawStatus {
@@ -361,6 +380,26 @@ export default function Dashboard() {
         <div className="stat-card">
           <span className="stat-num">{prizeFormatCount}</span>
           <span className="stat-label">Prize Formats</span>
+        </div>
+      </section>
+
+      <section className="dash-feature-summary">
+        <div className="dash-feature-summary__inner">
+          <div className="dash-feature-summary__copy">
+            <h2>Everything currently active in the demo</h2>
+            <p>
+              These are the implemented flows now surfaced directly on the dashboard so payment,
+              postal entry, and prize-selection features are not hidden behind unexplained clicks.
+            </p>
+          </div>
+          <div className="dash-feature-summary__grid">
+            {dashboardFeatureCards.map((feature) => (
+              <article key={feature.title} className="dash-feature-card">
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 

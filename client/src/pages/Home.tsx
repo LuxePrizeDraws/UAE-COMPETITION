@@ -69,6 +69,51 @@ const walkthroughSteps = [
   },
 ] as const;
 
+const surfacedFeatures = [
+  {
+    title: 'Live competition catalogue',
+    description: 'Browse all current draws from the homepage with entry price, availability, progress, and prize presentation already visible.',
+    detail: 'Homepage catalogue',
+    href: '#competitions',
+    cta: 'Browse live cards',
+  },
+  {
+    title: 'Dashboard interaction layer',
+    description: 'Open the dashboard to show live versus coming-soon states, countdown displays, progress bars, and quick entry actions in one place.',
+    detail: 'Dashboard route',
+    href: '/dashboard',
+    cta: 'Open dashboard',
+  },
+  {
+    title: 'Prize or cash choice',
+    description: 'Eligible competitions already support a clear cash-versus-prize presentation so the demo can show how users compare their options.',
+    detail: 'Dashboard toggles',
+    href: '/dashboard',
+    cta: 'Show prize options',
+  },
+  {
+    title: 'Stripe checkout path',
+    description: 'The entry flow already supports a Stripe redirect when keys are configured, while still falling back safely in demo environments.',
+    detail: 'Entry Options tab',
+    href: '/entry-options',
+    cta: 'Review checkout paths',
+  },
+  {
+    title: 'Free postal entry route',
+    description: 'Postal-entry guidance is already built into the entry flow so the app can present a compliance-aware alternative to paid checkout.',
+    detail: 'Entry Options tab',
+    href: '/entry-options',
+    cta: 'Open postal entry view',
+  },
+  {
+    title: 'Disclosure-first investor summary',
+    description: 'The investor page stays visible as part of the demo so commercial context is presented without unsupported public claims.',
+    detail: 'Investor summary',
+    href: '/investor-summary',
+    cta: 'Review disclosure',
+  },
+] as const;
+
 export default function Home() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -129,6 +174,8 @@ export default function Home() {
           </p>
           <div className="hero-actions">
             <Link to="/dashboard" className="btn-cta">Open Live Dashboard</Link>
+            <Link to="/feature-centre" className="btn-secondary">Explore Feature Centre</Link>
+            <Link to="/entry-options" className="btn-secondary">View Entry Options</Link>
             <Link to="/investor-summary" className="btn-secondary">Review Investor Summary</Link>
             <a href="#competitions" className="btn-secondary">Browse Competitions</a>
           </div>
@@ -203,6 +250,30 @@ export default function Home() {
               <article key={step.title} className="walkthrough-card">
                 <h3>{step.title}</h3>
                 <p>{step.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="feature-section">
+        <div className="container">
+          <h2 className="section-title">Everything included in this demo right now</h2>
+          <p className="section-copy">
+            This section surfaces the implemented flows directly so the presentation does not rely on
+            hidden interactions or imply extra modules that are not in the current build.
+          </p>
+          <div className="feature-grid">
+            {surfacedFeatures.map((feature) => (
+              <article key={feature.title} className="feature-card">
+                <span className="feature-card__eyebrow">{feature.detail}</span>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+                {feature.href.startsWith('/') ? (
+                  <Link to={feature.href} className="demo-link">{feature.cta} →</Link>
+                ) : (
+                  <a href={feature.href} className="demo-link">{feature.cta} →</a>
+                )}
               </article>
             ))}
           </div>
