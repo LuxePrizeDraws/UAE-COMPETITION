@@ -96,6 +96,33 @@ nav {
   margin-top: auto;
 }
 
+.help-badge {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 999;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.9rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(192, 132, 252, 0.32);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
+    linear-gradient(135deg, rgba(36, 20, 43, 0.96), rgba(90, 42, 122, 0.92));
+  color: #f4e7ff;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 40px rgba(0, 0, 0, 0.34);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.help-badge:hover {
+  transform: translateY(-2px);
+  border-color: rgba(216, 180, 254, 0.52);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 20px 46px rgba(0, 0, 0, 0.38);
+}
+
 @media (max-width: 900px) {
   .header-content {
     flex-direction: column;
@@ -120,5 +147,11 @@ nav {
 
   .nav-link {
     width: 100%;
+  }
+
+  .help-badge {
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
   }
 }

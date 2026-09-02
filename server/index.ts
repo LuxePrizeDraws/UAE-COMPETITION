@@ -13,6 +13,8 @@ const app: Express = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
+const charityDonationAmount = Math.max(1, Number(process.env.CHARITY_DONATION_AMOUNT || 5));
+const charityCampaignName = process.env.CHARITY_CAMPAIGN_NAME || 'Help Awareness Donation';
 const postalEntryAddress = (process.env.POSTAL_ENTRY_ADDRESS || '')
   .split(/\r?\n|\|/)
   .map((line) => line.trim())
@@ -343,6 +345,62 @@ app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
     entryNumbers: Array.from({ length: qty }, () => `${competition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`),
     drawReadyPercent: competition.drawReadyPercent,
     endsIn: competition.endsIn,
+  });
+});
+
+app.post('/api/charity/checkout', async (req: Request, res: Response) => {
+  if (stripe) {
+    try {
+      const checkoutBaseUrl = CLIENT_URL || req.get('origin') || 'http://localhost:5173';
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        line_items: [
+          {
+            quantity: 1,
+            price_data: {
+              currency: 'gbp',
+              unit_amount: Math.round(charityDonationAmount * 100),
+              product_data: {
+                name: charityCampaignName,
+                description: 'One-click charity support from the wellbeing and awareness section.',
+              },
+            },
+          },
+        ],
+        success_url: `${checkoutBaseUrl}/wellbeing-support?donation=success&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${checkoutBaseUrl}/wellbeing-support?donation=cancel`,
+        metadata: {
+          purpose: 'charity-donation',
+          campaign: charityCampaignName,
+        },
+      });
+
+      if (!session.url) {
+        return res.status(502).json({ error: 'Stripe charity checkout session was created without a redirect URL.' });
+      }
+
+      return res.json({
+        success: true,
+        mode: 'stripe',
+        message: 'Secure charity checkout created successfully.',
+        checkoutUrl: session.url,
+        amount: charityDonationAmount,
+        currency: 'GBP',
+        campaign: charityCampaignName,
+      });
+    } catch (error) {
+      console.error('Stripe charity checkout error', error);
+      return res.status(502).json({ error: 'Could not create a charity checkout session. Please try again later.' });
+    }
+  }
+
+  res.json({
+    success: true,
+    mode: 'demo',
+    message: 'Charity support button is active in demo mode. Configure Stripe to take live donations.',
+    amount: charityDonationAmount,
+    currency: 'GBP',
+    campaign: charityCampaignName,
   });
 });
 

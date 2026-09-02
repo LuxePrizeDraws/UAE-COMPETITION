@@ -112,6 +112,13 @@ const surfacedFeatures = [
     href: '/investor-summary',
     cta: 'Review disclosure',
   },
+  {
+    title: 'Help awareness and charity layer',
+    description: 'The support tab now surfaces the AI advisor, awareness messaging, and a one-click charity button so wellbeing features are visible too.',
+    detail: 'Support tab',
+    href: '/wellbeing-support',
+    cta: 'Open support layer',
+  },
 ] as const;
 
 export default function Home() {

@@ -28,6 +28,11 @@ const surfacedIntegrations = [
     location: 'Entry modal + API',
   },
   {
+    title: 'Wellbeing support and charity layer',
+    description: 'A dedicated support tab now includes the AI advisor, awareness messaging, persistent help badge, and one-click charity button.',
+    location: 'Support tab',
+  },
+  {
     title: 'Disclosure-first investor view',
     description: 'Commercial context stays visible through a dedicated investor summary without unsupported public claims.',
     location: 'Investor Summary',
