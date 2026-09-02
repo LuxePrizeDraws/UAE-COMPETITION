@@ -174,7 +174,17 @@ function getTypeColor(type: Competition['type']) {
 }
 
 function CountdownTimer({ timeRemaining }: { timeRemaining: string }) {
-  return <span className="countdown">{timeRemaining}</span>;
+  const segments = timeRemaining.split(' ');
+
+  return (
+    <span className="countdown">
+      {segments.map((segment, index) => (
+        <span key={`${segment}-${index}`} className="countdown__segment">
+          {segment}
+        </span>
+      ))}
+    </span>
+  );
 }
 
 function parsePound(str: string): number {

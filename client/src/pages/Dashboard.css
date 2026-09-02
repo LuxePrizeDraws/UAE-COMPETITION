@@ -203,7 +203,28 @@
   font-size: 0.82rem;
   color: #aaa;
 }
-.countdown { font-weight: 600; color: #e8d5b7; }
+.countdown {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.countdown__segment {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  padding: 0.22rem 0.45rem;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #10161f 0%, #070b11 100%);
+  border: 1px solid rgba(240, 208, 96, 0.22);
+  color: #f8e7b6;
+  font-family: 'Courier New', monospace;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  box-shadow: inset 0 0 10px rgba(34, 197, 94, 0.08), 0 0 10px rgba(240, 208, 96, 0.08);
+}
 
 /* Progress */
 .dash-card__progress-section { display: flex; flex-direction: column; gap: 0.3rem; }

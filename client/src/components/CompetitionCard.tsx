@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import './CompetitionCard.css';
+import cashPrizeImage from '../assets/prize-cash.svg';
+import vehiclePrizeImage from '../assets/prize-vehicle.svg';
+import experiencePrizeImage from '../assets/prize-experience.svg';
+import packagePrizeImage from '../assets/prize-package.svg';
 
 interface Competition {
   id: number;
@@ -27,12 +31,29 @@ interface CompetitionCardProps {
   onEnter?: (id: number) => void;
 }
 
+function getPrizeVisual(prizeType: string) {
+  if (prizeType.includes('VEHICLE')) {
+    return { src: vehiclePrizeImage, alt: 'Premium supercar prize illustration', flash: 'SUPERCHARGED' };
+  }
+
+  if (prizeType.includes('EXPERIENCE')) {
+    return { src: experiencePrizeImage, alt: 'Luxury experience prize illustration', flash: 'LUXURY LIVE' };
+  }
+
+  if (prizeType.includes('BUSINESS')) {
+    return { src: packagePrizeImage, alt: 'Business package prize illustration', flash: 'BONUS DROP' };
+  }
+
+  return { src: cashPrizeImage, alt: 'Cash prize illustration', flash: 'CASH FLASH' };
+}
+
 const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
   const odds = ((1 / remainingEntries) * 100).toFixed(6);
+  const prizeVisual = getPrizeVisual(competition.prizeType);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;
@@ -45,6 +66,7 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
     <div className="competition-card">
       <div className="card-header">
         <span className="card-badge">{competition.prizeType}</span>
+        <span className="card-flash">{competition.status === 'coming-soon' ? 'COMING SOON' : prizeVisual.flash}</span>
       </div>
 
       <div className="card-content">
@@ -64,7 +86,9 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
         </div>
 
         <div className="prize-image-placeholder">
-          <div className="image-placeholder">💎</div>
+          <img src={prizeVisual.src} alt={prizeVisual.alt} className="prize-image" />
+          <div className="image-flash image-flash--one" />
+          <div className="image-flash image-flash--two" />
         </div>
       </div>
 
