@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import './WellbeingSupport.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const DONOR_STORAGE_KEY = 'uae-competition-donors';
 
 const advisorTopics = [
   {
@@ -46,14 +47,56 @@ export default function WellbeingSupport() {
   const [selectedTopicId, setSelectedTopicId] = useState<(typeof advisorTopics)[number]['id']>('overwhelmed');
   const [donating, setDonating] = useState(false);
   const [donationMessage, setDonationMessage] = useState<string | null>(null);
+  const [donorName, setDonorName] = useState('');
+  const [flashingDonors, setFlashingDonors] = useState<string[]>(() => {
+    if (typeof window === 'undefined') {
+      return [];
+    }
+
+    try {
+      const stored = window.localStorage.getItem(DONOR_STORAGE_KEY);
+      const parsed = stored ? JSON.parse(stored) : [];
+      return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
+    } catch {
+      return [];
+    }
+  });
   const donationState = new URLSearchParams(location.search).get('donation');
+  const donatedNameFromQuery = new URLSearchParams(location.search).get('donorName');
 
   const selectedTopic = useMemo(
     () => advisorTopics.find((topic) => topic.id === selectedTopicId) ?? advisorTopics[0],
     [selectedTopicId],
   );
 
+  const addFlashingDonor = (name: string) => {
+    const cleanName = name.trim();
+    if (!cleanName) {
+      return;
+    }
+
+    setFlashingDonors((current) => {
+      const next = [cleanName, ...current.filter((item) => item !== cleanName)].slice(0, 6);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(DONOR_STORAGE_KEY, JSON.stringify(next));
+      }
+      return next;
+    });
+  };
+
+  useMemo(() => {
+    if (donationState === 'success' && donatedNameFromQuery) {
+      addFlashingDonor(donatedNameFromQuery);
+    }
+  }, [donatedNameFromQuery, donationState]);
+
   const handleDonate = async () => {
+    const cleanDonorName = donorName.trim();
+    if (cleanDonorName.length < 2 || cleanDonorName.length > 60) {
+      setDonationMessage('Enter the donor name you want to flash in the badge.');
+      return;
+    }
+
     setDonating(true);
     setDonationMessage(null);
 
@@ -61,6 +104,7 @@ export default function WellbeingSupport() {
       const res = await fetch(`${API_URL}/api/charity/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ donorName: cleanDonorName }),
       });
       const data = await res.json();
 
@@ -69,6 +113,7 @@ export default function WellbeingSupport() {
       } else if (data.checkoutUrl) {
         window.location.assign(data.checkoutUrl);
       } else {
+        addFlashingDonor(data.donorName || cleanDonorName);
         setDonationMessage(data.message || 'Charity support is available in demo mode.');
       }
     } catch {
@@ -102,6 +147,22 @@ export default function WellbeingSupport() {
       <section className="wellbeing-support__section">
         <div className="container wellbeing-support__layout">
           <article className="wellbeing-support__advisor">
+            <div className="wellbeing-support__donor-entry">
+              <label htmlFor="donor-name">Donor name for the flashing gold badge</label>
+              <div className="wellbeing-support__donor-entry-row">
+                <input
+                  id="donor-name"
+                  type="text"
+                  value={donorName}
+                  onChange={(event) => setDonorName(event.target.value)}
+                  maxLength={60}
+                  placeholder="Enter donor name"
+                />
+                <button className="wellbeing-support__badge-preview" type="button">
+                  {donorName.trim() || 'Gold Badge'}
+                </button>
+              </div>
+            </div>
             {donationState && (
               <div className={`wellbeing-support__status wellbeing-support__status--${donationState}`}>
                 {donationState === 'success'
@@ -112,6 +173,21 @@ export default function WellbeingSupport() {
             {donationMessage && (
               <div className="wellbeing-support__status wellbeing-support__status--info">
                 {donationMessage}
+              </div>
+            )}
+            {flashingDonors.length > 0 && (
+              <div className="wellbeing-support__flash-wall">
+                <span className="wellbeing-support__flash-wall-label">Supporter spotlight</span>
+                <div className="wellbeing-support__flash-badges">
+                  {flashingDonors.map((name, index) => (
+                    <span
+                      key={name}
+                      className={`wellbeing-support__flash-badge${index === 0 ? ' wellbeing-support__flash-badge--lead' : ''}`}
+                    >
+                      {name}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
             <div className="wellbeing-support__advisor-header">

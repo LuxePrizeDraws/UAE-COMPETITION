@@ -121,6 +121,79 @@
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.26);
 }
 
+.wellbeing-support__donor-entry {
+  margin-bottom: 1rem;
+}
+
+.wellbeing-support__donor-entry label,
+.wellbeing-support__flash-wall-label {
+  display: block;
+  margin-bottom: 0.65rem;
+  color: #d7d1bc;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wellbeing-support__donor-entry-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.wellbeing-support__donor-entry input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.95rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(240, 208, 96, 0.18);
+  background: rgba(12, 12, 12, 0.92);
+  color: var(--color-text);
+  font-size: 0.98rem;
+}
+
+.wellbeing-support__donor-entry input:focus {
+  outline: none;
+  border-color: rgba(240, 208, 96, 0.42);
+  box-shadow: 0 0 0 3px rgba(240, 208, 96, 0.1);
+}
+
+.wellbeing-support__badge-preview,
+.wellbeing-support__flash-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(240, 208, 96, 0.5);
+  background: linear-gradient(135deg, rgba(88, 66, 16, 0.95), rgba(240, 208, 96, 0.22));
+  color: #ffd86f;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px rgba(240, 208, 96, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 10px 24px rgba(0, 0, 0, 0.26);
+}
+
+.wellbeing-support__flash-wall {
+  margin-bottom: 1rem;
+}
+
+.wellbeing-support__flash-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.wellbeing-support__flash-badge {
+  animation: donorPulse 2s ease-in-out infinite;
+}
+
+.wellbeing-support__flash-badge--lead {
+  animation: donorFlash 1s ease-in-out infinite;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0 24px rgba(240, 208, 96, 0.42);
+}
+
 .wellbeing-support__status {
   margin-bottom: 1rem;
   padding: 0.95rem 1rem;
@@ -220,6 +293,16 @@
   color: #fecaca;
 }
 
+@keyframes donorPulse {
+  0%, 100% { opacity: 0.82; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-1px); }
+}
+
+@keyframes donorFlash {
+  0%, 100% { opacity: 0.8; transform: scale(1); filter: brightness(1); }
+  50% { opacity: 1; transform: scale(1.04); filter: brightness(1.18); }
+}
+
 @media (max-width: 900px) {
   .wellbeing-support__layout {
     grid-template-columns: 1fr;
@@ -240,6 +323,11 @@
   .wellbeing-support__advisor-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .wellbeing-support__donor-entry-row {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .wellbeing-support__btn {

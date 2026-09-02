@@ -349,9 +349,16 @@ app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
 });
 
 app.post('/api/charity/checkout', async (req: Request, res: Response) => {
+  const donorName = typeof req.body?.donorName === 'string' ? req.body.donorName.trim() : '';
+
+  if (!donorName || donorName.length < 2 || donorName.length > 60) {
+    return res.status(400).json({ error: 'Please provide a donor name between 2 and 60 characters.' });
+  }
+
   if (stripe) {
     try {
       const checkoutBaseUrl = CLIENT_URL || req.get('origin') || 'http://localhost:5173';
+      const donorQuery = encodeURIComponent(donorName);
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         line_items: [
@@ -367,11 +374,12 @@ app.post('/api/charity/checkout', async (req: Request, res: Response) => {
             },
           },
         ],
-        success_url: `${checkoutBaseUrl}/wellbeing-support?donation=success&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${checkoutBaseUrl}/wellbeing-support?donation=success&donorName=${donorQuery}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${checkoutBaseUrl}/wellbeing-support?donation=cancel`,
         metadata: {
           purpose: 'charity-donation',
           campaign: charityCampaignName,
+          donorName,
         },
       });
 
@@ -387,6 +395,7 @@ app.post('/api/charity/checkout', async (req: Request, res: Response) => {
         amount: charityDonationAmount,
         currency: 'GBP',
         campaign: charityCampaignName,
+        donorName,
       });
     } catch (error) {
       console.error('Stripe charity checkout error', error);
@@ -401,6 +410,7 @@ app.post('/api/charity/checkout', async (req: Request, res: Response) => {
     amount: charityDonationAmount,
     currency: 'GBP',
     campaign: charityCampaignName,
+    donorName,
   });
 });
 
