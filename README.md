@@ -226,6 +226,7 @@ curl -X POST http://localhost:5000/api/support-worker-requests \
 |----------|---------|-------------|
 | `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
 | `VITE_ENABLE_MENTAL_HEALTH_SUPPORT` | `true` | Optional UI-level flag for support feature toggling |
+| `VITE_SHOW_OPERATOR_PLAYBOOK` | `false` | Set to `true` only if you intentionally want to expose operator growth-playbook content |
 
 ---
 

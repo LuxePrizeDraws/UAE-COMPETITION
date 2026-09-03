@@ -333,6 +333,14 @@
   padding: 4rem 2rem;
 }
 
+.home--operator-playbook-hidden .playbook-section,
+.home--operator-playbook-hidden .ring-fence-section,
+.home--operator-playbook-hidden .action-plan-section,
+.home--operator-playbook-hidden .resources-section,
+.home--operator-playbook-hidden .metrics-section {
+  display: none;
+}
+
 .playbook-section,
 .action-plan-section,
 .resources-section {
