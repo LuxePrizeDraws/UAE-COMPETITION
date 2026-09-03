@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
 import { useButtonSound } from '../hooks/useButtonSound';
+import AdBanner from '../components/AdBanner';
+import AffiliateWidget from '../components/AffiliateWidget';
 import './Home.css';
 
 interface Competition {
@@ -411,6 +413,15 @@ const milestones = [
   'Month 20: 450K-500K users · £1.125M-£1.25M monthly profit · £10M+ annual run rate',
 ] as const;
 
+const experienceLinks = [
+  { to: '/competitions', title: 'Competitions', description: 'Explore all active prize competitions.', icon: '🎯' },
+  { to: '/chess-tournament', title: 'Chess Tournament', description: 'Register for the UAE Chess Masters bracket.', icon: '♟️' },
+  { to: '/connect4-tournament', title: 'Connect 4 Tournament', description: 'Join fast-paced Connect 4 elimination rounds.', icon: '🔴' },
+  { to: '/gallery', title: 'Gallery', description: 'View featured highlights and event snapshots.', icon: '🖼️' },
+  { to: '/mental-health', title: 'Mental Health Support', description: 'Access AI guidance and support-worker handoff.', icon: '🧠' },
+  { to: '/help', title: 'Contact & Help', description: 'Get help with platform and tournament questions.', icon: '🆘' },
+] as const;
+
 export default function Home() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
@@ -457,6 +468,9 @@ export default function Home() {
 
   return (
     <div className="home">
+      {/* Top banner ad */}
+      <AdBanner placement="HOME_TOP" />
+
       {/* Hero */}
       <section className="hero">
         <div className="hero-background">
@@ -488,6 +502,21 @@ export default function Home() {
             <div className="home-stat"><strong>100%</strong><span>Cash Alternative</span></div>
           </div>
         </div>
+
+        <section className="experience-section">
+          <div className="container">
+            <h2 className="section-title">🌟 EXPLORE EXPERIENCES</h2>
+            <div className="experience-grid">
+              {experienceLinks.map((item) => (
+                <Link key={item.to} to={item.to} className="experience-card">
+                  <span className="experience-card__icon">{item.icon}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* Competitions */}
@@ -498,15 +527,22 @@ export default function Home() {
           {error && <p className="loading" style={{ color: '#f87171' }}>{error}</p>}
           {!loading && !error && (
             <div className="competitions-grid">
-              {cardCompetitions.map((comp) => (
-                <CompetitionCard
-                  key={comp.id}
-                  competition={comp}
-                  onEnter={(id) => {
-                    const c = competitions.find((x) => x.id === id);
-                    if (c) setSelectedComp(c);
-                  }}
-                />
+              {cardCompetitions.map((comp, idx) => (
+                <React.Fragment key={comp.id}>
+                  <CompetitionCard
+                    competition={comp}
+                    onEnter={(id) => {
+                      const c = competitions.find((x) => x.id === id);
+                      if (c) setSelectedComp(c);
+                    }}
+                  />
+                  {/* Insert interstitial ad every 3 competition cards */}
+                  {(idx + 1) % 3 === 0 && idx < cardCompetitions.length - 1 && (
+                    <div className="competitions-grid__ad-row">
+                      <AdBanner placement="BETWEEN_COMPETITIONS" />
+                    </div>
+                  )}
+                </React.Fragment>
               ))}
             </div>
           )}
@@ -516,6 +552,11 @@ export default function Home() {
             </p>
           )}
         </div>
+      </section>
+
+      {/* Affiliate widget — contextual luxury products */}
+      <section className="container">
+        <AffiliateWidget category="default" title="Recommended — Luxury Products & Services" />
       </section>
 
       {/* Trust Section */}
@@ -709,11 +750,17 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Footer ad banner */}
+      <div className="container">
+        <AdBanner placement="HOME_FOOTER" />
+      </div>
+
       {/* Footer */}
       <footer className="home-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+          <Link to="/competitions" className="footer-dash-link">📊 View Live Dashboard →</Link>
+          <Link to="/investor-summary" className="footer-dash-link">💼 Investor Summary &amp; Valuation Notes →</Link>
         </div>
       </footer>
 
