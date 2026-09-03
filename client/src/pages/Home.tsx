@@ -29,6 +29,7 @@ interface Competition {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const SHOW_OPERATOR_PLAYBOOK = import.meta.env.VITE_SHOW_OPERATOR_PLAYBOOK === 'true';
 
 const launchPhases = [
   {
@@ -468,7 +469,7 @@ export default function Home() {
   }));
 
   return (
-    <div className="home">
+    <div className={`home${SHOW_OPERATOR_PLAYBOOK ? '' : ' home--operator-playbook-hidden'}`}>
       {/* Top banner ad */}
       <AdBanner placement="HOME_TOP" />
 
@@ -583,12 +584,12 @@ export default function Home() {
             <div className="trust-item">
               <div className="trust-icon">📊</div>
               <h3>Transparent Odds</h3>
-              <p>40% house margin shown publicly. No hidden fees or surprises</p>
+              <p>Clear entry pricing and draw status shown publicly. No hidden fees or surprises.</p>
             </div>
             <div className="trust-item">
               <div className="trust-icon">🧮</div>
               <h3>Ring-Fenced Draw Economics</h3>
-              <p>Every draw is budgeted to stay ring-fenced with a healthy profit margin before reinvestment.</p>
+              <p>Each draw is run with ring-fenced controls to protect prize coverage and platform stability.</p>
             </div>
           </div>
         </div>
@@ -761,7 +762,6 @@ export default function Home() {
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
           <Link to="/competitions" className="footer-dash-link">📊 View Live Dashboard →</Link>
-          <Link to="/investor-summary" className="footer-dash-link">💼 Investor Summary &amp; Valuation Notes →</Link>
         </div>
       </footer>
 

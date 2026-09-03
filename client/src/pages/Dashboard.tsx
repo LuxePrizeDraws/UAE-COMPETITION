@@ -438,12 +438,12 @@ export default function Dashboard() {
           <span className="stat-label">Coming Soon</span>
         </div>
         <div className="stat-card">
-          <span className="stat-num">£18.4M</span>
-          <span className="stat-label">Annual Profit Potential</span>
+          <span className="stat-num">2</span>
+          <span className="stat-label">Live Tournaments</span>
         </div>
         <div className="stat-card">
-          <span className="stat-num">£1.53M</span>
-          <span className="stat-label">Avg Monthly Revenue</span>
+          <span className="stat-num">8</span>
+          <span className="stat-label">Cash Alternative Draws</span>
         </div>
       </section>
 

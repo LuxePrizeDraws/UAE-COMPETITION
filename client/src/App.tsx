@@ -29,12 +29,6 @@ function NavigationLinks() {
           {item.label}
         </NavLink>
       ))}
-      <NavLink
-        to="/investor-summary"
-        className={({ isActive }) => `nav-link nav-link--highlight${isActive ? ' nav-link--active' : ''}`}
-      >
-        Investor Summary
-      </NavLink>
     </>
   );
 }

@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import App from './App';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
-import InvestorSummary from './pages/InvestorSummary';
 import ChessTournament from './pages/ChessTournament';
 import Connect4Tournament from './pages/Connect4Tournament';
 import Gallery from './pages/Gallery';
@@ -22,7 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route index element={<Home />} />
           <Route path="competitions" element={<Dashboard />} />
           <Route path="dashboard" element={<Navigate to="/competitions" replace />} />
-          <Route path="investor-summary" element={<InvestorSummary />} />
+          <Route path="investor-summary" element={<Navigate to="/mission" replace />} />
           <Route path="chess-tournament" element={<ChessTournament />} />
           <Route path="connect4-tournament" element={<Connect4Tournament />} />
           <Route path="gallery" element={<Gallery />} />
