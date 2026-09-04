@@ -1,0 +1,125 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-bottom: 2px solid #c9a84c;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  font-size: 1.2rem;
+  color: #c9a84c;
+  font-weight: 800;
+}
+
+.app-nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.app-nav--mobile {
+  display: none;
+}
+
+.app-nav--desktop-only {
+  justify-content: flex-end;
+}
+
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.45);
+  color: #c9a84c;
+  border-radius: 8px;
+  padding: 0.35rem 0.6rem;
+  font-size: 1.1rem;
+}
+
+.nav-link {
+  color: #e8d5b7;
+  font-weight: 600;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+  font-size: 0.88rem;
+}
+
+.nav-link:hover {
+  background: rgba(201, 168, 76, 0.15);
+}
+
+.nav-link--highlight {
+  background: rgba(201, 168, 76, 0.2);
+  border: 1px solid #c9a84c;
+  color: #c9a84c;
+}
+
+.nav-link--active {
+  color: #c9a84c;
+  background: rgba(201, 168, 76, 0.12);
+}
+
+.competitions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  flex: 1;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: #888;
+  font-size: 0.85rem;
+  border-top: 1px solid #222;
+  margin-top: auto;
+}
+
+@media (max-width: 1100px) {
+  .header-content {
+    grid-template-columns: 1fr auto;
+  }
+
+  .menu-toggle {
+    display: inline-block;
+    justify-self: end;
+  }
+
+  .app-nav--desktop-only {
+    display: none;
+  }
+
+  .app-nav--mobile {
+    display: none;
+    grid-column: 1 / -1;
+    border-top: 1px solid #3a3a3a;
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .app-nav--mobile.app-nav--open {
+    display: flex;
+  }
+}

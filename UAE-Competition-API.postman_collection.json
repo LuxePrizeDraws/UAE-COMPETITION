@@ -1,0 +1,954 @@
+{
+  "info": {
+    "name": "UAE Competition Platform API",
+    "description": "Complete API testing collection for all 8 competitions. Set the `baseUrl` variable to your backend URL before running.\n\nDefault: http://localhost:5000\n\nImport instructions:\n1. Open Postman\n2. Click Import\n3. Select this file\n4. Update `baseUrl` variable if needed\n5. Run any request!",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "description": "Backend API base URL. Change to your Railway/Heroku URL for staging."
+    },
+    {
+      "key": "competitionId",
+      "value": "1",
+      "description": "Competition ID (1-8)"
+    },
+    {
+      "key": "tournamentSlug",
+      "value": "chess",
+      "description": "Tournament slug: chess or connect4"
+    },
+    {
+      "key": "supportEmail",
+      "value": "support-user@example.com",
+      "description": "Reusable test email for support/tournament requests"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            },
+            "description": "Returns API status, timestamp, total competitions, and live count."
+          },
+          "response": []
+        },
+        {
+          "name": "Root Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            },
+            "description": "Root endpoint \u2013 returns platform name and version."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Competitions",
+      "item": [
+        {
+          "name": "Get All Competitions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions"
+              ]
+            },
+            "description": "Returns all 8 competitions with prize details, entry prices, draw progress percentages, cash alternatives, and time remaining."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/{{competitionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "{{competitionId}}"
+              ]
+            },
+            "description": "Returns a single competition by ID. Change `competitionId` variable to 1-8."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition 1 \u2013 Weekly \u00a310K",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition 2 \u2013 Luxury Experience",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition 3 \u2013 \u00a350K Monthly",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition 4 \u2013 \u00a3500K Quarterly",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/4",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition 5 \u2013 \u00a35M Annual",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition 6 \u2013 Weekly Bonus \u00a310K",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/6",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition 7 \u2013 Supercars OR \u00a3135K",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/7",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Competition 8 \u2013 UK Dream OR \u00a3320K",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/8",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "8"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Entry Management",
+      "item": [
+        {
+          "name": "Enter Competition 1 \u2013 Cash (5 tickets)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 5,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/1/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
+            },
+            "description": "Enter Weekly \u00a310K draw with 5 tickets."
+          },
+          "response": []
+        },
+        {
+          "name": "Enter Competition 2 \u2013 Luxury (10 tickets, cash)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/2/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "2",
+                "enter"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enter Competition 3 \u2013 \u00a350K (3 tickets)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/3/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "3",
+                "enter"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enter Competition 4 \u2013 \u00a3500K (1 ticket)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/4/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "4",
+                "enter"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enter Competition 5 \u2013 \u00a35M Annual (should fail: coming soon)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 2,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/5/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "5",
+                "enter"
+              ]
+            },
+            "description": "Expected: 400 error \u2013 competition not yet open."
+          },
+          "response": []
+        },
+        {
+          "name": "Enter Competition 6 \u2013 Weekly Bonus (20 tickets)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 20,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/6/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "6",
+                "enter"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enter Competition 7 \u2013 Supercars (physical prize)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"physical\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/7/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "7",
+                "enter"
+              ]
+            },
+            "description": "Enter Supercars competition choosing physical prize (Porsche, Lamborghini, Ferrari)."
+          },
+          "response": []
+        },
+        {
+          "name": "Enter Competition 7 \u2013 Supercars (cash alternative)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 10,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/7/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "7",
+                "enter"
+              ]
+            },
+            "description": "Enter Supercars competition choosing \u00a3135K cash alternative instead."
+          },
+          "response": []
+        },
+        {
+          "name": "Enter Competition 8 \u2013 UK Dream (cash alternative)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3,\n  \"termsAccepted\": true,\n  \"prizeOption\": \"cash\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/8/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "8",
+                "enter"
+              ]
+            },
+            "description": "Enter UK Entrepreneur Dream taking \u00a3320K cash alternative."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Scenarios",
+      "item": [
+        {
+          "name": "FAIL \u2013 No terms accepted",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 5,\n  \"termsAccepted\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/1/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
+            },
+            "description": "Expected: 400 \u2013 You must accept the terms and conditions to enter."
+          },
+          "response": []
+        },
+        {
+          "name": "FAIL \u2013 Invalid quantity (0)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 0,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/1/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
+            },
+            "description": "Expected: 400 \u2013 Invalid quantity."
+          },
+          "response": []
+        },
+        {
+          "name": "FAIL \u2013 Invalid quantity (over 1000)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 9999,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/1/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
+            },
+            "description": "Expected: 400 \u2013 Invalid quantity. Must be a whole number between 1 and 1000."
+          },
+          "response": []
+        },
+        {
+          "name": "FAIL \u2013 Competition not found (ID 999)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/999/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "999",
+                "enter"
+              ]
+            },
+            "description": "Expected: 404 \u2013 Competition not found."
+          },
+          "response": []
+        },
+        {
+          "name": "FAIL \u2013 Competition coming soon (ID 5)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 1,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/5/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "5",
+                "enter"
+              ]
+            },
+            "description": "Expected: 400 \u2013 Competition not yet open."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Load Testing",
+      "item": [
+        {
+          "name": "Bulk Entry \u2013 1000 tickets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 1000,\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/1/enter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "1",
+                "enter"
+              ]
+            },
+            "description": "Maximum allowed bulk entry \u2013 tests server under load."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tournaments",
+      "item": [
+        {
+          "name": "Get All Tournaments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tournaments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tournaments"
+              ]
+            },
+            "description": "Returns visible tournaments based on ENABLED_TOURNAMENTS env configuration."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tournament by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tournaments/{{tournamentSlug}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tournaments",
+                "{{tournamentSlug}}"
+              ]
+            },
+            "description": "Get a specific tournament by slug (chess or connect4)."
+          },
+          "response": []
+        },
+        {
+          "name": "Register Chess Tournament",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Chess Player\",\n  \"email\": \"{{supportEmail}}\",\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tournaments/chess/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tournaments",
+                "chess",
+                "register"
+              ]
+            },
+            "description": "Registers user for chess tournament and returns registration ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Register Connect4 Tournament",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Connect4 Player\",\n  \"email\": \"connect4-player@example.com\",\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tournaments/connect4/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tournaments",
+                "connect4",
+                "register"
+              ]
+            },
+            "description": "Registers user for connect4 tournament and returns registration ID."
+          },
+          "response": []
+        },
+        {
+          "name": "FAIL \u2013 Duplicate tournament registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Chess Player\",\n  \"email\": \"{{supportEmail}}\",\n  \"termsAccepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tournaments/chess/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tournaments",
+                "chess",
+                "register"
+              ]
+            },
+            "description": "Run after successful chess registration; expected: 409 duplicate response."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mental Health Support",
+      "item": [
+        {
+          "name": "Mental Health Chat \u2013 Supportive Guidance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"I feel anxious today and need grounding tips\",\n  \"history\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mental-health/chat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "mental-health",
+                "chat"
+              ]
+            },
+            "description": "Returns supportive AI guidance and a disclaimer (mock/live mode)."
+          },
+          "response": []
+        },
+        {
+          "name": "Support Worker Handoff Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Support User\",\n  \"email\": \"{{supportEmail}}\",\n  \"reason\": \"I need to speak with a support worker about stress and focus challenges.\",\n  \"preferredContact\": \"email\",\n  \"urgent\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/support-worker-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "support-worker-requests"
+              ]
+            },
+            "description": "Creates support worker ticket and returns ticketId."
+          },
+          "response": []
+        },
+        {
+          "name": "FAIL \u2013 Support Worker Validation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"A\",\n  \"email\": \"invalid-email\",\n  \"reason\": \"short\",\n  \"preferredContact\": \"email\",\n  \"urgent\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/support-worker-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "support-worker-requests"
+              ]
+            },
+            "description": "Expected: 400 validation error for name/email/reason."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
