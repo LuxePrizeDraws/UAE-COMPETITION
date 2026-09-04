@@ -199,7 +199,7 @@ For a full local or production setup, configure both the backend env file and `c
 2. **New Project** → Import `UAE-COMPETITION` repo
 3. Keep the project rooted at the repository root to use `/vercel.json` (or set the root directory to `client` to use `client/vercel.json`)
 4. Add env vars: `VITE_API_URL=https://your-backend.railway.app` and `VITE_STRIPE_PUBLISHABLE_KEY=pk_live_...`
-5. Deploy — the Vercel build only installs dependencies once, then builds `client/dist`
+5. Deploy — Vercel installs root deps and client deps, then builds `client/dist`
 
 ### Deploy Backend → Railway (Free)
 1. Sign in at [railway.app](https://railway.app)
