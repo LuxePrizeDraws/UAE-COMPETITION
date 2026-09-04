@@ -1,15 +1,7 @@
-<<<<<<< HEAD
 import { useEffect, useState } from 'react';
-=======
-import React, { useState, useEffect } from 'react';
->>>>>>> origin/main
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
 import EntryModal from '../components/EntryModal';
-import { useButtonSound } from '../hooks/useButtonSound';
-import AdBanner from '../components/AdBanner';
-import AdSidebar from '../components/AdSidebar';
-import AffiliateWidget from '../components/AffiliateWidget';
 import './Home.css';
 
 interface Competition {
@@ -33,7 +25,6 @@ interface Competition {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const SHOW_OPERATOR_PLAYBOOK = import.meta.env.VITE_SHOW_OPERATOR_PLAYBOOK === 'true';
 
 const demoPaths = [
   {
@@ -161,21 +152,11 @@ const gameChallenges = [
   },
 ] as const;
 
-const experienceLinks = [
-  { to: '/competitions', title: 'Competitions', description: 'Explore all active prize competitions.', icon: '🎯' },
-  { to: '/chess-tournament', title: 'Chess Tournament', description: 'Register for the UAE Chess Masters bracket.', icon: '♟️' },
-  { to: '/connect4-tournament', title: 'Connect 4 Tournament', description: 'Join fast-paced Connect 4 elimination rounds.', icon: '🔴' },
-  { to: '/gallery', title: 'Gallery', description: 'View featured highlights and event snapshots.', icon: '🖼️' },
-  { to: '/mental-health', title: 'Mental Health Support', description: 'Access AI guidance and support-worker handoff.', icon: '🧠' },
-  { to: '/help', title: 'Contact & Help', description: 'Get help with platform and tournament questions.', icon: '🆘' },
-] as const;
-
 export default function Home() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedComp, setSelectedComp] = useState<Competition | null>(null);
-  const playSound = useButtonSound();
 
   useEffect(() => {
     fetch(`${API_URL}/api/competitions`)
@@ -216,15 +197,7 @@ export default function Home() {
   }));
 
   return (
-<<<<<<< HEAD
     <main className="home">
-=======
-    <div className={`home${SHOW_OPERATOR_PLAYBOOK ? '' : ' home--operator-playbook-hidden'}`}>
-      {/* Top banner ad */}
-      <AdBanner placement="HOME_TOP" />
-
-      {/* Hero */}
->>>>>>> origin/main
       <section className="hero">
         <div className="hero-background">
           <div className="hero-gradient" />
@@ -245,14 +218,10 @@ export default function Home() {
             <Link to="/investor-summary" className="btn-secondary">Review Investor Summary</Link>
             <a href="#competitions" className="btn-secondary">Browse Competitions</a>
           </div>
-<<<<<<< HEAD
           <p className="hero-note">
             Demo note: this experience is presentation-focused and avoids unsupported public
             financial claims. Commercial details remain disclosure-led throughout the app.
           </p>
-=======
-          <a href="#competitions" className="btn-cta btn-interactive" onMouseDown={playSound}>VIEW COMPETITIONS ↓</a>
->>>>>>> origin/main
         </div>
       </section>
 
@@ -277,21 +246,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        <section className="experience-section">
-          <div className="container">
-            <h2 className="section-title">🌟 EXPLORE EXPERIENCES</h2>
-            <div className="experience-grid">
-              {experienceLinks.map((item) => (
-                <Link key={item.to} to={item.to} className="experience-card">
-                  <span className="experience-card__icon">{item.icon}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
       </div>
 
       <section className="demo-section">
@@ -406,7 +360,6 @@ export default function Home() {
           {error && <p className="loading loading--error">{error}</p>}
           {!loading && !error && (
             <div className="competitions-grid">
-<<<<<<< HEAD
               {cardCompetitions.map((competition) => (
                 <CompetitionCard
                   key={competition.id}
@@ -418,24 +371,6 @@ export default function Home() {
                     }
                   }}
                 />
-=======
-              {cardCompetitions.map((comp, idx) => (
-                <React.Fragment key={comp.id}>
-                  <CompetitionCard
-                    competition={comp}
-                    onEnter={(id) => {
-                      const c = competitions.find((x) => x.id === id);
-                      if (c) setSelectedComp(c);
-                    }}
-                  />
-                  {/* Insert interstitial ad every 3 competition cards */}
-                  {(idx + 1) % 3 === 0 && idx < cardCompetitions.length - 1 && (
-                    <div className="competitions-grid__ad-row">
-                      <AdBanner placement="BETWEEN_COMPETITIONS" />
-                    </div>
-                  )}
-                </React.Fragment>
->>>>>>> origin/main
               ))}
             </div>
           )}
@@ -448,7 +383,6 @@ export default function Home() {
         </div>
       </section>
 
-<<<<<<< HEAD
       <footer className="home-footer">
         <div className="container">
           <p>© {new Date().getFullYear()} UAE Competition Platform</p>
@@ -456,214 +390,6 @@ export default function Home() {
             <Link to="/dashboard" className="footer-dash-link">📊 Live Dashboard</Link>
             <Link to="/investor-summary" className="footer-dash-link">💼 Investor Summary</Link>
           </div>
-=======
-      {/* Affiliate widget — contextual luxury products */}
-      <section className="container">
-        <AffiliateWidget category="default" title="Recommended — Luxury Products & Services" />
-      </section>
-
-      {/* Trust Section */}
-      <section className="trust-section">
-        <div className="container">
-          <h2 className="section-title">WHY CHOOSE US</h2>
-          <div className="trust-grid">
-            <div className="trust-item">
-              <div className="trust-icon">🔒</div>
-              <h3>Secure Platform</h3>
-              <p>Bank-grade security and SSL encryption on all transactions</p>
-            </div>
-            <div className="trust-item">
-              <div className="trust-icon">📡</div>
-              <h3>Live Fair Draws</h3>
-              <p>Every draw is conducted live and verifiably fair</p>
-            </div>
-            <div className="trust-item">
-              <div className="trust-icon">💰</div>
-              <h3>Cash Alternative</h3>
-              <p>Every prize has a cash equivalent — you always have the choice</p>
-            </div>
-            <div className="trust-item">
-              <div className="trust-icon">📊</div>
-              <h3>Transparent Odds</h3>
-              <p>Clear entry pricing and draw status shown publicly. No hidden fees or surprises.</p>
-            </div>
-            <div className="trust-item">
-              <div className="trust-icon">🧮</div>
-              <h3>Ring-Fenced Draw Economics</h3>
-              <p>Each draw is run with ring-fenced controls to protect prize coverage and platform stability.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="playbook-section" id="launch-playbook">
-        <div className="container">
-          <h2 className="section-title">🚀 ZERO-FUNDING LAUNCH PLAYBOOK</h2>
-          <p className="playbook-intro">
-            Complete 20-month operator blueprint to scale from launch to a £10M annual profit run rate using zero upfront capital, disciplined reinvestment, and ring-fenced draw economics.
-          </p>
-
-          <div className="playbook-grid">
-            {launchPhases.map((phase) => (
-              <article key={phase.title} className="playbook-card">
-                <p className="playbook-card__eyebrow">{phase.timeframe}</p>
-                <h3>{phase.title}</h3>
-                <p className="playbook-card__budget">{phase.budget}</p>
-                <ul>
-                  {phase.tactics.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                <div className="playbook-card__outcomes">
-                  {phase.outcomes.map((outcome) => (
-                    <span key={outcome}>{outcome}</span>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="ring-fence-section" id="ring-fenced-draws">
-        <div className="container">
-          <h2 className="section-title">💷 RING-FENCED DRAW &amp; PROFIT MARGIN RULES</h2>
-          <div className="checklist-card">
-            <ul className="checklist-list">
-              {ringFencedRules.map((rule) => (
-                <li key={rule}>{rule}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="action-plan-section" id="week-one-plan">
-        <div className="container">
-          <h2 className="section-title">📅 WEEK 1 DAILY ACTION PLAN</h2>
-          <div className="timeline-grid">
-            {weekOnePlan.map((day) => (
-              <article key={day.day} className="timeline-card">
-                <h3>{day.day}</h3>
-                {day.blocks.map((block) => (
-                  <div key={block.title} className="timeline-block">
-                    <h4>{block.title}</h4>
-                    <ul className="checklist-list">
-                      {block.items.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="action-plan-section action-plan-section--alt" id="growth-sprints">
-        <div className="container">
-          <h2 className="section-title">⚡ WEEK 2-4 GROWTH SPRINTS</h2>
-          <div className="playbook-grid">
-            {growthWeeks.map((week) => (
-              <article key={week.title} className="playbook-card">
-                <p className="playbook-card__eyebrow">{week.targets}</p>
-                <h3>{week.title}</h3>
-                <ul>
-                  {week.actions.map((action) => (
-                    <li key={action}>{action}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-          <div className="summary-bar">
-            {monthSummaries.map((summary) => (
-              <span key={summary}>{summary}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="resources-section" id="free-tools">
-        <div className="container">
-          <h2 className="section-title">🛠️ FREE TOOLS &amp; RESOURCES</h2>
-          <div className="resources-grid">
-            {freeTools.map((group) => (
-              <article key={group.category} className="resource-card">
-                <h3>{group.category}</h3>
-                <ul className="chip-list">
-                  {group.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="resources-section resources-section--alt" id="content-calendar">
-        <div className="container">
-          <h2 className="section-title">🎬 MONTH 1-3 CONTENT CALENDAR</h2>
-          <div className="resources-grid">
-            {contentCalendar.map((week) => (
-              <article key={week.title} className="resource-card">
-                <h3>{week.title}</h3>
-                <ul className="checklist-list">
-                  {week.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="metrics-section" id="metrics">
-        <div className="container">
-          <h2 className="section-title">📈 DAILY METRICS &amp; SUCCESS MILESTONES</h2>
-          <div className="metrics-grid">
-            <article className="resource-card">
-              <h3>Daily Tracking Sheet</h3>
-              <ul className="checklist-list">
-                {metrics.daily.map((metric) => (
-                  <li key={metric}>{metric}</li>
-                ))}
-              </ul>
-            </article>
-            <article className="resource-card">
-              <h3>Monthly Scorecard</h3>
-              <ul className="checklist-list">
-                {metrics.monthly.map((metric) => (
-                  <li key={metric}>{metric}</li>
-                ))}
-              </ul>
-            </article>
-            <article className="resource-card">
-              <h3>Key Milestones</h3>
-              <ul className="checklist-list">
-                {milestones.map((milestone) => (
-                  <li key={milestone}>{milestone}</li>
-                ))}
-              </ul>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer ad banner */}
-      <div className="container">
-        <AdBanner placement="HOME_FOOTER" />
-      </div>
-
-      {/* Footer */}
-      <footer className="home-footer">
-        <div className="container">
-          <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/competitions" className="footer-dash-link">📊 View Live Dashboard →</Link>
->>>>>>> origin/main
         </div>
       </footer>
 

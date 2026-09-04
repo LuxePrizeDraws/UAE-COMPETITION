@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import { useEffect, useState } from 'react';
-=======
-import { useState } from 'react';
 import { useButtonSound } from '../hooks/useButtonSound';
->>>>>>> origin/main
 import './EntryModal.css';
 
 interface Competition {
@@ -75,12 +71,9 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EntryResult | null>(null);
-<<<<<<< HEAD
   const [postalEntryInfo, setPostalEntryInfo] = useState<PostalEntryInfo>(defaultPostalEntryInfo);
   const [postalEntryLoading, setPostalEntryLoading] = useState(true);
-=======
   const playSound = useButtonSound();
->>>>>>> origin/main
 
   const totalCost = quantity * competition.entryPrice;
   const remaining = competition.totalEntries - competition.soldEntries;

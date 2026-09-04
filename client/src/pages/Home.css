@@ -13,53 +13,6 @@
   padding: 4rem 2rem;
 }
 
-<<<<<<< HEAD
-=======
-.experience-section {
-  padding: 3rem 2rem;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-  background: #111;
-}
-
-.experience-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.experience-card {
-  display: grid;
-  gap: 0.55rem;
-  padding: 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: rgba(212, 175, 55, 0.03);
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.experience-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--color-gold);
-}
-
-.experience-card__icon {
-  font-size: 1.3rem;
-}
-
-.experience-card h3 {
-  color: var(--color-gold);
-  font-size: 1.05rem;
-}
-
-.experience-card p {
-  color: var(--color-text-tertiary);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* Hero Section */
->>>>>>> origin/main
 .hero {
   position: relative;
   overflow: hidden;
@@ -234,57 +187,6 @@
   background: var(--color-black);
 }
 
-<<<<<<< HEAD
-=======
-.section-title {
-  text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
-  letter-spacing: 2px;
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.section-title::before,
-.section-title::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 80px;
-  height: 2px;
-  background: var(--color-gold);
-}
-
-.section-title::before {
-  right: calc(100% + 20px);
-}
-
-.section-title::after {
-  left: calc(100% + 20px);
-}
-
-.competitions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-/* Ad row spans the full grid width */
-.competitions-grid__ad-row {
-  grid-column: 1 / -1;
-}
-
-.loading {
-  text-align: center;
-  font-size: 1.2rem;
-  color: var(--color-gold);
-  padding: 3rem;
-}
-
-/* Trust Section */
->>>>>>> origin/main
 .trust-section {
   background: var(--color-dark-gray);
   border-top: 1px solid var(--color-border);
@@ -293,57 +195,7 @@
 
 .section-title {
   margin-bottom: 1rem;
-<<<<<<< HEAD
   font-size: 2.35rem;
-=======
-}
-
-.trust-item h3 {
-  color: var(--color-gold);
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  letter-spacing: 1px;
-}
-
-.trust-item p {
-  font-size: 0.9rem;
-  color: #999;
-}
-
-.playbook-section,
-.ring-fence-section,
-.action-plan-section,
-.resources-section,
-.metrics-section {
-  padding: 4rem 2rem;
-}
-
-.home--operator-playbook-hidden .playbook-section,
-.home--operator-playbook-hidden .ring-fence-section,
-.home--operator-playbook-hidden .action-plan-section,
-.home--operator-playbook-hidden .resources-section,
-.home--operator-playbook-hidden .metrics-section {
-  display: none;
-}
-
-.playbook-section,
-.action-plan-section,
-.resources-section {
-  background: var(--color-black);
-}
-
-.ring-fence-section,
-.action-plan-section.action-plan-section--alt,
-.resources-section.resources-section--alt,
-.metrics-section {
-  background: var(--color-dark-gray);
-  border-top: 1px solid var(--color-border);
-}
-
-.playbook-intro {
-  max-width: 960px;
-  margin: 0 auto 2.5rem;
->>>>>>> origin/main
   text-align: center;
   color: var(--color-gold-light);
 }
@@ -575,32 +427,8 @@
     flex-direction: column;
   }
 
-<<<<<<< HEAD
   .btn-cta,
   .btn-secondary {
     width: 100%;
-=======
-  .competitions-section,
-  .experience-section,
-  .trust-section,
-  .playbook-section,
-  .ring-fence-section,
-  .action-plan-section,
-  .resources-section,
-  .metrics-section {
-    padding: 2rem 1rem;
-  }
-
-  .summary-bar,
-  .chip-list {
-    gap: 0.5rem;
-  }
-
-  .playbook-card,
-  .resource-card,
-  .timeline-card,
-  .checklist-card {
-    padding: 1.25rem;
->>>>>>> origin/main
   }
 }

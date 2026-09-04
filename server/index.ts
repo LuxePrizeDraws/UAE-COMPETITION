@@ -5,17 +5,13 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-<<<<<<< HEAD
-import Stripe from 'stripe';
-=======
 import { randomUUID } from 'crypto';
->>>>>>> origin/main
+import Stripe from 'stripe';
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
-<<<<<<< HEAD
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const charityDonationAmount = Math.max(1, Number(process.env.CHARITY_DONATION_AMOUNT || 5));
@@ -25,7 +21,6 @@ const postalEntryAddress = (process.env.POSTAL_ENTRY_ADDRESS || '')
   .map((line) => line.trim())
   .filter(Boolean);
 const postalEntrySupportEmail = process.env.POSTAL_ENTRY_SUPPORT_EMAIL || null;
-=======
 const MENTAL_HEALTH_AI_MODE = (process.env.MENTAL_HEALTH_AI_MODE || 'mock').toLowerCase();
 const MENTAL_HEALTH_AI_ENDPOINT = process.env.MENTAL_HEALTH_AI_ENDPOINT || '';
 const MENTAL_HEALTH_AI_API_KEY = process.env.MENTAL_HEALTH_AI_API_KEY || '';
@@ -35,7 +30,6 @@ const enabledTournamentSlugs = new Set(
     .map((value) => value.trim().toLowerCase())
     .filter(Boolean)
 );
->>>>>>> origin/main
 
 // Middleware
 app.use(helmet());
@@ -388,7 +382,6 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
   res.json(competition);
 });
 
-<<<<<<< HEAD
 app.get('/api/competitions/:id/postal-entry', (req: Request, res: Response) => {
   const competition = competitions.find(c => c.id === parseInt(req.params.id));
   if (!competition) {
@@ -416,8 +409,6 @@ app.get('/api/competitions/:id/postal-entry', (req: Request, res: Response) => {
   });
 });
 
-app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
-=======
 app.get('/api/tournaments', (req: Request, res: Response) => {
   const visibleTournaments = tournaments
     .filter((tournament) => enabledTournamentSlugs.has(tournament.slug))
@@ -558,8 +549,7 @@ app.post('/api/support-worker-requests', (req: Request, res: Response) => {
   });
 });
 
-app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
->>>>>>> origin/main
+app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
   const { quantity, termsAccepted, prizeOption } = req.body;
   const competition = competitions.find(c => c.id === parseInt(req.params.id));
   
