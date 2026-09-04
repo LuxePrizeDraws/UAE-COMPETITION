@@ -1,6 +1,7 @@
 # UAE Competition Platform 🏆
 
 Premium UK competition platform with **8 live competitions**, transparent pricing, draw-ready tracking, and cash alternatives for every prize.
+Now includes **Chess + Connect 4 tournament integrations**, a **gallery**, and a **mental health support flow** with AI chat fallback + support-worker handoff.
 
 ---
 
@@ -38,6 +39,10 @@ Premium UK competition platform with **8 live competitions**, transparent pricin
 - ⏰ **Countdown timers** – Real-time draw deadlines
 - ✅ **Terms acceptance** – Compliance-first entry flow
 - 📱 **Responsive design** – Works on mobile, tablet, desktop
+- ♟️ **Chess Tournament** – Dedicated route, API integration, and registration flow
+- 🔴 **Connect 4 Tournament** – Dedicated route, API integration, and registration flow
+- 🖼️ **Gallery section** – Reusable gallery grid with replaceable sample content
+- 🧠 **Mental Health Support** – AI chat shell (mock/live mode) with support worker handoff endpoint
 
 ---
 
@@ -78,7 +83,12 @@ npm run dev
 | Service | URL |
 |---------|-----|
 | 🖥️ Frontend | http://localhost:5173 |
-| 📊 Dashboard | http://localhost:5173/dashboard |
+| 📊 Competitions Dashboard | http://localhost:5173/competitions |
+| ♟️ Chess Tournament | http://localhost:5173/chess-tournament |
+| 🔴 Connect 4 Tournament | http://localhost:5173/connect4-tournament |
+| 🖼️ Gallery | http://localhost:5173/gallery |
+| 🧠 Mental Health Support | http://localhost:5173/mental-health |
+| 🆘 Help | http://localhost:5173/help |
 | 🔌 Backend API | http://localhost:5000 |
 
 ### Run Both Together (from root)
@@ -216,6 +226,38 @@ Built-in automation includes:
 - alternative method fallback before manual intervention
 - winner notifications (SMS/email/in-app flags), certificate issuance, and audit/recovery tracking
 
+### Get All Tournaments
+```bash
+curl http://localhost:5000/api/tournaments
+```
+
+### Get Tournament by Slug
+```bash
+curl http://localhost:5000/api/tournaments/chess
+curl http://localhost:5000/api/tournaments/connect4
+```
+
+### Register for Tournament
+```bash
+curl -X POST http://localhost:5000/api/tournaments/chess/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Jane Player","email":"jane@example.com","termsAccepted":true}'
+```
+
+### Mental Health AI Chat (supportive guidance shell)
+```bash
+curl -X POST http://localhost:5000/api/mental-health/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"I feel overwhelmed today","history":[]}'
+```
+
+### Support Worker Handoff Request
+```bash
+curl -X POST http://localhost:5000/api/support-worker-requests \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Jane Player","email":"jane@example.com","reason":"Need to speak with a support worker","preferredContact":"email","urgent":false}'
+```
+
 ---
 
 ## ⚙️ Environment Variables
@@ -227,12 +269,25 @@ Built-in automation includes:
 | `PORT` | `5000` | Server port |
 | `NODE_ENV` | `development` | Environment |
 | `CLIENT_URL` | `http://localhost:5173` | Frontend URL for CORS |
+| `ENABLED_TOURNAMENTS` | `chess,connect4` | Comma-separated tournament visibility gates |
+| `MENTAL_HEALTH_AI_MODE` | `mock` | `mock` uses safe fallback replies; `live` calls external AI endpoint |
+| `MENTAL_HEALTH_AI_ENDPOINT` | _(empty)_ | External AI API endpoint used when mode is `live` |
+| `MENTAL_HEALTH_AI_API_KEY` | _(empty)_ | External AI API key used when mode is `live` |
 
 ### Frontend (`client/.env.example`)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
+| `VITE_ENABLE_MENTAL_HEALTH_SUPPORT` | `true` | Optional UI-level flag for support feature toggling |
+| `VITE_SHOW_OPERATOR_PLAYBOOK` | `false` | Set to `true` only if you intentionally want to expose operator growth-playbook content |
+
+---
+
+## 🧩 Tournament Integration Root Cause & Recovery
+
+- **Root cause:** Chess and Connect 4 integrations were not wired into the current branch (no frontend routes, no backend endpoints, no nav entry points), so users had no way to access them.
+- **Recovery implemented:** Added backend tournament APIs (`/api/tournaments/*`), frontend routes/pages for both tournaments, and direct visibility in responsive navigation + homepage experience cards.
 
 ---
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useButtonSound } from '../hooks/useButtonSound';
 import './CompetitionCard.css';
 
 interface Competition {
@@ -29,6 +30,7 @@ interface CompetitionCardProps {
 
 const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
+  const playSound = useButtonSound();
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const totalCost = quantity * competition.entryPrice;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
@@ -130,8 +132,9 @@ const CompetitionCard = ({ competition, onEnter }: CompetitionCardProps) => {
       </div>
 
       <button
-        className="btn-enter-now"
+        className="btn-enter-now btn-interactive"
         disabled={competition.status === 'coming-soon'}
+        onMouseDown={playSound}
         onClick={() => onEnter?.(competition.id)}
       >
         {competition.status === 'coming-soon' ? '⏳ COMING SOON' : `ENTER NOW - ${totalCost} AED`}
