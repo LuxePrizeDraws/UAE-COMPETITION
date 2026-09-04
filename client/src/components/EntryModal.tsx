@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useButtonSound } from '../hooks/useButtonSound';
+import { API_BASE } from '../config';
 import './EntryModal.css';
 
 interface Competition {
@@ -37,7 +38,6 @@ interface EntryModalProps {
   onClose: () => void;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const TERMS_PREF_KEY = 'uae_competition_terms_accepted';
 
 export default function EntryModal({ competition, onClose }: EntryModalProps) {
@@ -50,13 +50,19 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EntryResult | null>(null);
+  const [idempotencyKey] = useState(() => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+    return `entry-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  });
   const playSound = useButtonSound();
 
   const totalCost = quantity * competition.entryPrice;
   const remaining = competition.totalEntries - competition.soldEntries;
 
   const handleQuantityChange = (val: number) => {
-    const clamped = Math.max(1, Math.min(1000, Math.round(val) || 1));
+    const clamped = Math.max(1, Math.min(100, Math.round(val) || 1));
     setQuantity(clamped);
   };
 
@@ -68,9 +74,12 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/api/competitions/${competition.id}/enter`, {
+      const res = await fetch(`${API_BASE}/api/competitions/${competition.id}/enter`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': idempotencyKey,
+        },
         body: JSON.stringify({ quantity, termsAccepted, prizeOption }),
       });
       const data = await res.json();
@@ -191,7 +200,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                   id="qty-input"
                   type="number"
                   min="1"
-                  max="1000"
+                  max="100"
                   value={quantity}
                   onChange={(e) => handleQuantityChange(Number(e.target.value))}
                   className="qty-input"
@@ -200,7 +209,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                   className="qty-btn btn-interactive"
                   onMouseDown={playSound}
                   onClick={() => handleQuantityChange(quantity + 1)}
-                  disabled={quantity >= 1000}
+                  disabled={quantity >= 100}
                 >+</button>
               </div>
               <div className="qty-presets">
@@ -231,7 +240,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
               />
               <span>
                 I am 18+ and accept the{' '}
-                <a href="#" onClick={(e) => e.preventDefault()}>Terms &amp; Conditions</a>.
+                <a href="/terms">Terms &amp; Conditions</a>.
                 I understand this is a prize competition and the draw is conducted fairly and transparently.
               </span>
             </label>

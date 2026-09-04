@@ -8,10 +8,13 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "nodemon --exec node --loader ts-node/esm server/index.ts",
     "dev:client": "cd client && vite",
-    "build": "cd client && vite build",
+    "build:client": "npm --prefix client run build",
+    "build:server": "tsc -p tsconfig.json",
+    "build": "npm run build:client && npm run build:server",
     "preview": "cd client && vite preview",
-    "type-check": "tsc --noEmit",
-    "test": "vitest"
+    "start": "node dist/server/index.js",
+    "type-check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p client/tsconfig.json",
+    "test": "vitest --run"
   },
   "keywords": [
     "competition",

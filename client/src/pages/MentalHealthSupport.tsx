@@ -1,5 +1,6 @@
 import './FeaturePages.css';
 import { FormEvent, useMemo, useState } from 'react';
+import { API_BASE } from '../config';
 
 interface ChatMessage {
   role: 'assistant' | 'user';
@@ -13,8 +14,6 @@ interface SupportForm {
   preferredContact: string;
   urgent: boolean;
 }
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function MentalHealthSupport() {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -56,7 +55,7 @@ export default function MentalHealthSupport() {
     setInput('');
 
     try {
-      const response = await fetch(`${API_URL}/api/mental-health/chat`, {
+      const response = await fetch(`${API_BASE}/api/mental-health/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, history: sanitizedHistory }),
@@ -102,7 +101,7 @@ export default function MentalHealthSupport() {
 
     try {
       setSupportSubmitting(true);
-      const response = await fetch(`${API_URL}/api/support-worker-requests`, {
+      const response = await fetch(`${API_BASE}/api/support-worker-requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(supportForm),

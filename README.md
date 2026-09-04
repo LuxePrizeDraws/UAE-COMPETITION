@@ -1,365 +1,115 @@
-# UAE Competition Platform 🏆
+# UAE Competition Platform
 
-Premium UK competition platform with **8 live competitions**, transparent pricing, draw-ready tracking, and cash alternatives for every prize.
-Now includes **Chess + Connect 4 tournament integrations**, a **gallery**, and a **mental health support flow** with AI chat fallback + support-worker handoff.
+Competition platform with:
+- Core paid-entry competitions
+- Chess + Connect 4 tournament flows
+- Mental health support chat + support-worker handoff
+- SQLite persistence with startup migrations
+- Idempotent entry checkout and payment audit trail
 
----
+## Scope for this release
+This release ships **competitions + tournaments + support** as one integrated experience.
 
-## 🌐 Live Staging Links
+## Routes (frontend)
+- `/` Home
+- `/competitions` Competition dashboard + entry modal
+- `/tournaments/chess`
+- `/tournaments/connect4`
+- `/mental-health`
+- `/gallery`
+- `/help`
+- `/terms`
+- Legacy redirects: `/chess-tournament`, `/connect4-tournament`, `/wellbeing-support`
 
-| Service | URL |
-|---------|-----|
-| 🖥️ Frontend | *(Deploy to Vercel – see [Deployment](#deployment) below)* |
-| 🔌 Backend API | *(Deploy to Railway – see [Deployment](#deployment) below)* |
-| 📬 Postman Collection | Import `UAE-Competition-API.postman_collection.json` |
+## API highlights
+- `GET /api/competitions`
+- `GET /api/competitions/:id`
+- `POST /api/competitions/:id/enter` (requires `Idempotency-Key` header + `termsAccepted: true`)
+- `GET /api/entries/:entryId/audit`
+- `GET /api/tournaments`
+- `GET /api/tournaments/:slug`
+- `POST /api/tournaments/:slug/register`
+- `POST /api/mental-health/chat`
+- `POST /api/support-worker-requests`
+- `POST /api/charity/checkout`
 
----
+## Entry flow hardening
+- Quantity validated to integer range 1–100
+- Terms acceptance enforced server-side
+- Idempotency key required for entry POST
+- Payment authorization abstraction (`PAYMENT_PROVIDER`)
+- Audit events persisted per entry (`payment_initiated`, `payment_authorized`, `entry_confirmed`)
 
-## 🎯 Platform Overview
+## Persistence
+Server uses SQLite via Node runtime (`node:sqlite`) with migrations applied at startup:
+- `schema_migrations`
+- `competitions`
+- `competition_entries`
+- `payment_audit_logs`
+- `idempotency_keys`
+- `tournaments`
+- `tournament_registrations`
+- `support_worker_requests`
 
-### 8 Competitions with £18.4M Annual Profit Potential
+Default DB path comes from `DATABASE_URL` (example: `sqlite:./database.db`).
 
-| # | Competition | Prize | Ticket | Annual Profit |
-|---|-------------|-------|--------|---------------|
-| 1 | Weekly £10K Cash | £10,000 | £1 | £780K |
-| 2 | Luxury Experience OR £100K Cash | £100,000 | £5 | £1.8M |
-| 3 | £50K Monthly Cash | £50,000 | £5 | £900K |
-| 4 | £500K Quarterly Cash | £500,000 | £10 | £3M |
-| 5 | £5M Annual Grand Draw | £5,000,000 | £25 | £7.5M |
-| 6 | Weekly £10K Bonus | £10,000 | £1 | £780K |
-| 7 | 3 Supercars OR £135K Cash | £135,000 | £10 | £2.43M |
-| 8 | UK Entrepreneur Dream OR £320K Cash | £320,000 | £25 | £1.92M |
-
-**Total Annual Profit Potential: £18.4M** | **Average Monthly Revenue: £1.53M**
-
-### Key Features
-- 🔵 **Draw-ready tracking** – Live progress bars showing entries sold vs needed
-- 💰 **Cash alternatives** – Every prize offers a cash equivalent ("CASH OR CARS – YOU CHOOSE!")
-- 📊 **Transparent pricing** – 40% house margin shown publicly
-- ⚡ **One-click re-entry** – Terms consent can be remembered on-device for faster paid entries
-- ⏰ **Countdown timers** – Real-time draw deadlines
-- ✅ **Terms acceptance** – Compliance-first entry flow
-- 📱 **Responsive design** – Works on mobile, tablet, desktop
-- ♟️ **Chess Tournament** – Dedicated route, API integration, and registration flow
-- 🔴 **Connect 4 Tournament** – Dedicated route, API integration, and registration flow
-- 🖼️ **Gallery section** – Reusable gallery grid with replaceable sample content
-- 🧠 **Mental Health Support** – AI chat shell (mock/live mode) with support worker handoff endpoint
-
----
-
-## 🚀 Quick Start
-
+## Local setup
 ### Prerequisites
-- Node.js v16+
-- npm v8+
+- Node.js 22+
+- npm 10+
 
-### 1. Clone the Repository
+### Install
 ```bash
-git clone https://github.com/shugstarwork-maker/UAE-COMPETITION.git
-cd UAE-COMPETITION
+npm ci
+npm --prefix client ci
 ```
 
-### 2. Backend Setup
-```bash
-npm install
-cp .env.example .env
-npm run dev:server
-```
-
-You should see:
-```
-✨ UAE Competition API running on http://localhost:5000
-```
-
-### 3. Frontend Setup
-```bash
-cd client
-npm install
-cp .env.example .env
-npm run dev
-```
-
-### 4. Access the Platform
-
-| Service | URL |
-|---------|-----|
-| 🖥️ Frontend | http://localhost:5173 |
-| 📊 Competitions Dashboard | http://localhost:5173/competitions |
-| ♟️ Chess Tournament | http://localhost:5173/chess-tournament |
-| 🔴 Connect 4 Tournament | http://localhost:5173/connect4-tournament |
-| 🖼️ Gallery | http://localhost:5173/gallery |
-| 🧠 Mental Health Support | http://localhost:5173/mental-health |
-| 🆘 Help | http://localhost:5173/help |
-| 🔌 Backend API | http://localhost:5000 |
-
-### Run Both Together (from root)
+### Run
 ```bash
 npm run dev
 ```
+- Frontend: `http://localhost:5173`
+- API: `http://localhost:5000`
 
----
-
-## 📁 Project Structure
-
-```
-UAE-COMPETITION/
-├── server/
-│   ├── index.ts               # Main API with 8 competitions
-│   └── .env.example
-├── client/
-│   ├── src/
-│   │   ├── components/
-│   │   │   └── CompetitionCard.tsx
-│   │   ├── pages/
-│   │   │   └── Dashboard.tsx  # Live demo dashboard
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   ├── index.html
-│   ├── vite.config.ts
-│   ├── package.json
-│   └── vercel.json            # Vercel deployment config
-├── .env.example
-├── .env.staging
-├── .env.production
-├── railway.toml               # Railway deployment config
-├── UAE-Competition-API.postman_collection.json
-└── README.md
-```
-
----
-
-## 🔌 API Endpoints
-
-### Health Check
-```bash
-curl http://localhost:5000/api/health
-```
-
-### Get All Competitions
-```bash
-curl http://localhost:5000/api/competitions
-```
-
-### Get Single Competition
-```bash
-curl http://localhost:5000/api/competitions/7
-```
-
-### Enter a Competition
-```bash
-# Basic cash entry
-curl -X POST http://localhost:5000/api/competitions/1/enter \
-  -H "Content-Type: application/json" \
-  -d '{"quantity": 5, "termsAccepted": true}'
-
-# Supercar – physical prize
-curl -X POST http://localhost:5000/api/competitions/7/enter \
-  -H "Content-Type: application/json" \
-  -d '{"quantity": 10, "termsAccepted": true, "prizeOption": "physical"}'
-
-# UK Dream – cash alternative
-curl -X POST http://localhost:5000/api/competitions/8/enter \
-  -H "Content-Type: application/json" \
-  -d '{"quantity": 3, "termsAccepted": true, "prizeOption": "cash"}'
-```
-
-**Request body fields:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `quantity` | integer | ✅ | Tickets to buy (1–1000) |
-| `termsAccepted` | boolean | ✅ | Must be `true` |
-| `prizeOption` | string | ❌ | `"physical"` or `"cash"` |
-
----
-
-### Automated Instant Payout APIs
-```bash
-# 1) Save winner payout preferences
-curl -X POST http://localhost:5000/api/payout-methods \
-  -H "Content-Type: application/json" \
-  -d '{
-    "userId": "user_123",
-    "primaryMethod": "bank",
-    "destinations": {
-      "bank": "GB11BARC1234567890",
-      "paypal": "winner@example.com",
-      "wise": "wise_account_123"
-    },
-    "preferredCurrency": "GBP"
-  }'
-
-# 2) Complete draw and trigger zero-touch automated payouts
-curl -X POST http://localhost:5000/api/draws/draw_weekly_001/complete-and-payout \
-  -H "Content-Type: application/json" \
-  -d '{
-    "winners": [
-      { "drawWinnerId": "dw_1", "userId": "user_123", "prizeAmount": 1500, "prizeTier": 1 },
-      { "drawWinnerId": "dw_2", "userId": "user_456", "prizeAmount": 750, "prizeTier": 2 }
-    ],
-    "ringFencedAccount": { "id": "rf_weekly", "balance": 3500, "reservePercent": 5 },
-    "insurancePolicy": { "id": "pol_weekly_001", "active": true, "coverageAmount": 35000 }
-  }'
-
-# 3) Monitoring and audit endpoints
-curl http://localhost:5000/api/draws/draw_weekly_001/payouts
-curl http://localhost:5000/api/draws/draw_weekly_001/payout-batch
-curl http://localhost:5000/api/draws/draw_weekly_001/payout-dashboard
-curl http://localhost:5000/api/payouts/<payoutId>/audit
-curl http://localhost:5000/api/payouts/<payoutId>/recovery
-```
-
-Supported automated payout methods:
-- `bank` (BACS/ACH/SEPA style flows via processor abstraction)
-- `paypal`
-- `stripe`
-- `wise`
-- `applepay`
-- `googlepay`
-- `crypto`
-- `check` (fallback)
-
-Built-in automation includes:
-- instant post-draw payout activation
-- ring-fenced balance checks with insurance top-up fallback
-- automatic processor submission
-- retry scheduling with exponential backoff
-- alternative method fallback before manual intervention
-- winner notifications (SMS/email/in-app flags), certificate issuance, and audit/recovery tracking
-
-### Get All Tournaments
-```bash
-curl http://localhost:5000/api/tournaments
-```
-
-### Get Tournament by Slug
-```bash
-curl http://localhost:5000/api/tournaments/chess
-curl http://localhost:5000/api/tournaments/connect4
-```
-
-### Register for Tournament
-```bash
-curl -X POST http://localhost:5000/api/tournaments/chess/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Jane Player","email":"jane@example.com","termsAccepted":true}'
-```
-
-### Mental Health AI Chat (supportive guidance shell)
-```bash
-curl -X POST http://localhost:5000/api/mental-health/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message":"I feel overwhelmed today","history":[]}'
-```
-
-### Support Worker Handoff Request
-```bash
-curl -X POST http://localhost:5000/api/support-worker-requests \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Jane Player","email":"jane@example.com","reason":"Need to speak with a support worker","preferredContact":"email","urgent":false}'
-```
-
----
-
-## ⚙️ Environment Variables
-
-### Backend (`server/.env.example`)
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `5000` | Server port |
-| `NODE_ENV` | `development` | Environment |
-| `CLIENT_URL` | `http://localhost:5173` | Frontend URL for CORS |
-| `ENABLED_TOURNAMENTS` | `chess,connect4` | Comma-separated tournament visibility gates |
-| `MENTAL_HEALTH_AI_MODE` | `mock` | `mock` uses safe fallback replies; `live` calls external AI endpoint |
-| `MENTAL_HEALTH_AI_ENDPOINT` | _(empty)_ | External AI API endpoint used when mode is `live` |
-| `MENTAL_HEALTH_AI_API_KEY` | _(empty)_ | External AI API key used when mode is `live` |
-
-### Frontend (`client/.env.example`)
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `VITE_API_URL` | `http://localhost:5000` | Backend API URL |
-| `VITE_ENABLE_MENTAL_HEALTH_SUPPORT` | `true` | Optional UI-level flag for support feature toggling |
-| `VITE_SHOW_OPERATOR_PLAYBOOK` | `false` | Set to `true` only if you intentionally want to expose operator growth-playbook content |
-
----
-
-## 🧩 Tournament Integration Root Cause & Recovery
-
-- **Root cause:** Chess and Connect 4 integrations were not wired into the current branch (no frontend routes, no backend endpoints, no nav entry points), so users had no way to access them.
-- **Recovery implemented:** Added backend tournament APIs (`/api/tournaments/*`), frontend routes/pages for both tournaments, and direct visibility in responsive navigation + homepage experience cards.
-
----
-
-## 🚀 Deployment
-
-### Deploy Frontend → Vercel (Free)
-1. Sign in at [vercel.com](https://vercel.com)
-2. **New Project** → Import `UAE-COMPETITION` repo
-3. Set **Root Directory** to `client`
-4. Add env var: `VITE_API_URL=https://your-backend.railway.app`
-5. Deploy
-
-### Deploy Backend → Railway (Free)
-1. Sign in at [railway.app](https://railway.app)
-2. **New Project** → Deploy from GitHub → `UAE-COMPETITION`
-3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`
-4. Railway auto-detects `railway.toml`
-
-### Production Launch Baseline
-- Copy `.env.production.example` to your production secret manager.
-- Configure trusted frontend domains with `CORS_ORIGINS` (comma-separated).
-- Tune API protection with `RATE_LIMIT_WINDOW_MS` and `RATE_LIMIT_MAX`.
-- Verify `/api/health` returns `status: "ok"` and non-zero uptime after deploy.
-
----
-
-## 🔧 Troubleshooting
-
-**Port already in use**
-```bash
-lsof -i :5000   # find PID
-kill -9 <PID>
-```
-
-**CORS errors** – Ensure `CLIENT_URL` in backend `.env` exactly matches your frontend URL.
-
-**npm install failures**
-```bash
-rm -rf node_modules package-lock.json && npm install
-```
-
-**TypeScript errors**
+## Validation commands
 ```bash
 npm run type-check
+npm run build
+npm test
 ```
 
-**Frontend can't reach API** – Check `VITE_API_URL` in `client/.env` points to running backend.
+## Environment variables
+Use root `.env.example` and `server/.env.example`.
 
----
+Key backend vars:
+- `DATABASE_URL=sqlite:./database.db`
+- `PAYMENT_PROVIDER=modular`
+- `STRIPE_CHECKOUT_URL=` (optional)
+- `CORS_ORIGINS=http://localhost:5173`
+- `RATE_LIMIT_WINDOW_MS=900000`
+- `RATE_LIMIT_MAX=100`
+- `ENABLED_TOURNAMENTS=chess,connect4`
+- `MENTAL_HEALTH_AI_MODE=mock|live`
+- `MENTAL_HEALTH_AI_ENDPOINT=`
+- `MENTAL_HEALTH_AI_API_KEY=`
 
-## 🛠️ Technology Stack
+## Deployment path
+### Frontend (Vercel)
+Root `vercel.json` builds from `client/` and outputs `client/dist`.
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React 18 + Vite + TypeScript |
-| Routing | React Router v6 |
-| Backend | Express + Node.js + TypeScript |
-| Security | Helmet, CORS, Rate limiting |
-| Deployment | Vercel (frontend) + Railway (backend) |
+### Backend (Railway)
+`railway.toml`:
+- build: `npm run build:server`
+- start: `node dist/server/index.js`
 
----
+## Launch checklist
+- [ ] Configure production env vars
+- [ ] Restrict `CORS_ORIGINS` to production domains only
+- [ ] Set production rate-limit values
+- [ ] Verify `/api/health`
+- [ ] Run `npm run type-check && npm run build && npm test`
+- [ ] Confirm idempotent entry behavior in staging
+- [ ] Confirm payment audit endpoint output for sample entries
 
-## 📬 Postman Collection
-
-Import `UAE-Competition-API.postman_collection.json` into Postman:
-1. Open Postman → **Import** → select the JSON file
-2. Set `baseUrl` variable to your backend URL (default: `http://localhost:5000`)
-3. Run requests from **Health & Info**, **Competitions**, or **Entry Management**
-
----
-
-## 📄 License
-
-MIT © shugstarwork-maker
+## License
+MIT

@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import '../pages/FeaturePages.css';
+import { API_BASE } from '../config';
 
 interface Tournament {
   id: number;
@@ -26,8 +27,6 @@ interface RegistrationForm {
   termsAccepted: boolean;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
 export default function TournamentExperience({ slug }: { slug: 'chess' | 'connect4' }) {
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +40,7 @@ export default function TournamentExperience({ slug }: { slug: 'chess' | 'connec
     setError(null);
     setSuccessMessage(null);
 
-    fetch(`${API_URL}/api/tournaments/${slug}`)
+    fetch(`${API_BASE}/api/tournaments/${slug}`)
       .then(async (res) => {
         if (!res.ok) {
           const payload = await res.json().catch(() => ({}));
@@ -91,7 +90,7 @@ export default function TournamentExperience({ slug }: { slug: 'chess' | 'connec
 
     try {
       setSubmitting(true);
-      const response = await fetch(`${API_URL}/api/tournaments/${slug}/register`, {
+      const response = await fetch(`${API_BASE}/api/tournaments/${slug}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
