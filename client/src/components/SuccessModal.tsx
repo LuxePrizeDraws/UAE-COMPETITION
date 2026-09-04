@@ -82,7 +82,9 @@ const SuccessModal = ({
 
           <div className="modal-competition">
             <span className="modal-label">Amount Paid</span>
-            <span className="modal-value gold-text">{totalCostConverted} {currency}</span>
+            <span className="modal-value gold-text">
+              {totalCostConverted.toLocaleString(undefined, { maximumFractionDigits: 2 })} {currency}
+            </span>
           </div>
 
           <div className="entry-numbers-section">
