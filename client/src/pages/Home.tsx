@@ -764,7 +764,6 @@ export default function Home() {
           <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
           <div className="footer-links">
             <Link to="/competitions" className="footer-dash-link">📊 View Live Dashboard →</Link>
-            <Link to="/dashboard" className="footer-dash-link">📊 View Dashboard →</Link>
             <Link to="/ring-fencing" className="footer-dash-link">🛡️ Ring-Fencing Guarantees →</Link>
           </div>
         </div>

@@ -123,7 +123,11 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                 <li>✅ Bank: <strong>Barclays Business (Separate Account)</strong></li>
                 <li>✅ Insurance Backing: <strong>Lloyd's of London Syndicate</strong></li>
                 <li>✅ Audit Status: <strong className="rf-verified">✓ Verified This Month</strong></li>
-                <li>✅ Your £{(result.totalCost * (competition.ringFencedPercent ?? 70) / 100).toFixed(2)} is now in the ring-fenced prize pool</li>
+                {typeof competition.ringFencedPercent === 'number' ? (
+                  <li>✅ Your £{(result.totalCost * competition.ringFencedPercent / 100).toFixed(2)} is now in the ring-fenced prize pool</li>
+                ) : (
+                  <li>✅ Your ring-fenced allocation is now reserved in the prize pool</li>
+                )}
               </ul>
               <div className="rf-confirm-links">
                 <Link to="/ring-fencing" className="rf-confirm-link" onClick={onClose}>View Ring-Fencing Report →</Link>
