@@ -72,10 +72,9 @@ Then open:
 - http://localhost:4173/signup
 - http://localhost:4173/login
 
-You should see:
-```
-✨ UK Luxe Prize Draw API running on http://localhost:5000
-```
+You should see the Vite preview server running at http://localhost:4173.
+
+Note: `npm run demo` does not start the backend API; run `npm run dev` separately if you need it.
 
 ### 3. Access the Platform
 
