@@ -164,7 +164,7 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 
 ## ⚙️ Environment Variables
 
-### Root / Backend (`.env.example` or `server/.env.example`)
+### Backend (`.env` in repo root — copy from `.env.example`)
 
 | Variable | Default | Description |
 |----------|---------|-------------|
