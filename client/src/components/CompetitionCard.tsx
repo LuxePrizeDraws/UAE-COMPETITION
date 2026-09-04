@@ -56,7 +56,8 @@ const CompetitionCard = ({ competition, currency }: CompetitionCardProps) => {
 
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
   const remainingEntries = competition.totalEntries - competition.soldEntries;
-  const odds = ((1 / remainingEntries) * 100).toFixed(6);
+  const soldOut = remainingEntries <= 0;
+  const odds = soldOut ? '0.000000' : ((1 / remainingEntries) * 100).toFixed(6);
 
   // Convert entry price and prize amounts to selected currency
   const entryPriceConverted = convertFromAED(competition.entryPrice, currency);
@@ -177,7 +178,7 @@ const CompetitionCard = ({ competition, currency }: CompetitionCardProps) => {
           </div>
           <div className="stat">
             <span className="stat-label">ODDS (Each Entry)</span>
-            <span className="stat-value">1 in {remainingEntries.toLocaleString()}</span>
+            <span className="stat-value">{soldOut ? 'Sold Out' : `1 in ${remainingEntries.toLocaleString()}`}</span>
             <span className="stat-sublabel">{odds}%</span>
           </div>
           <div className="stat">
