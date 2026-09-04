@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type * as React from 'react';
 import './CompetitionCard.css';
 import SuccessModal from './SuccessModal';
 import { CurrencyCode, convertFromAED, formatCurrency } from '../utils/currency';
