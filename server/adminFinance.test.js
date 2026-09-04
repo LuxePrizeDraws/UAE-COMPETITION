@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeOwnerFinancialSummary, createWithdrawal } from './adminFinance';
+import { computeOwnerFinancialSummary, createWithdrawal } from './adminFinance.js';
 
 describe('computeOwnerFinancialSummary', () => {
   it('calculates transparent owner/public totals by period', () => {

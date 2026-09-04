@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 
@@ -48,15 +48,21 @@ export default function AdminDashboard() {
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState('');
 
-  const token = useMemo(() => localStorage.getItem(TOKEN_KEY), []);
+  const getToken = () => localStorage.getItem(TOKEN_KEY);
 
   useEffect(() => {
-    if (!token) {
+    if (!getToken()) {
       navigate('/admin/login');
       return;
     }
 
     const refresh = async () => {
+      const token = getToken();
+      if (!token) {
+        navigate('/admin/login');
+        return;
+      }
+
       try {
         const response = await fetch(`${API_URL}/api/admin/dashboard`, {
           headers: { 'x-admin-token': token },
@@ -85,9 +91,10 @@ export default function AdminDashboard() {
     refresh();
     const timer = setInterval(refresh, 5000);
     return () => clearInterval(timer);
-  }, [navigate, token]);
+  }, [navigate]);
 
   const handleWithdraw = async () => {
+    const token = getToken();
     if (!token) return;
     const amount = Number.parseFloat(withdrawAmount);
 
@@ -130,6 +137,7 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = async () => {
+    const token = getToken();
     if (token) {
       await fetch(`${API_URL}/api/admin/logout`, {
         method: 'POST',
@@ -216,7 +224,7 @@ export default function AdminDashboard() {
           <ul>
             {data.recentActivity.map((entry, index) => (
               <li key={`${entry.timestamp}-${index}`}>
-                <strong>{entry.action}</strong> — {entry.details} <em>({entry.ipAddress})</em>
+                <strong>{entry.action}</strong> — {entry.details} <em>({entry.ipAddress})</em> · {new Date(entry.timestamp).toLocaleString('en-GB')}
               </li>
             ))}
           </ul>

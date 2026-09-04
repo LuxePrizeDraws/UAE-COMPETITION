@@ -1,13 +1,15 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express from 'express';
+import type { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcryptjs';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import type { JwtPayload } from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import { computeOwnerFinancialSummary, createWithdrawal, OwnerLedger } from './adminFinance.js';
+import { computeOwnerFinancialSummary, createWithdrawal } from './adminFinance.js';
 
 dotenv.config();
 
@@ -22,6 +24,36 @@ const ADMIN_2FA_CODE = process.env.ADMIN_2FA_CODE || '123456';
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-owner-secret-change-me';
 const OWNER_PROFIT_SHARE = Number.parseFloat(process.env.OWNER_PROFIT_SHARE || '0.4');
 const AUTO_WITHDRAW_THRESHOLD = Number.parseFloat(process.env.AUTO_WITHDRAW_THRESHOLD || '10000');
+const ENABLE_AUTO_WITHDRAW_SWEEP = process.env.ENABLE_AUTO_WITHDRAW_SWEEP === 'true';
+
+function validateAdminSecurityConfig(): void {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  const usingDefaultAdminEmail = ADMIN_EMAIL === 'owner@uaecompetition.com';
+  const usingDefaultPassword = !ADMIN_PASSWORD_HASH && ADMIN_PASSWORD === 'ChangeMe123!';
+  const usingDefaultTwoFaCode = ADMIN_2FA_CODE === '123456';
+  const usingDefaultJwtSecret = JWT_SECRET === 'dev-owner-secret-change-me';
+
+  if (!process.env.JWT_SECRET || usingDefaultJwtSecret) {
+    throw new Error('JWT_SECRET must be set to a non-default value in production');
+  }
+
+  if (!process.env.ADMIN_EMAIL || usingDefaultAdminEmail) {
+    throw new Error('ADMIN_EMAIL must be set to a non-default value in production');
+  }
+
+  if (usingDefaultPassword) {
+    throw new Error('Set ADMIN_PASSWORD_HASH (preferred) or ADMIN_PASSWORD to a non-default value in production');
+  }
+
+  if (!process.env.ADMIN_2FA_CODE || usingDefaultTwoFaCode) {
+    throw new Error('ADMIN_2FA_CODE must be set to a non-default value in production');
+  }
+}
+
+validateAdminSecurityConfig();
 
 interface Competition {
   id: number;
@@ -52,6 +84,12 @@ interface EntryRecord {
   amount: number;
   quantity: number;
   timestamp: Date;
+}
+
+interface OwnerLedger {
+  availableToWithdraw: number;
+  pendingWithdrawal: number;
+  totalWithdrawn: number;
 }
 
 interface AdminSessionPayload extends JwtPayload {
@@ -98,10 +136,6 @@ function toTwoDp(value: number): number {
 }
 
 function getRequestIp(req: Request): string {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (typeof forwarded === 'string' && forwarded.length > 0) {
-    return forwarded.split(',')[0].trim();
-  }
   return req.ip;
 }
 
@@ -171,7 +205,7 @@ function buildAdminDashboardResponse() {
     pendingWithdrawal: ownerLedger.pendingWithdrawal,
     totalWithdrawn: ownerLedger.totalWithdrawn,
     autoWithdrawal: {
-      enabled: true,
+      enabled: ENABLE_AUTO_WITHDRAW_SWEEP,
       threshold: AUTO_WITHDRAW_THRESHOLD,
     },
     recentActivity: adminActivityLog
@@ -507,6 +541,8 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
   });
 
   accrueOwnerProfit(totalCost);
+  competition.soldEntries = Math.min(competition.totalEntries, competition.soldEntries + qty);
+  competition.drawReadyPercent = toTwoDp((competition.soldEntries / competition.totalEntries) * 100);
 
   return res.json({
     success: true,
@@ -671,13 +707,19 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'UAE Competition Platform API (Transparent & Compliant)', version: '1.0.0' });
 });
 
-setInterval(runAutoWithdrawalSweep, 60 * 60 * 1000);
+export { app };
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
-  console.log(`📡 CORS enabled for ${API_URL}`);
-  console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions`);
-  console.log(`🔐 Owner admin login: http://localhost:${PORT}/api/admin/login\n`);
-});
+if (process.env.NODE_ENV !== 'test' && ENABLE_AUTO_WITHDRAW_SWEEP) {
+  const autoSweepInterval = setInterval(runAutoWithdrawalSweep, 60 * 60 * 1000);
+  autoSweepInterval.unref();
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`\n✨ UAE Competition API running on http://localhost:${PORT}`);
+    console.log(`📡 CORS enabled for ${API_URL}`);
+    console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
+    console.log(`📊 Competitions: http://localhost:${PORT}/api/competitions`);
+    console.log(`🔐 Owner admin login: http://localhost:${PORT}/api/admin/login\n`);
+  });
+}

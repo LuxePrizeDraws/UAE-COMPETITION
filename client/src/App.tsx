@@ -10,9 +10,9 @@ function App() {
       <header className="app-header">
         <div className="header-content">
           <h1 className="logo">🏆 UAE Competition Platform</h1>
-          <nav>
+          <nav className="app-nav">
             <Link to="/" className={`nav-link${!isDashboard ? ' nav-link--active' : ''}`}>Home</Link>
-            <Link to="/dashboard" className={`nav-link${isDashboard ? ' nav-link--highlight' : ''}`}>📊 Live Dashboard</Link>
+            <Link to="/dashboard" className={`nav-link${isDashboard ? ' nav-link--highlight nav-link--active' : ''}`}>📊 Live Dashboard</Link>
           </nav>
         </div>
       </header>
