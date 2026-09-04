@@ -25,12 +25,14 @@ const AED_RATES: Record<CurrencyCode, number> = {
 };
 
 export function convertFromAED(amountAED: number, targetCurrency: CurrencyCode): number {
-  return Math.round(amountAED * AED_RATES[targetCurrency]);
+  const rate = AED_RATES[targetCurrency];
+  return Math.round(amountAED * rate * 100) / 100;
 }
 
 export function formatCurrency(amount: number, currency: CurrencyCode): string {
   const info = CURRENCIES[currency];
-  return `${info.symbol}${amount.toLocaleString()}`;
+  const formatted = amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  return `${info.symbol}${formatted}`;
 }
 
 const STORAGE_KEY = 'preferred_currency';
