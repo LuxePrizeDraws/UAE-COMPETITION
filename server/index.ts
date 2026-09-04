@@ -101,7 +101,7 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Competition not found' });
   }
 
-  if (!quantity || quantity < 1) {
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
     return res.status(400).json({ error: 'Invalid quantity' });
   }
 
