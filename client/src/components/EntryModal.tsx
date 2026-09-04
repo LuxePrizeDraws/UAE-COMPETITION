@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useButtonSound } from '../hooks/useButtonSound';
 import './EntryModal.css';
 
 interface Competition {
@@ -47,6 +48,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EntryResult | null>(null);
+  const playSound = useButtonSound();
 
   const totalCost = quantity * competition.entryPrice;
   const remaining = competition.totalEntries - competition.soldEntries;
@@ -114,7 +116,6 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
             <p className="confirmation-note">
               ✅ Good luck! The draw will be conducted live and fairly. Results will be announced when the draw threshold is reached.
             </p>
-
             <div className="confirmation-rf">
               <h3 className="rf-confirm-title">🛡️ PRIZE POOL GUARANTEES</h3>
               <ul className="rf-confirm-list">
@@ -128,7 +129,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                 <Link to="/ring-fencing" className="rf-confirm-link" onClick={onClose}>View Ring-Fencing Report →</Link>
               </div>
             </div>
-            <button className="btn-confirm-close" onClick={onClose}>Close</button>
+            <button className="btn-confirm-close btn-interactive" onMouseDown={playSound} onClick={onClose}>Close</button>
           </div>
         ) : (
           <>
@@ -171,13 +172,15 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                 <p className="toggle-label">Choose your prize option:</p>
                 <div className="prize-options">
                   <button
-                    className={`prize-option ${prizeOption === 'physical' ? 'prize-option--active' : ''}`}
+                    className={`prize-option btn-interactive ${prizeOption === 'physical' ? 'prize-option--active' : ''}`}
+                    onMouseDown={playSound}
                     onClick={() => setPrizeOption('physical')}
                   >
                     🏆 Physical Prize
                   </button>
                   <button
-                    className={`prize-option ${prizeOption === 'cash' ? 'prize-option--active' : ''}`}
+                    className={`prize-option btn-interactive ${prizeOption === 'cash' ? 'prize-option--active' : ''}`}
+                    onMouseDown={playSound}
                     onClick={() => setPrizeOption('cash')}
                   >
                     💰 Cash (£{competition.cashAlternativeAmount.toLocaleString()})
@@ -190,7 +193,8 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
               <label htmlFor="qty-input">Number of Tickets:</label>
               <div className="qty-controls">
                 <button
-                  className="qty-btn"
+                  className="qty-btn btn-interactive"
+                  onMouseDown={playSound}
                   onClick={() => handleQuantityChange(quantity - 1)}
                   disabled={quantity <= 1}
                 >−</button>
@@ -204,14 +208,15 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                   className="qty-input"
                 />
                 <button
-                  className="qty-btn"
+                  className="qty-btn btn-interactive"
+                  onMouseDown={playSound}
                   onClick={() => handleQuantityChange(quantity + 1)}
                   disabled={quantity >= 1000}
                 >+</button>
               </div>
               <div className="qty-presets">
                 {[1, 5, 10, 25, 50].map((n) => (
-                  <button key={n} className={`qty-preset ${quantity === n ? 'qty-preset--active' : ''}`} onClick={() => setQuantity(n)}>
+                  <button key={n} className={`qty-preset btn-interactive ${quantity === n ? 'qty-preset--active' : ''}`} onMouseDown={playSound} onClick={() => setQuantity(n)}>
                     {n}
                   </button>
                 ))}
@@ -221,29 +226,6 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
             <div className="entry-modal__cost">
               <span>Total Cost</span>
               <strong>£{totalCost.toLocaleString()}</strong>
-            </div>
-
-            <div className="entry-modal__rf-breakdown">
-              <p className="rf-breakdown-title">Payment Breakdown:</p>
-              {(() => {
-                const rfPct = competition.ringFencedPercent ?? 70;
-                const opsPct = Math.round((100 - rfPct) * 0.67);
-                const profitPct = 100 - rfPct - opsPct;
-                return (
-                  <ul className="rf-breakdown-list">
-                    <li><span className="rf-chk">✅</span> <strong>£{(totalCost * rfPct / 100).toFixed(2)}</strong> → Ring-Fenced Prize Pool <em>({rfPct}% guaranteed for winners)</em></li>
-                    <li><span className="rf-chk">✅</span> <strong>£{(totalCost * opsPct / 100).toFixed(2)}</strong> → Operations &amp; Fees <em>(Stripe processing, hosting)</em></li>
-                    <li><span className="rf-chk">✅</span> <strong>£{(totalCost * profitPct / 100).toFixed(2)}</strong> → Platform Profit <em>(separate account, never touches prizes)</em></li>
-                  </ul>
-                );
-              })()}
-              <div className="rf-guarantees">
-                <p>🛡️ Segregated in dedicated bank account</p>
-                <p>🛡️ Insurance-backed by Lloyd's of London</p>
-                <p>🛡️ Audited monthly by independent auditor</p>
-                <p>🛡️ Third-party verified quarterly</p>
-              </div>
-              <Link to="/ring-fencing" className="rf-cert-link" onClick={onClose}>View Ring-Fencing Certificate →</Link>
             </div>
 
             <label className="entry-modal__terms">
@@ -262,8 +244,9 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
             {error && <p className="entry-modal__error">⚠ {error}</p>}
 
             <button
-              className="entry-modal__submit"
+              className="entry-modal__submit btn-interactive"
               onClick={handleSubmit}
+              onMouseDown={playSound}
               disabled={loading || competition.status === 'coming-soon'}
             >
               {loading ? '⏳ Processing...' : `ENTER NOW — £${totalCost.toLocaleString()}`}
