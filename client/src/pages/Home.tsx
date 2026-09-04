@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type * as React from 'react';
 import CompetitionCard from '../components/CompetitionCard';
 import { CurrencyCode, CURRENCIES, detectCurrency, storeCurrency } from '../utils/currency';
 import { API_BASE } from '../config';
