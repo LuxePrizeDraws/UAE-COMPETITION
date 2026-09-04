@@ -1,0 +1,103 @@
+.owner-dashboard {
+  min-height: 100vh;
+  padding: 24px;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.owner-dashboard--state {
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+
+.owner-dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.owner-dashboard__header h1 {
+  margin: 0 0 8px;
+}
+
+.owner-dashboard__header p {
+  margin: 0;
+  color: #475569;
+}
+
+.owner-dashboard__logout {
+  border: 0;
+  background: #1e293b;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.owner-dashboard__error {
+  margin-bottom: 14px;
+  color: #b91c1c;
+}
+
+.owner-dashboard__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.owner-dashboard__metrics article,
+.owner-dashboard__withdraw,
+.owner-dashboard__activity {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+}
+
+.owner-dashboard__metrics h2,
+.owner-dashboard__withdraw h2,
+.owner-dashboard__activity h2 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.owner-dashboard__metrics p {
+  margin: 6px 0;
+}
+
+.owner-dashboard__withdraw,
+.owner-dashboard__activity {
+  margin-top: 14px;
+}
+
+.owner-dashboard__withdraw-row {
+  display: flex;
+  gap: 10px;
+}
+
+.owner-dashboard__withdraw-row input {
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 10px;
+}
+
+.owner-dashboard__withdraw-row button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.owner-dashboard__activity ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
