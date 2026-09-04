@@ -140,7 +140,7 @@ const CompetitionCard = ({ competition }: CompetitionCardProps) => {
           competitionId={competition.id}
           competitionTitle={competition.title}
           entryPrice={competition.entryPrice}
-          currency={competition.prizeDetails.currency}
+          currency="AED"
           quantity={quantity}
           onClose={() => setShowCheckout(false)}
         />
