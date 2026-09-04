@@ -8,6 +8,9 @@
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   border-bottom: 2px solid #c9a84c;
   padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .header-content {
@@ -27,6 +30,7 @@
 nav {
   display: flex;
   gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .nav-link {

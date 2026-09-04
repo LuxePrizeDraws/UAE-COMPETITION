@@ -89,7 +89,7 @@ export async function bootstrapSchema(): Promise<void> {
 // ---------------------------------------------------------------------------
 // Typed query helper
 // ---------------------------------------------------------------------------
-export async function query<T = pg.QueryResultRow>(
+export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(
   text: string,
   params?: unknown[]
 ): Promise<pg.QueryResult<T>> {
