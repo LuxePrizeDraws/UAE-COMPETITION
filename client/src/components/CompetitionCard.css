@@ -386,7 +386,10 @@
 }
 
 .prize-choice-option input[type="radio"] {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
 }
 
 .prize-choice-option.active {
