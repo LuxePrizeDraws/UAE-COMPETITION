@@ -172,6 +172,60 @@ curl -X POST http://localhost:5000/api/competitions/8/enter \
 
 ---
 
+### Automated Instant Payout APIs
+```bash
+# 1) Save winner payout preferences
+curl -X POST http://localhost:5000/api/payout-methods \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": "user_123",
+    "primaryMethod": "bank",
+    "destinations": {
+      "bank": "GB11BARC1234567890",
+      "paypal": "winner@example.com",
+      "wise": "wise_account_123"
+    },
+    "preferredCurrency": "GBP"
+  }'
+
+# 2) Complete draw and trigger zero-touch automated payouts
+curl -X POST http://localhost:5000/api/draws/draw_weekly_001/complete-and-payout \
+  -H "Content-Type: application/json" \
+  -d '{
+    "winners": [
+      { "drawWinnerId": "dw_1", "userId": "user_123", "prizeAmount": 1500, "prizeTier": 1 },
+      { "drawWinnerId": "dw_2", "userId": "user_456", "prizeAmount": 750, "prizeTier": 2 }
+    ],
+    "ringFencedAccount": { "id": "rf_weekly", "balance": 3500, "reservePercent": 5 },
+    "insurancePolicy": { "id": "pol_weekly_001", "active": true, "coverageAmount": 35000 }
+  }'
+
+# 3) Monitoring and audit endpoints
+curl http://localhost:5000/api/draws/draw_weekly_001/payouts
+curl http://localhost:5000/api/draws/draw_weekly_001/payout-batch
+curl http://localhost:5000/api/draws/draw_weekly_001/payout-dashboard
+curl http://localhost:5000/api/payouts/<payoutId>/audit
+curl http://localhost:5000/api/payouts/<payoutId>/recovery
+```
+
+Supported automated payout methods:
+- `bank` (BACS/ACH/SEPA style flows via processor abstraction)
+- `paypal`
+- `stripe`
+- `wise`
+- `applepay`
+- `googlepay`
+- `crypto`
+- `check` (fallback)
+
+Built-in automation includes:
+- instant post-draw payout activation
+- ring-fenced balance checks with insurance top-up fallback
+- automatic processor submission
+- retry scheduling with exponential backoff
+- alternative method fallback before manual intervention
+- winner notifications (SMS/email/in-app flags), certificate issuance, and audit/recovery tracking
+
 ### Get All Tournaments
 ```bash
 curl http://localhost:5000/api/tournaments
