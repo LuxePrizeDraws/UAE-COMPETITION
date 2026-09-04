@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type * as React from 'react';
 import CompetitionCard from '../components/CompetitionCard';
-import { CurrencyCode, CURRENCIES, detectCurrency, storeCurrency } from '../utils/currency';
+import { CurrencyCode, CURRENCIES, detectCurrency, detectJurisdictionCurrency, storeCurrency } from '../utils/currency';
 import { API_BASE } from '../config';
 import './Home.css';
 
@@ -30,9 +30,11 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currency, setCurrency] = useState<CurrencyCode>('AED');
+  const [complianceCurrency, setComplianceCurrency] = useState<CurrencyCode>('AED');
 
   useEffect(() => {
     detectCurrency().then(setCurrency);
+    detectJurisdictionCurrency().then(setComplianceCurrency);
   }, []);
 
   useEffect(() => {
@@ -126,6 +128,7 @@ const Home = () => {
                   key={competition.id}
                   competition={competition}
                   currency={currency}
+                  complianceCurrency={complianceCurrency}
                 />
               ))}
             </div>

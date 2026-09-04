@@ -28,6 +28,7 @@ interface Competition {
 interface CompetitionCardProps {
   competition: Competition;
   currency: CurrencyCode;
+  complianceCurrency: CurrencyCode;
 }
 
 const TERMS_LINKS: Record<string, string> = {
@@ -44,7 +45,7 @@ const AGE_REQUIREMENTS: Record<string, number> = {
   EUR: 18,
 };
 
-const CompetitionCard = ({ competition, currency }: CompetitionCardProps) => {
+const CompetitionCard = ({ competition, currency, complianceCurrency }: CompetitionCardProps) => {
   const [quantity, setQuantity] = useState(1);
   const [prizeChoice, setPrizeChoice] = useState<'prize' | 'cash'>('prize');
   const [isEntering, setIsEntering] = useState(false);
@@ -64,8 +65,8 @@ const CompetitionCard = ({ competition, currency }: CompetitionCardProps) => {
   const prizeAmountConverted = convertFromAED(competition.prizeAmount, currency);
   const totalCostConverted = entryPriceConverted * quantity;
 
-  const ageRequirement = AGE_REQUIREMENTS[currency] ?? 18;
-  const termsLink = TERMS_LINKS[currency] ?? '#';
+  const ageRequirement = AGE_REQUIREMENTS[complianceCurrency] ?? 18;
+  const termsLink = TERMS_LINKS[complianceCurrency] ?? '#';
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 1;

@@ -70,6 +70,25 @@ const COUNTRY_CURRENCY: Record<string, CurrencyCode> = {
   PT: 'EUR',
 };
 
+function getCurrencyByCountryCode(countryCode: string): CurrencyCode {
+  return COUNTRY_CURRENCY[countryCode] ?? 'AED';
+}
+
+export async function detectJurisdictionCurrency(): Promise<CurrencyCode> {
+  try {
+    const response = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(5000) });
+    if (response.ok) {
+      const data = await response.json();
+      const countryCode: string = data.country_code ?? '';
+      return getCurrencyByCountryCode(countryCode);
+    }
+  } catch {
+    // Geolocation failed — fall through to default
+  }
+
+  return 'AED';
+}
+
 /**
  * Detects the user's currency via IP geolocation (ipapi.co).
  * Falls back to stored preference → AED if detection fails.
@@ -78,18 +97,7 @@ export async function detectCurrency(): Promise<CurrencyCode> {
   const stored = getStoredCurrency();
   if (stored) return stored;
 
-  try {
-    const response = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(5000) });
-    if (response.ok) {
-      const data = await response.json();
-      const countryCode: string = data.country_code ?? '';
-      const currency = COUNTRY_CURRENCY[countryCode] ?? 'AED';
-      storeCurrency(currency);
-      return currency;
-    }
-  } catch {
-    // Geolocation failed — fall through to default
-  }
-
-  return 'AED';
+  const currency = await detectJurisdictionCurrency();
+  storeCurrency(currency);
+  return currency;
 }
