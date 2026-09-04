@@ -5,12 +5,17 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+<<<<<<< HEAD
 import Stripe from 'stripe';
+=======
+import { randomUUID } from 'crypto';
+>>>>>>> origin/main
 
 dotenv.config();
 
 const app: Express = express();
 const PORT = process.env.PORT || 5000;
+<<<<<<< HEAD
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const charityDonationAmount = Math.max(1, Number(process.env.CHARITY_DONATION_AMOUNT || 5));
@@ -20,6 +25,17 @@ const postalEntryAddress = (process.env.POSTAL_ENTRY_ADDRESS || '')
   .map((line) => line.trim())
   .filter(Boolean);
 const postalEntrySupportEmail = process.env.POSTAL_ENTRY_SUPPORT_EMAIL || null;
+=======
+const MENTAL_HEALTH_AI_MODE = (process.env.MENTAL_HEALTH_AI_MODE || 'mock').toLowerCase();
+const MENTAL_HEALTH_AI_ENDPOINT = process.env.MENTAL_HEALTH_AI_ENDPOINT || '';
+const MENTAL_HEALTH_AI_API_KEY = process.env.MENTAL_HEALTH_AI_API_KEY || '';
+const enabledTournamentSlugs = new Set(
+  (process.env.ENABLED_TOURNAMENTS || 'chess,connect4')
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean)
+);
+>>>>>>> origin/main
 
 // Middleware
 app.use(helmet());
@@ -38,6 +54,142 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP',
 });
 app.use(limiter);
+
+type TournamentSlug = 'chess' | 'connect4';
+
+interface Tournament {
+  id: number;
+  slug: TournamentSlug;
+  name: string;
+  shortTitle: string;
+  format: string;
+  status: 'open' | 'upcoming';
+  startDate: string;
+  maxPlayers: number;
+  registeredPlayers: number;
+  entryFee: number;
+  currency: string;
+  timeControl?: string;
+  rounds: number;
+  description: string;
+  highlights: string[];
+  rules: string[];
+}
+
+const tournaments: Tournament[] = [
+  {
+    id: 101,
+    slug: 'chess',
+    name: 'UAE Chess Masters Tournament',
+    shortTitle: 'Chess Tournament',
+    format: 'Swiss',
+    status: 'open',
+    startDate: '2026-09-12T18:00:00.000Z',
+    maxPlayers: 128,
+    registeredPlayers: 72,
+    entryFee: 15,
+    currency: 'GBP',
+    timeControl: '10+5',
+    rounds: 7,
+    description: 'Rapid Swiss event with live leaderboard updates and fair matchmaking brackets.',
+    highlights: ['FIDE-inspired pairing logic', 'Live standings each round', 'Cash and trophy rewards'],
+    rules: ['Respect fair play policies', 'Join each round on time', 'Disconnect grace period of 3 minutes'],
+  },
+  {
+    id: 102,
+    slug: 'connect4',
+    name: 'UAE Connect 4 Clash',
+    shortTitle: 'Connect 4 Tournament',
+    format: 'Double Elimination',
+    status: 'open',
+    startDate: '2026-09-14T17:00:00.000Z',
+    maxPlayers: 256,
+    registeredPlayers: 149,
+    entryFee: 5,
+    currency: 'GBP',
+    rounds: 8,
+    description: 'Fast-paced Connect 4 brackets with strategic rematches and stream-friendly rounds.',
+    highlights: ['Double-elimination safety bracket', 'Best-of-3 finals', 'Live bracket progression'],
+    rules: ['No stalling between turns', 'Report technical issues immediately', 'Sportsmanship is mandatory'],
+  },
+];
+
+const tournamentRegistrations: {
+  id: string;
+  tournamentSlug: TournamentSlug;
+  name: string;
+  email: string;
+  createdAt: string;
+}[] = [];
+
+const supportWorkerRequests: {
+  ticketId: string;
+  name: string;
+  email: string;
+  reason: string;
+  preferredContact: string;
+  urgent: boolean;
+  createdAt: string;
+}[] = [];
+
+function isTournamentEnabled(slug: string): slug is TournamentSlug {
+  return (slug === 'chess' || slug === 'connect4') && enabledTournamentSlugs.has(slug);
+}
+
+function getRegisteredPlayers(tournament: Tournament): number {
+  return tournament.registeredPlayers + tournamentRegistrations.filter(
+    (registration) => registration.tournamentSlug === tournament.slug
+  ).length;
+}
+
+function toTournamentResponse(tournament: Tournament): Tournament {
+  return {
+    ...tournament,
+    registeredPlayers: getRegisteredPlayers(tournament),
+  };
+}
+
+function isValidEmail(email: string): boolean {
+  const atIndex = email.indexOf('@');
+  const lastDotIndex = email.lastIndexOf('.');
+  return atIndex > 0 && lastDotIndex > atIndex + 1 && lastDotIndex < email.length - 1;
+}
+
+function generateSupportiveReply(message: string): string {
+  const normalized = message.toLowerCase();
+  if (normalized.includes('anxious') || normalized.includes('anxiety')) {
+    return 'It sounds like anxiety is feeling heavy right now. A brief grounding step can help: breathe in for 4 counts, hold for 4, and exhale for 6, repeating for one minute.';
+  }
+  if (normalized.includes('sleep') || normalized.includes('insomnia')) {
+    return 'Sleep stress can build quickly. Try a short wind-down: dim screens, write down racing thoughts, and focus on slow breathing for 5 minutes before bed.';
+  }
+  if (normalized.includes('stress') || normalized.includes('overwhelm')) {
+    return 'When stress piles up, it can help to pick one small next step you can finish in 10 minutes. Completing that step often reduces overwhelm and gives momentum.';
+  }
+  return 'Thanks for sharing that. I can offer supportive, practical steps and we can also connect you with a support worker if you want more personal follow-up.';
+}
+
+async function fetchExternalMentalHealthReply(message: string, history: Array<{ role: string; content: string }>) {
+  const response = await fetch(MENTAL_HEALTH_AI_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(MENTAL_HEALTH_AI_API_KEY ? { Authorization: 'Bearer ' + MENTAL_HEALTH_AI_API_KEY } : {}),
+    },
+    body: JSON.stringify({ message, history }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`AI provider error: ${response.status}`);
+  }
+
+  const payload = await response.json() as { reply?: string };
+  if (!payload.reply || typeof payload.reply !== 'string') {
+    throw new Error('Invalid AI provider response');
+  }
+
+  return payload.reply;
+}
 
 // 8 competitions data – transparent structure with cash alternatives
 const competitions = [
@@ -236,6 +388,7 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
   res.json(competition);
 });
 
+<<<<<<< HEAD
 app.get('/api/competitions/:id/postal-entry', (req: Request, res: Response) => {
   const competition = competitions.find(c => c.id === parseInt(req.params.id));
   if (!competition) {
@@ -264,6 +417,149 @@ app.get('/api/competitions/:id/postal-entry', (req: Request, res: Response) => {
 });
 
 app.post('/api/competitions/:id/enter', async (req: Request, res: Response) => {
+=======
+app.get('/api/tournaments', (req: Request, res: Response) => {
+  const visibleTournaments = tournaments
+    .filter((tournament) => enabledTournamentSlugs.has(tournament.slug))
+    .map(toTournamentResponse);
+  res.json(visibleTournaments);
+});
+
+app.get('/api/tournaments/:slug', (req: Request, res: Response) => {
+  const slug = req.params.slug.toLowerCase();
+  if (!isTournamentEnabled(slug)) {
+    return res.status(404).json({ error: 'Tournament not found or currently disabled' });
+  }
+
+  const tournament = tournaments.find((entry) => entry.slug === slug);
+  if (!tournament) {
+    return res.status(404).json({ error: 'Tournament not found' });
+  }
+
+  res.json(toTournamentResponse(tournament));
+});
+
+app.post('/api/tournaments/:slug/register', (req: Request, res: Response) => {
+  const slug = req.params.slug.toLowerCase();
+  if (!isTournamentEnabled(slug)) {
+    return res.status(404).json({ error: 'Tournament not found or currently disabled' });
+  }
+
+  const tournament = tournaments.find((entry) => entry.slug === slug);
+  if (!tournament) {
+    return res.status(404).json({ error: 'Tournament not found' });
+  }
+
+  const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
+  const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const termsAccepted = req.body.termsAccepted === true;
+
+  if (name.length < 2 || name.length > 100) {
+    return res.status(400).json({ error: 'Please enter a valid name (2-100 characters).' });
+  }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: 'Please provide a valid email address.' });
+  }
+
+  if (!termsAccepted) {
+    return res.status(400).json({ error: 'You must accept tournament terms before registering.' });
+  }
+
+  const registeredPlayers = getRegisteredPlayers(tournament);
+  if (registeredPlayers >= tournament.maxPlayers) {
+    return res.status(409).json({ error: 'Tournament capacity is full.' });
+  }
+
+  const duplicateRegistration = tournamentRegistrations.some(
+    (registration) => registration.tournamentSlug === tournament.slug && registration.email === email
+  );
+  if (duplicateRegistration) {
+    return res.status(409).json({ error: 'This email is already registered for the tournament.' });
+  }
+
+  const registrationId = `${tournament.slug.toUpperCase()}-${randomUUID().slice(0, 8).toUpperCase()}`;
+  tournamentRegistrations.push({
+    id: registrationId,
+    tournamentSlug: tournament.slug,
+    name,
+    email,
+    createdAt: new Date().toISOString(),
+  });
+
+  res.json({
+    success: true,
+    registrationId,
+    tournament: tournament.shortTitle,
+    message: 'Registration received. We will email bracket and schedule details shortly.',
+  });
+});
+
+app.post('/api/mental-health/chat', async (req: Request, res: Response) => {
+  const message = typeof req.body.message === 'string' ? req.body.message.trim() : '';
+  const history = Array.isArray(req.body.history) ? req.body.history : [];
+
+  if (message.length < 2 || message.length > 500) {
+    return res.status(400).json({ error: 'Message must be between 2 and 500 characters.' });
+  }
+
+  try {
+    const reply = MENTAL_HEALTH_AI_MODE === 'live' && MENTAL_HEALTH_AI_ENDPOINT
+      ? await fetchExternalMentalHealthReply(message, history)
+      : generateSupportiveReply(message);
+
+    return res.json({
+      mode: MENTAL_HEALTH_AI_MODE === 'live' && MENTAL_HEALTH_AI_ENDPOINT ? 'live' : 'mock',
+      reply,
+      disclaimer: 'Supportive guidance only. This assistant is not emergency care.',
+    });
+  } catch {
+    return res.json({
+      mode: 'mock-fallback',
+      reply: generateSupportiveReply(message),
+      disclaimer: 'Supportive guidance only. This assistant is not emergency care.',
+      error: 'Live AI provider unavailable. Fallback response returned.',
+    });
+  }
+});
+
+app.post('/api/support-worker-requests', (req: Request, res: Response) => {
+  const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
+  const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const reason = typeof req.body.reason === 'string' ? req.body.reason.trim() : '';
+  const preferredContact = typeof req.body.preferredContact === 'string' ? req.body.preferredContact.trim() : 'email';
+  const urgent = req.body.urgent === true;
+
+  if (name.length < 2 || name.length > 100) {
+    return res.status(400).json({ error: 'Please enter your name (2-100 characters).' });
+  }
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: 'Please provide a valid email address.' });
+  }
+  if (reason.length < 10 || reason.length > 1200) {
+    return res.status(400).json({ error: 'Please add some context for support (10-1200 characters).' });
+  }
+
+  const ticketId = `SUP-${randomUUID().slice(0, 8).toUpperCase()}`;
+  supportWorkerRequests.push({
+    ticketId,
+    name,
+    email,
+    reason,
+    preferredContact,
+    urgent,
+    createdAt: new Date().toISOString(),
+  });
+
+  return res.status(201).json({
+    success: true,
+    ticketId,
+    message: 'Support worker request sent. A team member will follow up soon.',
+  });
+});
+
+app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
+>>>>>>> origin/main
   const { quantity, termsAccepted, prizeOption } = req.body;
   const competition = competitions.find(c => c.id === parseInt(req.params.id));
   

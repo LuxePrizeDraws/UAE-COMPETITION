@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import { useEffect, useState } from 'react';
+=======
+import { useState } from 'react';
+import { useButtonSound } from '../hooks/useButtonSound';
+>>>>>>> origin/main
 import './EntryModal.css';
 
 interface Competition {
@@ -70,8 +75,12 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EntryResult | null>(null);
+<<<<<<< HEAD
   const [postalEntryInfo, setPostalEntryInfo] = useState<PostalEntryInfo>(defaultPostalEntryInfo);
   const [postalEntryLoading, setPostalEntryLoading] = useState(true);
+=======
+  const playSound = useButtonSound();
+>>>>>>> origin/main
 
   const totalCost = quantity * competition.entryPrice;
   const remaining = competition.totalEntries - competition.soldEntries;
@@ -173,7 +182,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
             <p className="confirmation-note">
               ✅ Good luck! The draw will be conducted live and fairly. Results will be announced when the draw threshold is reached.
             </p>
-            <button className="btn-confirm-close" onClick={onClose}>Close</button>
+            <button className="btn-confirm-close btn-interactive" onMouseDown={playSound} onClick={onClose}>Close</button>
           </div>
         ) : (
           <>
@@ -216,13 +225,15 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                 <p className="toggle-label">Choose your prize option:</p>
                 <div className="prize-options">
                   <button
-                    className={`prize-option ${prizeOption === 'physical' ? 'prize-option--active' : ''}`}
+                    className={`prize-option btn-interactive ${prizeOption === 'physical' ? 'prize-option--active' : ''}`}
+                    onMouseDown={playSound}
                     onClick={() => setPrizeOption('physical')}
                   >
                     🏆 Physical Prize
                   </button>
                   <button
-                    className={`prize-option ${prizeOption === 'cash' ? 'prize-option--active' : ''}`}
+                    className={`prize-option btn-interactive ${prizeOption === 'cash' ? 'prize-option--active' : ''}`}
+                    onMouseDown={playSound}
                     onClick={() => setPrizeOption('cash')}
                   >
                     💰 Cash (£{competition.cashAlternativeAmount.toLocaleString()})
@@ -235,7 +246,8 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
               <label htmlFor="qty-input">Number of Tickets:</label>
               <div className="qty-controls">
                 <button
-                  className="qty-btn"
+                  className="qty-btn btn-interactive"
+                  onMouseDown={playSound}
                   onClick={() => handleQuantityChange(quantity - 1)}
                   disabled={quantity <= 1}
                 >−</button>
@@ -249,14 +261,15 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
                   className="qty-input"
                 />
                 <button
-                  className="qty-btn"
+                  className="qty-btn btn-interactive"
+                  onMouseDown={playSound}
                   onClick={() => handleQuantityChange(quantity + 1)}
                   disabled={quantity >= 1000}
                 >+</button>
               </div>
               <div className="qty-presets">
                 {[1, 5, 10, 25, 50].map((n) => (
-                  <button key={n} className={`qty-preset ${quantity === n ? 'qty-preset--active' : ''}`} onClick={() => setQuantity(n)}>
+                  <button key={n} className={`qty-preset btn-interactive ${quantity === n ? 'qty-preset--active' : ''}`} onMouseDown={playSound} onClick={() => setQuantity(n)}>
                     {n}
                   </button>
                 ))}
@@ -314,8 +327,9 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
             {error && <p className="entry-modal__error">⚠ {error}</p>}
 
             <button
-              className="entry-modal__submit"
+              className="entry-modal__submit btn-interactive"
               onClick={handleSubmit}
+              onMouseDown={playSound}
               disabled={loading || competition.status === 'coming-soon'}
             >
               {loading ? '⏳ Processing...' : `ENTER NOW — £${totalCost.toLocaleString()}`}
