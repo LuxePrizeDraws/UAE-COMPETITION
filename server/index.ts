@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import { AutomatedPayoutService, PAYOUT_METHOD_TYPES } from './payoutService.js';
+import { AutomatedPayoutService, PAYOUT_METHOD_TYPES, PayoutMethodType } from './payoutService.js';
 import { randomUUID } from 'crypto';
 
 dotenv.config();
@@ -571,9 +571,10 @@ app.post('/api/payout-methods', (req: Request, res: Response) => {
   if (typeof primaryMethod !== 'string') {
     return res.status(400).json({ error: 'primaryMethod is required' });
   }
-  if (!PAYOUT_METHOD_TYPES.includes(primaryMethod)) {
+  if (!PAYOUT_METHOD_TYPES.includes(primaryMethod as PayoutMethodType)) {
     return res.status(400).json({ error: 'Invalid primary payout method' });
   }
+  const selectedPrimaryMethod = primaryMethod as PayoutMethodType;
   if (!destinations || typeof destinations !== 'object' || Object.keys(destinations).length === 0) {
     return res.status(400).json({ error: 'At least one payout destination is required' });
   }
@@ -581,7 +582,7 @@ app.post('/api/payout-methods', (req: Request, res: Response) => {
   try {
     const method = payoutService.registerWinnerPayoutMethod({
       userId,
-      primaryMethod,
+      primaryMethod: selectedPrimaryMethod,
       destinations,
       preferredCurrency,
       verified: Boolean(verified),
