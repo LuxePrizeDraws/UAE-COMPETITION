@@ -20,8 +20,8 @@ const enabledTournamentSlugs = new Set(
     .filter(Boolean)
 );
 
-const getSingleRouteParam = (value: string | string[] | undefined): string =>
-  Array.isArray(value) ? value[0] ?? '' : value ?? '';
+const getSingleRouteParam = (value: string | string[] | undefined): string | null =>
+  typeof value === 'string' ? value : null;
 
 // Middleware
 app.use(helmet());
@@ -367,7 +367,16 @@ app.get('/api/competitions', (req: Request, res: Response) => {
 });
 
 app.get('/api/competitions/:id', (req: Request, res: Response) => {
-  const competitionId = Number.parseInt(getSingleRouteParam(req.params.id), 10);
+  const competitionIdParam = getSingleRouteParam(req.params.id);
+  if (!competitionIdParam) {
+    return res.status(400).json({ error: 'Invalid competition ID' });
+  }
+
+  const competitionId = Number.parseInt(competitionIdParam, 10);
+  if (Number.isNaN(competitionId)) {
+    return res.status(400).json({ error: 'Invalid competition ID' });
+  }
+
   const competition = competitions.find(c => c.id === competitionId);
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
@@ -383,7 +392,12 @@ app.get('/api/tournaments', (req: Request, res: Response) => {
 });
 
 app.get('/api/tournaments/:slug', (req: Request, res: Response) => {
-  const slug = getSingleRouteParam(req.params.slug).toLowerCase();
+  const slugParam = getSingleRouteParam(req.params.slug);
+  if (!slugParam) {
+    return res.status(400).json({ error: 'Invalid tournament slug' });
+  }
+
+  const slug = slugParam.toLowerCase();
   if (!isTournamentEnabled(slug)) {
     return res.status(404).json({ error: 'Tournament not found or currently disabled' });
   }
@@ -397,7 +411,12 @@ app.get('/api/tournaments/:slug', (req: Request, res: Response) => {
 });
 
 app.post('/api/tournaments/:slug/register', (req: Request, res: Response) => {
-  const slug = getSingleRouteParam(req.params.slug).toLowerCase();
+  const slugParam = getSingleRouteParam(req.params.slug);
+  if (!slugParam) {
+    return res.status(400).json({ error: 'Invalid tournament slug' });
+  }
+
+  const slug = slugParam.toLowerCase();
   if (!isTournamentEnabled(slug)) {
     return res.status(404).json({ error: 'Tournament not found or currently disabled' });
   }
@@ -517,7 +536,16 @@ app.post('/api/support-worker-requests', (req: Request, res: Response) => {
 
 app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
   const { quantity, termsAccepted, prizeOption } = req.body;
-  const competitionId = Number.parseInt(getSingleRouteParam(req.params.id), 10);
+  const competitionIdParam = getSingleRouteParam(req.params.id);
+  if (!competitionIdParam) {
+    return res.status(400).json({ error: 'Invalid competition ID' });
+  }
+
+  const competitionId = Number.parseInt(competitionIdParam, 10);
+  if (Number.isNaN(competitionId)) {
+    return res.status(400).json({ error: 'Invalid competition ID' });
+  }
+
   const competition = competitions.find(c => c.id === competitionId);
   
   if (!competition) {
