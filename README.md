@@ -36,6 +36,7 @@ Now includes **Chess + Connect 4 tournament integrations**, a **gallery**, and a
 - 🔵 **Draw-ready tracking** – Live progress bars showing entries sold vs needed
 - 💰 **Cash alternatives** – Every prize offers a cash equivalent ("CASH OR CARS – YOU CHOOSE!")
 - 📊 **Transparent pricing** – 40% house margin shown publicly
+- ⚡ **One-click re-entry** – Terms consent can be remembered on-device for faster paid entries
 - ⏰ **Countdown timers** – Real-time draw deadlines
 - ✅ **Terms acceptance** – Compliance-first entry flow
 - 📱 **Responsive design** – Works on mobile, tablet, desktop
@@ -305,6 +306,12 @@ curl -X POST http://localhost:5000/api/support-worker-requests \
 2. **New Project** → Deploy from GitHub → `UAE-COMPETITION`
 3. Add env vars: `NODE_ENV=production`, `CLIENT_URL=https://your-frontend.vercel.app`
 4. Railway auto-detects `railway.toml`
+
+### Production Launch Baseline
+- Copy `.env.production.example` to your production secret manager.
+- Configure trusted frontend domains with `CORS_ORIGINS` (comma-separated).
+- Tune API protection with `RATE_LIMIT_WINDOW_MS` and `RATE_LIMIT_MAX`.
+- Verify `/api/health` returns `status: "ok"` and non-zero uptime after deploy.
 
 ---
 
