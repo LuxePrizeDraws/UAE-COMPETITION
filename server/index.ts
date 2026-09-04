@@ -23,6 +23,14 @@ const enabledTournamentSlugs = new Set(
 const getSingleRouteParam = (value: string | string[] | undefined): string | null =>
   typeof value === 'string' ? value : null;
 
+const parseCompetitionId = (value: string): number | null => {
+  if (!/^\d+$/.test(value)) {
+    return null;
+  }
+
+  return Number.parseInt(value, 10);
+};
+
 // Middleware
 app.use(helmet());
 app.use(morgan('combined'));
@@ -372,8 +380,8 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Invalid competition ID' });
   }
 
-  const competitionId = Number.parseInt(competitionIdParam, 10);
-  if (Number.isNaN(competitionId)) {
+  const competitionId = parseCompetitionId(competitionIdParam);
+  if (competitionId === null) {
     return res.status(400).json({ error: 'Invalid competition ID' });
   }
 
@@ -541,8 +549,8 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Invalid competition ID' });
   }
 
-  const competitionId = Number.parseInt(competitionIdParam, 10);
-  if (Number.isNaN(competitionId)) {
+  const competitionId = parseCompetitionId(competitionIdParam);
+  if (competitionId === null) {
     return res.status(400).json({ error: 'Invalid competition ID' });
   }
 
