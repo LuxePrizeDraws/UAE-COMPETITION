@@ -47,11 +47,11 @@
     "ts-node": "^10.9.1",
     "nodemon": "^3.0.1",
     "concurrently": "^8.2.2",
-    "vite": "^5.0.2",
+    "vite": "^8.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.1",
     "@vitejs/plugin-react": "^4.2.0",
-    "vitest": "^0.34.6"
+    "vitest": "^5.0.0"
   }
 }
