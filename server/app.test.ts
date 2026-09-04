@@ -10,8 +10,18 @@ interface RunningServer {
 
 const runningServers: Server[] = [];
 
-async function startServer(): Promise<RunningServer> {
-  const app = createApp({ databaseUrl: 'sqlite::memory:' });
+async function startServer(options: {
+  paymentGateway?: {
+    charge: (params: {
+      amount: number;
+      currency: string;
+      idempotencyKey: string;
+      metadata: Record<string, string>;
+    }) => Promise<{ status: 'authorized' | 'failed'; transactionId: string; provider: string; reason?: string }>;
+  };
+} = {}): Promise<RunningServer> {
+  process.env.AUDIT_API_TOKEN = 'test-audit-token';
+  const app = createApp({ databaseUrl: 'sqlite::memory:', paymentGateway: options.paymentGateway });
   const server = createServer(app);
 
   await new Promise<void>((resolve) => {
@@ -98,7 +108,9 @@ describe('competition entry API', () => {
     const secondBody = await secondResponse.json() as { entryId: string };
     expect(secondBody.entryId).toBe(firstBody.entryId);
 
-    const auditResponse = await fetch(`${baseUrl}/api/entries/${firstBody.entryId}/audit`);
+    const auditResponse = await fetch(`${baseUrl}/api/entries/${firstBody.entryId}/audit`, {
+      headers: { 'X-Entry-Audit-Token': 'test-audit-token' },
+    });
     expect(auditResponse.status).toBe(200);
     const auditBody = await auditResponse.json() as { audit: Array<{ event: string }> };
     expect(auditBody.audit.map((item) => item.event)).toEqual([
@@ -106,6 +118,79 @@ describe('competition entry API', () => {
       'payment_authorized',
       'entry_confirmed',
     ]);
+  });
+
+  it('rejects reused idempotency key with different payload', async () => {
+    const { baseUrl } = await startServer();
+    const key = 'stable-idempotency-98765';
+
+    const firstResponse = await fetch(`${baseUrl}/api/competitions/1/enter`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': key,
+      },
+      body: JSON.stringify({ quantity: 1, termsAccepted: true, prizeOption: 'cash' }),
+    });
+    expect(firstResponse.status).toBe(200);
+
+    const secondResponse = await fetch(`${baseUrl}/api/competitions/1/enter`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': key,
+      },
+      body: JSON.stringify({ quantity: 2, termsAccepted: true, prizeOption: 'cash' }),
+    });
+    expect(secondResponse.status).toBe(422);
+  });
+
+  it('returns 409 while matching idempotent request is still processing', async () => {
+    let releaseCharge: (() => void) | null = null;
+    const slowGateway = {
+      charge: async () => {
+        await new Promise<void>((resolve) => {
+          releaseCharge = () => resolve();
+        });
+        return {
+          status: 'authorized' as const,
+          transactionId: 'txn-slow-gateway',
+          provider: 'test-gateway',
+        };
+      },
+    };
+
+    const { baseUrl } = await startServer({ paymentGateway: slowGateway });
+    const key = 'in-progress-key-12345';
+    const payload = JSON.stringify({ quantity: 1, termsAccepted: true, prizeOption: 'cash' });
+
+    const firstPromise = fetch(`${baseUrl}/api/competitions/1/enter`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': key,
+      },
+      body: payload,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 25));
+
+    const secondResponse = await fetch(`${baseUrl}/api/competitions/1/enter`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': key,
+      },
+      body: payload,
+    });
+    expect(secondResponse.status).toBe(409);
+
+    const release = releaseCharge as (() => void) | null;
+    if (typeof release === 'function') {
+      release();
+    }
+    const firstResponse = await firstPromise;
+    expect(firstResponse.status).toBe(200);
   });
 });
 
@@ -131,6 +216,27 @@ describe('tournament and support APIs', () => {
     expect(registerResponse.status).toBe(201);
     const registerBody = await registerResponse.json() as { registrationId: string };
     expect(registerBody.registrationId.startsWith('reg_')).toBe(true);
+  });
+
+  it('returns 409 when tournament reaches capacity', async () => {
+    const { baseUrl } = await startServer();
+    let finalStatus = 201;
+
+    for (let i = 0; i < 120; i += 1) {
+      const response = await fetch(`${baseUrl}/api/tournaments/chess/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `Player ${i}`,
+          email: `player${i}@example.com`,
+          termsAccepted: true,
+        }),
+      });
+      finalStatus = response.status;
+      if (finalStatus === 409) break;
+    }
+
+    expect(finalStatus).toBe(409);
   });
 
   it('returns supportive reply and creates support request', async () => {

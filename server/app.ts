@@ -36,6 +36,23 @@ function parseList(value: string | undefined): string[] {
     .filter(Boolean);
 }
 
+function isAllowedSupportContact(value: string): value is 'email' | 'phone' | 'whatsapp' {
+  return value === 'email' || value === 'phone' || value === 'whatsapp';
+}
+
+function shouldUseTrustedLiveEndpoint(endpoint: string | undefined): endpoint is string {
+  if (!endpoint) return false;
+  try {
+    const parsed = new URL(endpoint);
+    if (parsed.protocol !== 'https:') return false;
+    const allowedHosts = parseList(process.env.MENTAL_HEALTH_AI_ALLOWED_HOSTS);
+    if (allowedHosts.length === 0) return false;
+    return allowedHosts.includes(parsed.hostname.toLowerCase());
+  } catch {
+    return false;
+  }
+}
+
 function getCorsOrigins(): Set<string> {
   const configured = parseList(process.env.CORS_ORIGINS);
   if (process.env.CLIENT_URL) configured.push(process.env.CLIENT_URL.toLowerCase());
@@ -59,7 +76,13 @@ function createCorsOriginValidator(origins: Set<string>) {
 }
 
 function isValidEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  if (!value || value.length > 254 || value.includes(' ')) return false;
+  const atIndex = value.indexOf('@');
+  if (atIndex <= 0 || atIndex !== value.lastIndexOf('@')) return false;
+  const local = value.slice(0, atIndex);
+  const domain = value.slice(atIndex + 1);
+  if (!local || !domain || domain.startsWith('.') || domain.endsWith('.')) return false;
+  return domain.includes('.');
 }
 
 function buildSupportiveReply(message: string): string {
@@ -71,6 +94,39 @@ function buildSupportiveReply(message: string): string {
     return 'I hear you, and you are not alone. A small next step can help: drink water, sit somewhere safe, and message one trusted person. If this feels urgent, please request a support worker below.';
   }
   return 'Thanks for sharing this. I can offer supportive guidance and connect you to a support worker. If there is immediate danger, contact local emergency services right now.';
+}
+
+function createEntryFingerprint(input: {
+  competitionId: number;
+  quantity: number;
+  termsAccepted: boolean;
+  prizeChoice: string;
+}): string {
+  return JSON.stringify({
+    competitionId: input.competitionId,
+    quantity: input.quantity,
+    termsAccepted: input.termsAccepted,
+    prizeChoice: input.prizeChoice,
+  });
+}
+
+function sanitizeChatHistory(input: unknown): Array<{ role: 'assistant' | 'user'; content: string }> {
+  if (!Array.isArray(input)) return [];
+  return input
+    .slice(-20)
+    .map((item) => {
+      const role: 'assistant' | 'user' =
+        item && typeof item === 'object' && item.role === 'assistant' ? 'assistant' : 'user';
+      const content = item && typeof item === 'object' && typeof item.content === 'string' ? item.content.slice(0, 500) : '';
+      return { role, content };
+    })
+    .filter((item) => item.content.trim().length > 0);
+}
+
+function isValidCurrencyAmount(amount: number): boolean {
+  if (!Number.isFinite(amount) || amount <= 0) return false;
+  const cents = Math.round(amount * 100);
+  return Math.abs(amount * 100 - cents) < 1e-9;
 }
 
 function createPaymentGateway(): PaymentGateway {
@@ -158,10 +214,6 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
     }
 
     const routeKey = `/api/competitions/${competitionId}/enter`;
-    const previous = db.getIdempotencyRecord(idempotencyKey, routeKey);
-    if (previous) {
-      return res.status(previous.status_code).json(JSON.parse(previous.response_json));
-    }
 
     const competition = db.getCompetitionById(competitionId);
     if (!competition) {
@@ -180,16 +232,44 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
     const incomingPrizeOption = String(req.body?.prizeOption ?? req.body?.prizeChoice ?? 'physical');
     const prizeChoice = incomingPrizeOption === 'cash' ? 'cash' : 'physical';
     const totalCost = Number((quantity * competition.entryPrice).toFixed(2));
-
-    const paymentAttempt = await paymentGateway.charge({
-      amount: totalCost,
-      currency: competition.prizeDetails?.currency || 'AED',
-      idempotencyKey,
-      metadata: {
-        competitionId: String(competition.id),
-        quantity: String(quantity),
-      },
+    const requestFingerprint = createEntryFingerprint({
+      competitionId,
+      quantity,
+      termsAccepted: true,
+      prizeChoice,
     });
+
+    const reserved = db.reserveIdempotencyRecord({ key: idempotencyKey, route: routeKey, requestFingerprint });
+    if (!reserved) {
+      const previous = db.getIdempotencyRecord(idempotencyKey, routeKey);
+      if (previous && previous.request_fingerprint !== requestFingerprint) {
+        return res.status(422).json({ error: 'Idempotency-Key has already been used with a different request payload.' });
+      }
+      if (previous?.status_code === 102) {
+        return res.status(409).json({ error: 'Entry request is currently being processed for this Idempotency-Key.' });
+      }
+      if (previous) {
+        return res.status(previous.status_code).json(JSON.parse(previous.response_json));
+      }
+      return res.status(409).json({ error: 'Unable to acquire idempotency lock. Please retry.' });
+    }
+
+    let paymentAttempt: PaymentResult;
+    try {
+      paymentAttempt = await paymentGateway.charge({
+        amount: totalCost,
+        currency: competition.prizeDetails?.currency || 'AED',
+        idempotencyKey,
+        metadata: {
+          competitionId: String(competition.id),
+          quantity: String(quantity),
+        },
+      });
+    } catch {
+      const failedResponse = { success: false, error: 'Payment provider unavailable', paymentStatus: 'failed' };
+      db.saveIdempotencyRecord({ key: idempotencyKey, route: routeKey, requestFingerprint, statusCode: 503, response: failedResponse });
+      return res.status(503).json(failedResponse);
+    }
 
     if (paymentAttempt.status !== 'authorized') {
       const failedResponse = {
@@ -197,8 +277,8 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
         error: paymentAttempt.reason || 'Payment was not authorized',
         paymentStatus: paymentAttempt.status,
       };
-      db.saveIdempotencyRecord({ key: idempotencyKey, route: routeKey, statusCode: 402, response: failedResponse });
-      return res.status(402).json(failedResponse);
+      db.saveIdempotencyRecord({ key: idempotencyKey, route: routeKey, requestFingerprint, statusCode: 422, response: failedResponse });
+      return res.status(422).json(failedResponse);
     }
 
     const entryId = `entry_${randomUUID()}`;
@@ -257,12 +337,29 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
         },
       };
 
-      db.saveIdempotencyRecord({ key: idempotencyKey, route: routeKey, statusCode: 200, response: responseBody });
+      db.saveIdempotencyRecord({ key: idempotencyKey, route: routeKey, requestFingerprint, statusCode: 200, response: responseBody });
       return res.json(responseBody);
     } catch (error) {
       const code = (error as { code?: string }).code;
       if (code === 'INSUFFICIENT_ENTRIES') {
+        db.saveIdempotencyRecord({
+          key: idempotencyKey,
+          route: routeKey,
+          requestFingerprint,
+          statusCode: 409,
+          response: { error: 'Not enough entries remaining for that quantity.' },
+        });
         return res.status(409).json({ error: 'Not enough entries remaining for that quantity.' });
+      }
+      if (code === 'NOT_FOUND') {
+        db.saveIdempotencyRecord({
+          key: idempotencyKey,
+          route: routeKey,
+          requestFingerprint,
+          statusCode: 404,
+          response: { error: 'Competition not found' },
+        });
+        return res.status(404).json({ error: 'Competition not found' });
       }
       if (code === 'IDEMPOTENCY_COLLISION') {
         const fallback = db.getIdempotencyRecord(idempotencyKey, routeKey);
@@ -270,13 +367,32 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
           return res.status(fallback.status_code).json(JSON.parse(fallback.response_json));
         }
       }
+      db.saveIdempotencyRecord({
+        key: idempotencyKey,
+        route: routeKey,
+        requestFingerprint,
+        statusCode: 500,
+        response: { error: 'Failed to process entry' },
+      });
       return res.status(500).json({ error: 'Failed to process entry' });
     }
   });
 
   app.get('/api/entries/:entryId/audit', (req: Request, res: Response) => {
+    const configuredAuditToken = process.env.AUDIT_API_TOKEN;
+    const providedAuditToken = req.header('X-Entry-Audit-Token');
+    if (!configuredAuditToken) {
+      return res.status(503).json({ error: 'Audit endpoint is not configured.' });
+    }
+    if (providedAuditToken !== configuredAuditToken) {
+      return res.status(401).json({ error: 'Unauthorized audit access.' });
+    }
+
     const entryId = String(req.params.entryId || '');
     if (!entryId) return res.status(400).json({ error: 'Invalid entry id' });
+    if (!db.entryExists(entryId)) {
+      return res.status(404).json({ error: 'Entry not found.' });
+    }
     const audit = db.listPaymentAuditByEntryId(entryId);
     return res.json({ entryId, audit });
   });
@@ -338,7 +454,8 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
     const endpoint = process.env.MENTAL_HEALTH_AI_ENDPOINT;
     const apiKey = process.env.MENTAL_HEALTH_AI_API_KEY;
 
-    if (mode === 'live' && endpoint && apiKey) {
+    if (mode === 'live' && shouldUseTrustedLiveEndpoint(endpoint) && apiKey) {
+      const history = sanitizeChatHistory(req.body?.history);
       try {
         const response = await fetch(endpoint, {
           method: 'POST',
@@ -346,7 +463,7 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
             'Content-Type': 'application/json',
             'x-api-key': apiKey,
           },
-          body: JSON.stringify({ message, history: req.body?.history ?? [] }),
+          body: JSON.stringify({ message: message.slice(0, 500), history }),
         });
 
         if (response.ok) {
@@ -373,6 +490,9 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
     if (name.length < 2) return res.status(400).json({ error: 'Name must be at least 2 characters.' });
     if (!isValidEmail(email)) return res.status(400).json({ error: 'Invalid email address.' });
     if (reason.length < 10) return res.status(400).json({ error: 'Please provide at least 10 characters for reason.' });
+    if (!isAllowedSupportContact(preferredContact)) {
+      return res.status(400).json({ error: 'Preferred contact must be one of: email, phone, whatsapp.' });
+    }
 
     const ticketId = `sw_${randomUUID()}`;
     db.createSupportWorkerRequest({ id: ticketId, name, email, reason, preferredContact, urgent });
@@ -381,8 +501,8 @@ export function createApp(options: { databaseUrl?: string; paymentGateway?: Paym
 
   app.post('/api/charity/checkout', (req: Request, res: Response) => {
     const amount = Number(req.body?.amount ?? 0);
-    if (!Number.isFinite(amount) || amount <= 0) {
-      return res.status(400).json({ error: 'Amount must be greater than zero.' });
+    if (!isValidCurrencyAmount(amount)) {
+      return res.status(400).json({ error: 'Amount must be a positive value with at most 2 decimal places.' });
     }
 
     const configuredCheckoutUrl = process.env.STRIPE_CHECKOUT_URL;

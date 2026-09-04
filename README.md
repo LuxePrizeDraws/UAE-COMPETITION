@@ -24,14 +24,14 @@ This release ships **competitions + tournaments + support** as one integrated ex
 ## API highlights
 - `GET /api/competitions`
 - `GET /api/competitions/:id`
-- `POST /api/competitions/:id/enter` (requires `Idempotency-Key` header + `termsAccepted: true`)
-- `GET /api/entries/:entryId/audit`
+- `POST /api/competitions/:id/enter` (requires `Idempotency-Key`, `termsAccepted: true`, `quantity` integer `1-100`, and optional `prizeOption`/`prizeChoice` = `cash|physical`)
+- `GET /api/entries/:entryId/audit` (requires `X-Entry-Audit-Token` header)
 - `GET /api/tournaments`
 - `GET /api/tournaments/:slug`
 - `POST /api/tournaments/:slug/register`
 - `POST /api/mental-health/chat`
 - `POST /api/support-worker-requests`
-- `POST /api/charity/checkout`
+- `POST /api/charity/checkout` (`amount` must be positive with max 2 decimal places)
 
 ## Entry flow hardening
 - Quantity validated to integer range 1–100
@@ -88,10 +88,12 @@ Key backend vars:
 - `CORS_ORIGINS=http://localhost:5173`
 - `RATE_LIMIT_WINDOW_MS=900000`
 - `RATE_LIMIT_MAX=100`
+- `AUDIT_API_TOKEN=change-me`
 - `ENABLED_TOURNAMENTS=chess,connect4`
 - `MENTAL_HEALTH_AI_MODE=mock|live`
 - `MENTAL_HEALTH_AI_ENDPOINT=`
 - `MENTAL_HEALTH_AI_API_KEY=`
+- `MENTAL_HEALTH_AI_ALLOWED_HOSTS=` (required for `live` mode, comma-separated trusted hosts)
 
 ## Deployment path
 ### Frontend (Vercel)

@@ -50,11 +50,17 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EntryResult | null>(null);
-  const [idempotencyKey] = useState(() => {
+  const [idempotencyKey] = useState<string | null>(() => {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
       return crypto.randomUUID();
     }
-    return `entry-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      const token = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+      return `entry-${token}`;
+    }
+    return null;
   });
   const playSound = useButtonSound();
 
@@ -69,6 +75,10 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const handleSubmit = async () => {
     if (!termsAccepted) {
       setError('Please accept the terms and conditions to enter.');
+      return;
+    }
+    if (!idempotencyKey) {
+      setError('Secure checkout is unavailable in this browser. Please update your browser and try again.');
       return;
     }
     setLoading(true);

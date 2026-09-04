@@ -169,6 +169,13 @@ const MIGRATIONS = [
       )`,
     ],
   },
+  {
+    id: 2,
+    name: 'idempotency_fingerprint',
+    statements: [
+      "ALTER TABLE idempotency_keys ADD COLUMN request_fingerprint TEXT NOT NULL DEFAULT ''",
+    ],
+  },
 ];
 
 function resolveDatabasePath(databaseUrl) {
@@ -250,7 +257,15 @@ function runMigrations(db) {
     db.exec('BEGIN');
     try {
       for (const statement of migration.statements) {
-        db.exec(statement);
+        try {
+          db.exec(statement);
+        } catch (error) {
+          const message = String(error?.message || '').toLowerCase();
+          if (message.includes('duplicate column name')) {
+            continue;
+          }
+          throw error;
+        }
       }
       markMigration.run(migration.id, migration.name, new Date().toISOString());
       db.exec('COMMIT');
@@ -323,7 +338,9 @@ export function createDatabaseClient(databaseUrl = process.env.DATABASE_URL) {
   const dbPath = resolveDatabasePath(databaseUrl);
   ensureDirectory(dbPath);
   const db = new DatabaseSync(dbPath);
-  db.exec('PRAGMA journal_mode = WAL');
+  if (dbPath !== ':memory:') {
+    db.exec('PRAGMA journal_mode = WAL');
+  }
   db.exec('PRAGMA foreign_keys = ON');
   runMigrations(db);
   seedDefaults(db);
@@ -341,39 +358,43 @@ export function createDatabaseClient(databaseUrl = process.env.DATABASE_URL) {
     },
 
     getIdempotencyRecord(key, route) {
-      return db.prepare('SELECT status_code, response_json FROM idempotency_keys WHERE key = ? AND route = ?').get(key, route) || null;
+      return db.prepare('SELECT status_code, response_json, request_fingerprint FROM idempotency_keys WHERE key = ? AND route = ?').get(key, route) || null;
     },
 
-    saveIdempotencyRecord({ key, route, statusCode, response }) {
-      db.prepare('INSERT OR REPLACE INTO idempotency_keys (key, route, status_code, response_json, created_at) VALUES (?, ?, ?, ?, ?)')
-        .run(key, route, statusCode, JSON.stringify(response), new Date().toISOString());
+    reserveIdempotencyRecord({ key, route, requestFingerprint }) {
+      const result = db
+        .prepare('INSERT OR IGNORE INTO idempotency_keys (key, route, request_fingerprint, status_code, response_json, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(key, route, requestFingerprint, 102, JSON.stringify({ status: 'in_progress' }), new Date().toISOString());
+      return result.changes > 0;
+    },
+
+    saveIdempotencyRecord({ key, route, requestFingerprint, statusCode, response }) {
+      db.prepare('INSERT OR REPLACE INTO idempotency_keys (key, route, request_fingerprint, status_code, response_json, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(key, route, requestFingerprint, statusCode, JSON.stringify(response), new Date().toISOString());
     },
 
     createCompetitionEntry(payload) {
-      const competitionRow = db.prepare('SELECT * FROM competitions WHERE id = ?').get(payload.competitionId);
-      if (!competitionRow) {
-        const error = new Error('Competition not found');
-        error.code = 'NOT_FOUND';
-        throw error;
-      }
-
-      const nextSoldEntries = competitionRow.sold_entries + payload.quantity;
-      if (nextSoldEntries > competitionRow.total_entries) {
-        const error = new Error('Not enough entries remaining');
-        error.code = 'INSUFFICIENT_ENTRIES';
-        throw error;
-      }
-
       const now = new Date().toISOString();
       const entryId = payload.entryId;
       const insertEntry = db.prepare(`INSERT INTO competition_entries
         (id, competition_id, quantity, total_cost, currency, prize_choice, terms_accepted, entry_numbers_json, payment_status, payment_reference, idempotency_key, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-      const updateCompetition = db.prepare('UPDATE competitions SET sold_entries = ?, updated_at = ? WHERE id = ?');
+      const updateCompetition = db.prepare('UPDATE competitions SET sold_entries = sold_entries + ?, updated_at = ? WHERE id = ? AND sold_entries + ? <= total_entries');
+      const selectCompetition = db.prepare('SELECT * FROM competitions WHERE id = ?');
       const insertAudit = db.prepare('INSERT INTO payment_audit_logs (id, entry_id, event, details_json, created_at) VALUES (?, ?, ?, ?, ?)');
 
+      let competitionRow;
       db.exec('BEGIN');
       try {
+        const updateResult = updateCompetition.run(payload.quantity, now, payload.competitionId, payload.quantity);
+        if (updateResult.changes === 0) {
+          const existing = selectCompetition.get(payload.competitionId);
+          const error = new Error(existing ? 'Not enough entries remaining' : 'Competition not found');
+          error.code = existing ? 'INSUFFICIENT_ENTRIES' : 'NOT_FOUND';
+          throw error;
+        }
+
+        competitionRow = selectCompetition.get(payload.competitionId);
         insertEntry.run(
           entryId,
           payload.competitionId,
@@ -388,7 +409,6 @@ export function createDatabaseClient(databaseUrl = process.env.DATABASE_URL) {
           payload.idempotencyKey,
           now,
         );
-        updateCompetition.run(nextSoldEntries, now, payload.competitionId);
 
         for (const auditEvent of payload.auditEvents) {
           insertAudit.run(auditEvent.id, entryId, auditEvent.event, JSON.stringify(auditEvent.details), now);
@@ -405,7 +425,7 @@ export function createDatabaseClient(databaseUrl = process.env.DATABASE_URL) {
 
       return {
         entryId,
-        competition: rowToCompetition({ ...competitionRow, sold_entries: nextSoldEntries }),
+        competition: rowToCompetition(competitionRow),
       };
     },
 
@@ -417,6 +437,11 @@ export function createDatabaseClient(databaseUrl = process.env.DATABASE_URL) {
         details: parseJson(row.details_json, {}),
         createdAt: row.created_at,
       }));
+    },
+
+    entryExists(entryId) {
+      const row = db.prepare('SELECT id FROM competition_entries WHERE id = ?').get(entryId);
+      return Boolean(row);
     },
 
     getTournaments(enabledSlugs = []) {
@@ -435,27 +460,26 @@ export function createDatabaseClient(databaseUrl = process.env.DATABASE_URL) {
     },
 
     registerTournamentPlayer({ registrationId, slug, name, email, termsAccepted }) {
-      const tournamentRow = db.prepare('SELECT * FROM tournaments WHERE slug = ?').get(slug);
-      if (!tournamentRow) {
+      const tournamentExists = db.prepare('SELECT slug FROM tournaments WHERE slug = ?').get(slug);
+      if (!tournamentExists) {
         const error = new Error('Tournament not found');
         error.code = 'TOURNAMENT_NOT_FOUND';
         throw error;
       }
 
-      if (tournamentRow.registered_players >= tournamentRow.max_players) {
-        const error = new Error('Tournament is full');
-        error.code = 'TOURNAMENT_FULL';
-        throw error;
-      }
-
       const now = new Date().toISOString();
       const insertRegistration = db.prepare('INSERT INTO tournament_registrations (id, tournament_slug, name, email, terms_accepted, created_at) VALUES (?, ?, ?, ?, ?, ?)');
-      const updateTournament = db.prepare('UPDATE tournaments SET registered_players = registered_players + 1, updated_at = ? WHERE slug = ?');
+      const updateTournament = db.prepare('UPDATE tournaments SET registered_players = registered_players + 1, updated_at = ? WHERE slug = ? AND registered_players < max_players');
 
       db.exec('BEGIN');
       try {
+        const updated = updateTournament.run(now, slug);
+        if (updated.changes === 0) {
+          const error = new Error('Tournament is full');
+          error.code = 'TOURNAMENT_FULL';
+          throw error;
+        }
         insertRegistration.run(registrationId, slug, name, email, termsAccepted ? 1 : 0, now);
-        updateTournament.run(now, slug);
         db.exec('COMMIT');
       } catch (error) {
         db.exec('ROLLBACK');
