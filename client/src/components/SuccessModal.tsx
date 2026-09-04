@@ -54,10 +54,16 @@ const SuccessModal = ({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="success-modal-title"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-header">
           <span className="modal-emoji">🎉</span>
-          <h2 className="modal-title">Entry Confirmed!</h2>
+          <h2 className="modal-title" id="success-modal-title">Entry Confirmed!</h2>
           <p className="modal-subtitle">You're in the running to win!</p>
         </div>
 
