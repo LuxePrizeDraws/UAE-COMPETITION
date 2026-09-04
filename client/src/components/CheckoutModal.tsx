@@ -67,7 +67,7 @@ const CheckoutModal = ({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" role="dialog" aria-modal="true" aria-label="Complete your entry" onClick={e => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>✕</button>
+        <button className="modal-close" type="button" aria-label="Close checkout modal" onClick={onClose}>✕</button>
         <h2>Complete Your Entry</h2>
         <p className="modal-competition-title">{competitionTitle}</p>
         <div className="modal-summary">
