@@ -20,6 +20,9 @@ const enabledTournamentSlugs = new Set(
     .filter(Boolean)
 );
 
+const getSingleRouteParam = (value: string | string[] | undefined): string =>
+  Array.isArray(value) ? value[0] ?? '' : value ?? '';
+
 // Middleware
 app.use(helmet());
 app.use(morgan('combined'));
@@ -364,7 +367,8 @@ app.get('/api/competitions', (req: Request, res: Response) => {
 });
 
 app.get('/api/competitions/:id', (req: Request, res: Response) => {
-  const competition = competitions.find(c => c.id === parseInt(req.params.id));
+  const competitionId = Number.parseInt(getSingleRouteParam(req.params.id), 10);
+  const competition = competitions.find(c => c.id === competitionId);
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
   }
@@ -379,7 +383,7 @@ app.get('/api/tournaments', (req: Request, res: Response) => {
 });
 
 app.get('/api/tournaments/:slug', (req: Request, res: Response) => {
-  const slug = req.params.slug.toLowerCase();
+  const slug = getSingleRouteParam(req.params.slug).toLowerCase();
   if (!isTournamentEnabled(slug)) {
     return res.status(404).json({ error: 'Tournament not found or currently disabled' });
   }
@@ -393,7 +397,7 @@ app.get('/api/tournaments/:slug', (req: Request, res: Response) => {
 });
 
 app.post('/api/tournaments/:slug/register', (req: Request, res: Response) => {
-  const slug = req.params.slug.toLowerCase();
+  const slug = getSingleRouteParam(req.params.slug).toLowerCase();
   if (!isTournamentEnabled(slug)) {
     return res.status(404).json({ error: 'Tournament not found or currently disabled' });
   }
@@ -513,7 +517,8 @@ app.post('/api/support-worker-requests', (req: Request, res: Response) => {
 
 app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
   const { quantity, termsAccepted, prizeOption } = req.body;
-  const competition = competitions.find(c => c.id === parseInt(req.params.id));
+  const competitionId = Number.parseInt(getSingleRouteParam(req.params.id), 10);
+  const competition = competitions.find(c => c.id === competitionId);
   
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
