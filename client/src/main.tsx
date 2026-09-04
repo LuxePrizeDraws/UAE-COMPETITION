@@ -1,9 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import InvestorSummary from './pages/InvestorSummary';
+import FeatureCentre from './pages/FeatureCentre';
+import GameChallenges from './pages/GameChallenges';
+import EntryOptions from './pages/EntryOptions';
+import WellbeingSupport from './pages/WellbeingSupport';
 import ChessTournament from './pages/ChessTournament';
 import Connect4Tournament from './pages/Connect4Tournament';
 import Gallery from './pages/Gallery';
@@ -19,9 +24,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="competitions" element={<Dashboard />} />
-          <Route path="dashboard" element={<Navigate to="/competitions" replace />} />
-          <Route path="investor-summary" element={<Navigate to="/mission" replace />} />
+          <Route path="feature-centre" element={<FeatureCentre />} />
+          <Route path="game-challenges" element={<GameChallenges />} />
+          <Route path="entry-options" element={<EntryOptions />} />
+          <Route path="wellbeing-support" element={<WellbeingSupport />} />
+          <Route path="investor-summary" element={<InvestorSummary />} />
           <Route path="chess-tournament" element={<ChessTournament />} />
           <Route path="connect4-tournament" element={<Connect4Tournament />} />
           <Route path="gallery" element={<Gallery />} />

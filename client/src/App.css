@@ -7,7 +7,7 @@
 .app-header {
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   border-bottom: 2px solid #c9a84c;
-  padding: 1rem;
+  padding: 1rem 2rem;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -23,15 +23,15 @@
 }
 
 .logo {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   color: #c9a84c;
   font-weight: 800;
 }
 
 .app-nav {
   display: flex;
-  gap: 0.5rem;
   flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .app-nav--mobile {
@@ -44,6 +44,7 @@
 
 .menu-toggle {
   display: none;
+  justify-self: end;
   background: transparent;
   border: 1px solid rgba(201, 168, 76, 0.45);
   color: #c9a84c;
@@ -53,27 +54,46 @@
 }
 
 .nav-link {
+  position: relative;
   color: #e8d5b7;
   font-weight: 600;
-  padding: 0.5rem 0.8rem;
-  border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent),
+    rgba(255, 255, 255, 0.02);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 22px rgba(0, 0, 0, 0.18);
+  transition: background 0.2s, transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  overflow: hidden;
   font-size: 0.88rem;
 }
 
-.nav-link:hover {
-  background: rgba(201, 168, 76, 0.15);
+.nav-link::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 11px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 45%);
+  pointer-events: none;
 }
 
-.nav-link--highlight {
-  background: rgba(201, 168, 76, 0.2);
-  border: 1px solid #c9a84c;
-  color: #c9a84c;
+.nav-link:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent),
+    rgba(201, 168, 76, 0.12);
+  border-color: rgba(201, 168, 76, 0.35);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 28px rgba(0, 0, 0, 0.24);
 }
 
 .nav-link--active {
   color: #c9a84c;
-  background: rgba(201, 168, 76, 0.12);
+  border-color: rgba(201, 168, 76, 0.28);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent),
+    rgba(201, 168, 76, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 24px rgba(201, 168, 76, 0.12);
 }
 
 .competitions-grid {
@@ -95,6 +115,33 @@
   margin-top: auto;
 }
 
+.help-badge {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 999;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.9rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(192, 132, 252, 0.32);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
+    linear-gradient(135deg, rgba(36, 20, 43, 0.96), rgba(90, 42, 122, 0.92));
+  color: #f4e7ff;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 40px rgba(0, 0, 0, 0.34);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.help-badge:hover {
+  transform: translateY(-2px);
+  border-color: rgba(216, 180, 254, 0.52);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 20px 46px rgba(0, 0, 0, 0.38);
+}
+
 @media (max-width: 1100px) {
   .header-content {
     grid-template-columns: 1fr auto;
@@ -102,7 +149,6 @@
 
   .menu-toggle {
     display: inline-block;
-    justify-self: end;
   }
 
   .app-nav--desktop-only {
@@ -121,5 +167,29 @@
 
   .app-nav--mobile.app-nav--open {
     display: flex;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    padding: 1rem;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .app-nav {
+    width: 100%;
+  }
+
+  .nav-link {
+    width: 100%;
+  }
+
+  .help-badge {
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
   }
 }

@@ -7,14 +7,19 @@ const SHOW_MENTAL_HEALTH_SUPPORT = import.meta.env.VITE_ENABLE_MENTAL_HEALTH_SUP
 const NAV_ITEMS = [
   { label: 'Home', to: '/' },
   { label: 'Competitions', to: '/competitions' },
+  { label: 'Feature Centre', to: '/feature-centre' },
+  { label: 'Game Challenges', to: '/game-challenges' },
+  { label: 'Entry Options', to: '/entry-options' },
+  { label: 'Investor Summary', to: '/investor-summary' },
   { label: 'Chess Tournament', to: '/chess-tournament' },
   { label: 'Connect 4 Tournament', to: '/connect4-tournament' },
   { label: 'Gallery', to: '/gallery' },
+  { label: 'Wellbeing Support', to: '/wellbeing-support' },
   ...(SHOW_MENTAL_HEALTH_SUPPORT ? [{ label: 'Mental Health Support', to: '/mental-health' }] : []),
   { label: 'Contact / Help', to: '/help' },
-  { label: '🧠 Mission', to: '/mission' },
+  { label: 'Mission', to: '/mission' },
   { label: 'Terms', to: '/terms' },
-];
+] as const;
 
 function NavigationLinks() {
   return (
@@ -37,16 +42,16 @@ function App() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Lazy-load AdSense script only when client ID is configured
   useEffect(() => {
     if (!AD_CLIENT) return;
     if (document.querySelector('script[data-adsense]')) return;
-    const s = document.createElement('script');
-    s.async = true;
-    s.crossOrigin = 'anonymous';
-    s.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT}`;
-    s.setAttribute('data-adsense', 'true');
-    document.head.appendChild(s);
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT}`;
+    script.setAttribute('data-adsense', 'true');
+    document.head.appendChild(script);
   }, []);
 
   useEffect(() => {
@@ -76,6 +81,7 @@ function App() {
         </div>
       </header>
       <Outlet />
+      <NavLink to="/wellbeing-support" className="help-badge">🧠 Help &amp; Awareness</NavLink>
     </div>
   );
 }

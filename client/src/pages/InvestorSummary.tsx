@@ -18,11 +18,11 @@ function InvestorSummary() {
       <section className="investor-summary__hero">
         <div className="container">
           <p className="investor-summary__eyebrow">Investor Summary</p>
-          <h1>Valuation Overview</h1>
+          <h1>Disclosure &amp; Demo Overview</h1>
           <p>
-            This section provides a clear snapshot of the platform&apos;s current disclosure status.
-            Financial and operational figures are intentionally shared as placeholders where verified
-            data is not yet published.
+            This page is designed to support demos with a disclosure-first overview of what the
+            platform currently shows publicly and which commercial details remain private until
+            verified or shared through diligence.
           </p>
         </div>
       </section>
@@ -31,9 +31,9 @@ function InvestorSummary() {
         <div className="container">
           <h2>Business Overview</h2>
           <p>
-            UAE Competition is positioned as a digital prize-competition platform with recurring
-            campaign operations, audience engagement, and draw-based product inventory. The current
-            focus is operational execution, product maturity, and transparent reporting readiness.
+            UAE Competition is presented here as a premium digital prize-draw product experience.
+            The current frontend demo focuses on competition browsing, dashboard visibility, and
+            clear supporting disclosure rather than public performance marketing claims.
           </p>
         </div>
       </section>
@@ -55,17 +55,17 @@ function InvestorSummary() {
       <section className="investor-summary__section">
         <div className="container disclosure-layout">
           <article className="disclosure-panel">
-            <h2>Asking Price / Current Valuation Status</h2>
+            <h2>Commercial Disclosure Status</h2>
             <p>
-              Asking price: <strong>Available on request</strong>. Any valuation view should be treated as
-              indicative and subject to due diligence, verification of operating data, and commercial review.
+              Asking price and any valuation discussion are <strong>available on request</strong>. No
+              public valuation is presented here without verification, diligence, and commercial review.
             </p>
           </article>
           <article className="disclosure-panel">
-            <h2>Maintenance &amp; Operating Effort</h2>
+            <h2>Operating Ownership</h2>
             <p>
-              Current maintenance is founder-managed with a low-to-moderate weekly operating commitment.
-              Time allocation varies by campaign volume, customer support demand, and acquisition activity.
+              Current maintenance is founder-managed. Operating effort will vary with campaign
+              volume, support demand, compliance workflows, and future commercial scale.
             </p>
           </article>
         </div>
@@ -73,12 +73,11 @@ function InvestorSummary() {
 
       <section className="investor-summary__section investor-summary__section--alt">
         <div className="container">
-          <h2>Future Valuation Potential (Forward-Looking)</h2>
+          <h2>Due Diligence Readiness</h2>
           <p>
-            Potential future valuation expansion is expected to depend on three drivers: sustained user
-            growth, verified repeat participation economics, and stronger operating leverage as systems,
-            support, and campaign workflows mature. As traction data becomes auditable, the platform may
-            warrant a materially higher valuation profile than its current disclosure stage.
+            The current demo, dashboard, and disclosure map are intended to make the product easy to
+            understand quickly. Verified traffic, growth, and financial information can be layered in
+            later once they are auditable and ready for formal diligence sharing.
           </p>
         </div>
       </section>

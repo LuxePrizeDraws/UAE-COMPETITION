@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useButtonSound } from '../hooks/useButtonSound';
 import './EntryModal.css';
 
@@ -21,6 +21,8 @@ interface Competition {
 interface EntryResult {
   success: boolean;
   message: string;
+  mode?: 'demo' | 'stripe';
+  checkoutUrl?: string;
   competitionId: number;
   competitionTitle: string;
   quantity: number;
@@ -38,6 +40,29 @@ interface EntryModalProps {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const defaultPostalEntryInfo = {
+  available: true,
+  summary: 'Free postal entry is supported for eligible participants.',
+  steps: [
+    'Review the official competition terms and postal-entry rules before sending your entry.',
+    'Send one postal entry per envelope with your full name, contact details, competition title, and preferred prize option.',
+    'Make sure your postal entry arrives before the published draw cutoff and meets the age and eligibility requirements.',
+  ],
+  note: 'Postal entry address will be published in the official terms before go-live.',
+  addressConfigured: false,
+  addressLines: [] as string[],
+  supportEmail: null as string | null,
+};
+
+interface PostalEntryInfo {
+  available: boolean;
+  summary: string;
+  steps: string[];
+  note: string;
+  addressConfigured: boolean;
+  addressLines: string[];
+  supportEmail: string | null;
+}
 
 export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [quantity, setQuantity] = useState(1);
@@ -46,10 +71,44 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<EntryResult | null>(null);
+  const [postalEntryInfo, setPostalEntryInfo] = useState<PostalEntryInfo>(defaultPostalEntryInfo);
+  const [postalEntryLoading, setPostalEntryLoading] = useState(true);
   const playSound = useButtonSound();
 
   const totalCost = quantity * competition.entryPrice;
   const remaining = competition.totalEntries - competition.soldEntries;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    setPostalEntryLoading(true);
+    fetch(`${API_URL}/api/competitions/${competition.id}/postal-entry`)
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error('Postal entry information is unavailable.');
+        }
+        return res.json();
+      })
+      .then((data: PostalEntryInfo) => {
+        if (!cancelled) {
+          setPostalEntryInfo(data);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPostalEntryInfo(defaultPostalEntryInfo);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setPostalEntryLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [competition.id]);
 
   const handleQuantityChange = (val: number) => {
     const clamped = Math.max(1, Math.min(1000, Math.round(val) || 1));
@@ -72,6 +131,8 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Something went wrong. Please try again.');
+      } else if (data.checkoutUrl) {
+        window.location.assign(data.checkoutUrl);
       } else {
         setResult(data);
       }
@@ -213,6 +274,36 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
               <strong>£{totalCost.toLocaleString()}</strong>
             </div>
 
+            <div className="entry-modal__postal">
+              <div className="entry-modal__postal-header">
+                <h3>📮 Free Postal Entry</h3>
+                <span>£0 entry route</span>
+              </div>
+              <p className="entry-modal__postal-summary">
+                {postalEntryLoading ? 'Loading postal entry instructions...' : postalEntryInfo.summary}
+              </p>
+              <ul className="entry-modal__postal-steps">
+                {postalEntryInfo.steps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ul>
+              {postalEntryInfo.addressConfigured && postalEntryInfo.addressLines.length > 0 ? (
+                <address className="entry-modal__postal-address">
+                  {postalEntryInfo.addressLines.map((line) => (
+                    <span key={line}>{line}</span>
+                  ))}
+                </address>
+              ) : (
+                <p className="entry-modal__postal-note">{postalEntryInfo.note}</p>
+              )}
+              {postalEntryInfo.supportEmail && (
+                <p className="entry-modal__postal-contact">
+                  Need the latest postal-entry wording?{' '}
+                  <a href={`mailto:${postalEntryInfo.supportEmail}`}>{postalEntryInfo.supportEmail}</a>
+                </p>
+              )}
+            </div>
+
             <label className="entry-modal__terms">
               <input
                 type="checkbox"
@@ -238,7 +329,7 @@ export default function EntryModal({ competition, onClose }: EntryModalProps) {
             </button>
 
             <p className="entry-modal__disclaimer">
-              🔒 Secure entry · 40% house margin transparent · Fair live draw guaranteed
+              🔒 Secure entry{competition.status !== 'coming-soon' ? ' · Stripe checkout when configured' : ''} · 40% house margin transparent · Fair live draw guaranteed
             </p>
           </>
         )}

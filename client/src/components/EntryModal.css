@@ -190,6 +190,66 @@
 }
 .entry-modal__cost strong { font-size: 1.5rem; color: #c9a84c; font-weight: 900; }
 
+.entry-modal__postal {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  border-radius: 10px;
+  background: rgba(201, 168, 76, 0.05);
+}
+
+.entry-modal__postal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.entry-modal__postal-header h3 {
+  color: #e8d5b7;
+  font-size: 1rem;
+}
+
+.entry-modal__postal-header span {
+  color: #c9a84c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.entry-modal__postal-summary,
+.entry-modal__postal-note,
+.entry-modal__postal-contact {
+  color: #bdbdbd;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.entry-modal__postal-steps {
+  margin: 0.85rem 0;
+  padding-left: 1rem;
+  color: #d6d6d6;
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.entry-modal__postal-address {
+  display: grid;
+  gap: 0.2rem;
+  margin-bottom: 0.75rem;
+  color: #f3e1a5;
+  font-style: normal;
+  font-size: 0.85rem;
+}
+
+.entry-modal__postal-contact a {
+  color: #c9a84c;
+}
+
 /* Terms */
 .entry-modal__terms {
   display: flex;
