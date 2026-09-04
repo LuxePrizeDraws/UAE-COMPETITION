@@ -16,14 +16,11 @@ app.use(morgan('combined'));
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true); // allow same-origin / server-to-server
-    if (
+    const allowed =
       origin.startsWith('http://localhost:') ||
       origin.endsWith('.app.github.dev') ||
-      origin === (process.env.CLIENT_URL ?? '')
-    ) {
-      return callback(null, true);
-    }
-    callback(new Error('Not allowed by CORS'));
+      origin === (process.env.CLIENT_URL ?? '');
+    return callback(null, allowed);
   },
   credentials: true,
 }));
