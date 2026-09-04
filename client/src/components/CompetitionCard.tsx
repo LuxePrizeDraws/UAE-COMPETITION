@@ -55,8 +55,8 @@ const CompetitionCard = ({ competition, currency }: CompetitionCardProps) => {
   const [error, setError] = useState<string | null>(null);
 
   const progressPercent = (competition.soldEntries / competition.totalEntries) * 100;
-  const remainingEntries = competition.totalEntries - competition.soldEntries;
-  const soldOut = remainingEntries <= 0;
+  const remainingEntries = Math.max(competition.totalEntries - competition.soldEntries, 0);
+  const soldOut = remainingEntries === 0;
   const odds = soldOut ? '0.000000' : ((1 / remainingEntries) * 100).toFixed(6);
 
   // Convert entry price and prize amounts to selected currency

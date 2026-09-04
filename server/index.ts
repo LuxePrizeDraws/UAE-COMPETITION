@@ -101,25 +101,26 @@ app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Competition not found' });
   }
 
-  if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
+  const parsedQuantity = Number(quantity);
+  if (!Number.isInteger(parsedQuantity) || parsedQuantity < 1 || parsedQuantity > 100) {
     return res.status(400).json({ error: 'Invalid quantity' });
   }
 
   const validPrizeChoices = ['prize', 'cash'];
   const selectedPrizeChoice = validPrizeChoices.includes(prizeChoice) ? prizeChoice : 'prize';
 
-  const totalCost = quantity * competition.entryPrice;
+  const totalCost = parsedQuantity * competition.entryPrice;
   
   // Mock response - in production this would process payment
   res.json({
     success: true,
     message: 'Entry processed (mock)',
     competitionId: competition.id,
-    quantity,
+    quantity: parsedQuantity,
     totalCost,
     currency: 'AED',
     prizeChoice: selectedPrizeChoice,
-    entryNumbers: Array.from({ length: quantity }, () => `${competition.id}-${Math.random().toString(36).substring(2, 11).toUpperCase()}`),
+    entryNumbers: Array.from({ length: parsedQuantity }, () => `${competition.id}-${Math.random().toString(36).substring(2, 11).toUpperCase()}`),
   });
 });
 

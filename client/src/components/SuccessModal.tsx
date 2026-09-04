@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import { CurrencyCode } from '../utils/currency';
 import './SuccessModal.css';
 
 interface SuccessModalProps {
   competitionTitle: string;
   entryNumbers: string[];
   totalCostConverted: number;
-  currency: string;
+  currency: CurrencyCode;
   prizeChoice: 'prize' | 'cash';
   onClose: () => void;
 }
