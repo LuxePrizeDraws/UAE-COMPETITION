@@ -1,108 +1,66 @@
-/* Home stats bar */
-.home-stats {
-  background: #1a1a1a;
-  border-bottom: 1px solid #2a2a2a;
-  padding: 1.25rem 2rem;
-}
-.home-stats__inner {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.home-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-}
-.home-stat strong {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #c9a84c;
-}
-.home-stat span {
-  font-size: 0.8rem;
-  color: #666;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Coming soon note */
-.coming-soon-note {
-  text-align: center;
-  margin-top: 2rem;
-  color: #888;
-  font-size: 0.9rem;
-}
-
-/* Footer */
-.home-footer {
-  padding: 2rem;
-  border-top: 1px solid #2a2a2a;
-  text-align: center;
-  color: #555;
-  font-size: 0.85rem;
-}
-.home-footer .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-.footer-dash-link {
-  color: #c9a84c;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: opacity 0.2s;
-}
-.footer-dash-link:hover { opacity: 0.8; }
-
 .home {
   width: 100%;
 }
 
-.experience-section {
-  padding: 3rem 2rem;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+/* Currency Bar */
+.currency-bar {
   background: #111;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 0.875rem 2rem;
 }
 
-.experience-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+.currency-selector-wrapper {
+  display: flex;
+  align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.experience-card {
-  display: grid;
-  gap: 0.55rem;
-  padding: 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: rgba(212, 175, 55, 0.03);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+.currency-selector-label {
+  font-size: 0.85rem;
+  color: #aaa;
+  white-space: nowrap;
 }
 
-.experience-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--color-gold);
+.currency-select {
+  padding: 0.5rem 0.75rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #d4af37;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
-.experience-card__icon {
-  font-size: 1.3rem;
+.currency-select option {
+  background: #1a1a1a;
+  color: #fff;
 }
 
-.experience-card h3 {
-  color: var(--color-gold);
-  font-size: 1.05rem;
+.currency-note {
+  font-size: 0.75rem;
+  color: #555;
+  font-style: italic;
 }
 
-.experience-card p {
-  color: var(--color-text-tertiary);
-  font-size: 0.9rem;
-  line-height: 1.5;
+/* Footer compliance */
+.footer-compliance {
+  padding: 1.5rem 2rem;
+  background: #080808;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  text-align: center;
+}
+
+.footer-compliance p {
+  font-size: 0.78rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 0.25rem;
+}
+
+.footer-compliance a {
+  color: #888;
+  text-decoration: underline;
 }
 
 /* Hero Section */
@@ -267,11 +225,6 @@
   margin-bottom: 2rem;
 }
 
-/* Ad row spans the full grid width */
-.competitions-grid__ad-row {
-  grid-column: 1 / -1;
-}
-
 .loading {
   text-align: center;
   font-size: 1.2rem;
@@ -325,153 +278,10 @@
   color: #999;
 }
 
-.playbook-section,
-.ring-fence-section,
-.action-plan-section,
-.resources-section,
-.metrics-section {
+/* Gallery Section */
+.gallery-section {
   padding: 4rem 2rem;
-}
-
-.home--operator-playbook-hidden .playbook-section,
-.home--operator-playbook-hidden .ring-fence-section,
-.home--operator-playbook-hidden .action-plan-section,
-.home--operator-playbook-hidden .resources-section,
-.home--operator-playbook-hidden .metrics-section {
-  display: none;
-}
-
-.playbook-section,
-.action-plan-section,
-.resources-section {
   background: var(--color-black);
-}
-
-.ring-fence-section,
-.action-plan-section.action-plan-section--alt,
-.resources-section.resources-section--alt,
-.metrics-section {
-  background: var(--color-dark-gray);
-  border-top: 1px solid var(--color-border);
-}
-
-.playbook-intro {
-  max-width: 960px;
-  margin: 0 auto 2.5rem;
-  text-align: center;
-  color: var(--color-text-secondary);
-  line-height: 1.7;
-  font-size: 1rem;
-}
-
-.playbook-grid,
-.resources-grid,
-.metrics-grid,
-.timeline-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.playbook-card,
-.resource-card,
-.timeline-card,
-.checklist-card {
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: rgba(212, 175, 55, 0.03);
-  padding: 1.5rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-}
-
-.playbook-card h3,
-.resource-card h3,
-.timeline-card h3 {
-  color: var(--color-gold);
-  margin-bottom: 0.75rem;
-  font-size: 1.2rem;
-}
-
-.playbook-card__eyebrow {
-  color: var(--color-gold-light);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.75rem;
-}
-
-.playbook-card__budget {
-  color: var(--color-text-secondary);
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.playbook-card ul,
-.checklist-list {
-  list-style: none;
-  display: grid;
-  gap: 0.75rem;
-}
-
-.playbook-card li,
-.checklist-list li {
-  color: var(--color-text-tertiary);
-  line-height: 1.6;
-  padding-left: 1.5rem;
-  position: relative;
-}
-
-.playbook-card li::before,
-.checklist-list li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: var(--color-gold);
-  font-weight: 700;
-}
-
-.playbook-card__outcomes,
-.summary-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.playbook-card__outcomes span,
-.summary-bar span,
-.chip-list li {
-  padding: 0.6rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  background: rgba(212, 175, 55, 0.08);
-  color: var(--color-gold-soft);
-  font-size: 0.88rem;
-}
-
-.timeline-card {
-  display: grid;
-  gap: 1rem;
-}
-
-.timeline-block h4 {
-  color: var(--color-gold-light);
-  margin-bottom: 0.6rem;
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.chip-list {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.resource-card,
-.checklist-card {
-  height: 100%;
 }
 
 .container {
@@ -496,13 +306,6 @@
   .section-title::after {
     display: none;
   }
-
-  .playbook-grid,
-  .resources-grid,
-  .metrics-grid,
-  .timeline-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 768px) {
@@ -521,25 +324,8 @@
   }
 
   .competitions-section,
-  .experience-section,
   .trust-section,
-  .playbook-section,
-  .ring-fence-section,
-  .action-plan-section,
-  .resources-section,
-  .metrics-section {
+  .gallery-section {
     padding: 2rem 1rem;
-  }
-
-  .summary-bar,
-  .chip-list {
-    gap: 0.5rem;
-  }
-
-  .playbook-card,
-  .resource-card,
-  .timeline-card,
-  .checklist-card {
-    padding: 1.25rem;
   }
 }

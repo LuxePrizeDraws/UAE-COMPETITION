@@ -1,0 +1,165 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #141414 0%, #1e1e1e 100%);
+  border: 2px solid var(--color-gold, #d4af37);
+  border-radius: 12px;
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 0 60px rgba(212, 175, 55, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.modal-emoji {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #d4af37;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.modal-subtitle {
+  font-size: 1rem;
+  color: #aaa;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-competition {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.modal-label {
+  font-size: 0.8rem;
+  color: #777;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.modal-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #eee;
+  text-align: right;
+  max-width: 60%;
+}
+
+.gold-text {
+  color: #d4af37;
+  font-size: 1.1rem;
+}
+
+.prize-choice-badge {
+  background: rgba(212, 175, 55, 0.15);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  color: #d4af37;
+  font-size: 0.85rem;
+}
+
+.entry-numbers-section {
+  padding: 0.75rem 1rem;
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.entry-numbers-section .modal-label {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.entry-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.entry-number {
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.modal-footer {
+  text-align: center;
+}
+
+.modal-compliance {
+  font-size: 0.78rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.modal-compliance a {
+  color: #d4af37;
+  text-decoration: underline;
+}
+
+.btn-close-modal {
+  width: 100%;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, #d4af37 0%, #f5d060 100%);
+  color: #000;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-close-modal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+}
