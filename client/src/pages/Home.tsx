@@ -87,7 +87,7 @@ const Home = () => {
           <span className="hero-badge">✦ TRANSPARENT · COMPLIANT · GLOBAL ✦</span>
           <h1 className="hero-title">WIN LUXURY.<br />LIVE ELITE.</h1>
           <p className="hero-subtitle">
-            Enter elite competitions with fully transparent odds. Win luxury prizes or take the cash alternative. 
+            Enter elite competitions with fully transparent odds. Win luxury prizes or take the cash alternative.
             Compliant across UK &amp; UAE.
           </p>
           <div className="hero-badges">
