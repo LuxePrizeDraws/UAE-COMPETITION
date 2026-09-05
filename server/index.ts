@@ -14,7 +14,14 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow same-origin / server-to-server
+    const allowed =
+      origin.startsWith('http://localhost:') ||
+      origin.endsWith('.app.github.dev') ||
+      origin === (process.env.CLIENT_URL ?? '');
+    return callback(null, allowed);
+  },
   credentials: true,
 }));
 app.use(express.json());
@@ -28,189 +35,50 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// 8 competitions data – transparent structure with cash alternatives
+// Mock competitions data - TRANSPARENT STRUCTURE
 const competitions = [
   {
     id: 1,
-    title: 'Weekly £10K Cash Draw',
-    description: 'Guaranteed Winner – Fair Live Draw every week',
+    title: 'WIN 10,000 AED CASH',
+    description: 'Guaranteed Winner - Fair Live Draw',
     prizeType: 'CASH COMPETITION',
     prizeAmount: 10000,
-    currency: 'GBP',
-    cashAlternative: true,
-    cashAlternativeAmount: 10000,
+    prizeDetails: {
+      currency: 'AED',
+      description: 'Cash Prize'
+    },
     entryPrice: 1,
-    totalEntries: 25000,
-    soldEntries: 15625,
-    drawReadyPercent: 62.5,
-    endsIn: '2 days 14 hours 36 minutes',
-    status: 'live',
-    annualProfitPotential: 780000,
-    tags: ['Guaranteed Winner', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
+    totalEntries: 10000,
+    soldEntries: 7248,
+    endsIn: '2 days 14 hours 36 minutes 28 seconds',
+    tags: ['Guaranteed Winner', 'Fair Live Draw', 'Transparent Odds'],
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
   },
   {
     id: 2,
-    title: 'Luxury Experience Package OR £100K Cash',
-    description: 'Ultimate luxury travel & lifestyle prize. Cash or prize – your choice.',
-    prizeType: 'EXPERIENCE PACKAGE',
-    prizeAmount: 100000,
-    currency: 'GBP',
-    cashAlternative: true,
-    cashAlternativeAmount: 100000,
-    entryPrice: 5,
-    totalEntries: 72000,
-    soldEntries: 45000,
-    drawReadyPercent: 62.5,
-    endsIn: '5 days 8 hours 12 minutes',
-    status: 'live',
-    annualProfitPotential: 1800000,
-    prizeIncludes: ['5-star Dubai resort stay', 'Business class flights', 'Yacht experience', 'Fine dining package'],
-    tags: ['Luxury Experience', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
-    profitMargin: '40% House, 60% Prize Pool (Transparent)',
-    expectedWinners: 1,
-  },
-  {
-    id: 3,
-    title: '£50K Monthly Cash Draw',
-    description: 'Monthly cash prize draw. Win £50,000 or cash equivalent.',
-    prizeType: 'CASH COMPETITION',
-    prizeAmount: 50000,
-    currency: 'GBP',
-    cashAlternative: true,
-    cashAlternativeAmount: 50000,
-    entryPrice: 5,
-    totalEntries: 90000,
-    soldEntries: 56250,
-    drawReadyPercent: 62.5,
-    endsIn: '12 days 6 hours',
-    status: 'live',
-    annualProfitPotential: 900000,
-    tags: ['Monthly Draw', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
-    profitMargin: '40% House, 60% Prize Pool (Transparent)',
-    expectedWinners: 1,
-  },
-  {
-    id: 4,
-    title: '£500K Quarterly Cash Draw',
-    description: 'Quarterly mega cash draw. Life-changing prize.',
-    prizeType: 'CASH COMPETITION',
+    title: 'WIN THE ULTIMATE UAE DREAM PACKAGE',
+    description: 'Luxury Stay, Premium Experiences, Travel & Lifestyle',
+    prizeType: 'LIFESTYLE PACKAGE',
     prizeAmount: 500000,
-    currency: 'GBP',
-    cashAlternative: true,
-    cashAlternativeAmount: 500000,
-    entryPrice: 10,
-    totalEntries: 300000,
-    soldEntries: 187500,
-    drawReadyPercent: 62.5,
-    endsIn: '28 days',
-    status: 'live',
-    annualProfitPotential: 3000000,
-    tags: ['Quarterly Draw', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
-    profitMargin: '40% House, 60% Prize Pool (Transparent)',
-    expectedWinners: 1,
-  },
-  {
-    id: 5,
-    title: '£5M Annual Grand Draw',
-    description: 'The ultimate annual £5 million cash draw. Coming soon.',
-    prizeType: 'CASH COMPETITION',
-    prizeAmount: 5000000,
-    currency: 'GBP',
-    cashAlternative: true,
-    cashAlternativeAmount: 5000000,
-    entryPrice: 25,
-    totalEntries: 1000000,
-    soldEntries: 0,
-    drawReadyPercent: 0,
-    endsIn: 'Coming Soon',
-    status: 'coming-soon',
-    annualProfitPotential: 7500000,
-    tags: ['Annual Draw', 'Fair Live Draw', 'Transparent Odds', 'Cash Alternative Available'],
-    profitMargin: '40% House, 60% Prize Pool (Transparent)',
-    expectedWinners: 1,
-  },
-  {
-    id: 6,
-    title: 'Weekly £10K Bonus Draw',
-    description: 'Additional weekly draw for extra cash winnings.',
-    prizeType: 'CASH COMPETITION',
-    prizeAmount: 10000,
-    currency: 'GBP',
-    cashAlternative: true,
-    cashAlternativeAmount: 10000,
+    prizeDetails: {
+      currency: 'AED',
+      description: 'Luxury Experience Package',
+      includes: ['5-star luxury stay', 'Premium experiences', 'Travel package', 'Lifestyle experiences']
+    },
     entryPrice: 1,
-    totalEntries: 30000,
-    soldEntries: 18750,
-    drawReadyPercent: 62.5,
-    endsIn: '6 days 22 hours 15 minutes',
-    status: 'live',
-    annualProfitPotential: 780000,
-    tags: ['Weekly Draw', 'Guaranteed Winner', 'Fair Live Draw', 'Cash Alternative Available'],
+    totalEntries: 1000000,
+    soldEntries: 856000,
+    endsIn: '5 days 14 hours 36 minutes 28 seconds',
+    tags: ['Luxury Experience', 'Fair Live Draw', 'Transparent Odds'],
     profitMargin: '40% House, 60% Prize Pool (Transparent)',
     expectedWinners: 1,
-  },
-  {
-    id: 7,
-    title: '3 Premium Supercars OR £135K Cash',
-    description: 'Win 3 luxury supercars or take £135K cash instead. CASH OR CARS – YOU CHOOSE!',
-    prizeType: 'VEHICLE COMPETITION',
-    prizeAmount: 135000,
-    currency: 'GBP',
-    cashAlternative: true,
-    cashAlternativeAmount: 135000,
-    entryPrice: 10,
-    totalEntries: 33750,
-    soldEntries: 21094,
-    drawReadyPercent: 62.5,
-    endsIn: '18 days 4 hours 30 minutes',
-    status: 'live',
-    annualProfitPotential: 2430000,
-    prizeIncludes: ['Porsche 911 Turbo S', 'Lamborghini Huracán', 'Ferrari 488 GTB', 'OR take £135,000 cash'],
-    tags: ['Supercar Draw', 'Cash or Cars', 'Fair Live Draw', 'Cash Alternative Available'],
-    profitMargin: '40% House, 60% Prize Pool (Transparent)',
-    expectedWinners: 1,
-  },
-  {
-    id: 8,
-    title: 'UK Entrepreneur Dream Package OR £320K Cash',
-    description: 'Full business & lifestyle prize package or £320K cash. Your choice.',
-    prizeType: 'BUSINESS PACKAGE',
-    prizeAmount: 320000,
-    currency: 'GBP',
-    cashAlternative: true,
-    cashAlternativeAmount: 320000,
-    entryPrice: 25,
-    totalEntries: 32000,
-    soldEntries: 20000,
-    drawReadyPercent: 62.5,
-    endsIn: '28 days',
-    status: 'live',
-    annualProfitPotential: 1920000,
-    prizeIncludes: [
-      '£80,000 cash lump sum',
-      'Premium Supercar',
-      'Limited Company setup',
-      'Digital business package',
-      'Luxury lifestyle bundle',
-      'OR take £320,000 cash instead',
-    ],
-    tags: ['Business Package', 'Cash Alternative', 'Fair Live Draw', 'Cash Alternative Available'],
-    profitMargin: '40% House, 60% Prize Pool (Transparent)',
-    expectedWinners: 1,
-  },
+  }
 ];
 
 // Routes
 app.get('/api/health', (req: Request, res: Response) => {
-  res.json({
-    status: 'ok',
-    message: 'Premium Competitions API is running',
-    timestamp: new Date().toISOString(),
-    competitions: competitions.length,
-    live: competitions.filter(c => c.status === 'live').length,
-  });
+  res.json({ status: 'ok', message: 'UAE Competition API is running' });
 });
 
 app.get('/api/competitions', (req: Request, res: Response) => {
@@ -226,42 +94,33 @@ app.get('/api/competitions/:id', (req: Request, res: Response) => {
 });
 
 app.post('/api/competitions/:id/enter', (req: Request, res: Response) => {
-  const { quantity, termsAccepted, prizeOption } = req.body;
+  const { quantity, prizeChoice } = req.body;
   const competition = competitions.find(c => c.id === parseInt(req.params.id));
   
   if (!competition) {
     return res.status(404).json({ error: 'Competition not found' });
   }
 
-  if (competition.status === 'coming-soon') {
-    return res.status(400).json({ error: 'Competition not yet open. Please check back soon.' });
+  const parsedQuantity = Number(quantity);
+  if (!Number.isInteger(parsedQuantity) || parsedQuantity < 1 || parsedQuantity > 100) {
+    return res.status(400).json({ error: 'Invalid quantity' });
   }
 
-  if (!termsAccepted) {
-    return res.status(400).json({ error: 'You must accept the terms and conditions to enter.' });
-  }
+  const validPrizeChoices = ['prize', 'cash'];
+  const selectedPrizeChoice = validPrizeChoices.includes(prizeChoice) ? prizeChoice : 'prize';
 
-  if (!quantity || !Number.isInteger(Number(quantity)) || Number(quantity) < 1 || Number(quantity) > 1000) {
-    return res.status(400).json({ error: 'Invalid quantity. Must be a whole number between 1 and 1000.' });
-  }
-
-  const qty = Number(quantity);
-  const totalCost = qty * competition.entryPrice;
-  const validPrizeOptions = ['physical', 'cash'];
-  const selectedPrizeOption = prizeOption && validPrizeOptions.includes(prizeOption) ? prizeOption : 'cash';
+  const totalCost = parsedQuantity * competition.entryPrice;
   
+  // Mock response - in production this would process payment
   res.json({
     success: true,
-    message: 'Entry processed successfully (demo mode)',
+    message: 'Entry processed (mock)',
     competitionId: competition.id,
-    competitionTitle: competition.title,
-    quantity: qty,
+    quantity: parsedQuantity,
     totalCost,
-    currency: competition.currency,
-    prizeOption: competition.cashAlternative ? selectedPrizeOption : 'physical',
-    entryNumbers: Array.from({ length: qty }, () => `${competition.id}-${Math.random().toString(36).slice(2, 11).toUpperCase()}`),
-    drawReadyPercent: competition.drawReadyPercent,
-    endsIn: competition.endsIn,
+    currency: 'AED',
+    prizeChoice: selectedPrizeChoice,
+    entryNumbers: Array.from({ length: parsedQuantity }, () => `${competition.id}-${Math.random().toString(36).substring(2, 11).toUpperCase()}`),
   });
 });
 

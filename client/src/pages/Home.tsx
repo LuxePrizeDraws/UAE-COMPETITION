@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import type * as React from 'react';
 import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
-import EntryModal from '../components/EntryModal';
 import { DRAW_LEGEND_ITEMS } from '../constants/drawLegend';
+import { CurrencyCode, CURRENCIES, detectCurrency, detectJurisdictionCurrency, storeCurrency } from '../utils/currency';
+import { API_BASE } from '../config';
 import '../styles/luxuryLayout.css';
 import './Home.css';
 
@@ -12,64 +14,57 @@ interface Competition {
   description: string;
   prizeType: string;
   prizeAmount: number;
-  currency: string;
-  cashAlternative: boolean;
-  cashAlternativeAmount: number;
+  prizeDetails: {
+    currency: string;
+    description: string;
+    includes?: string[];
+  };
   entryPrice: number;
   totalEntries: number;
   soldEntries: number;
   endsIn: string;
-  status: string;
   tags: string[];
   profitMargin: string;
   expectedWinners: number;
-  prizeIncludes?: string[];
+  status?: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
-export default function Home() {
+const Home = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedComp, setSelectedComp] = useState<Competition | null>(null);
+  const [currency, setCurrency] = useState<CurrencyCode>('AED');
+  const [complianceCurrency, setComplianceCurrency] = useState<CurrencyCode>('AED');
 
   useEffect(() => {
-    fetch(`${API_URL}/api/competitions`)
-      .then((res) => res.json())
-      .then((data) => {
-        setCompetitions(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError('Could not load competitions. Please try again later.');
-        setLoading(false);
-      });
+    detectCurrency().then(setCurrency);
+    detectJurisdictionCurrency().then(setComplianceCurrency);
   }, []);
 
-  const liveComps = competitions.filter((c) => c.status === 'live');
-  const comingSoon = competitions.filter((c) => c.status === 'coming-soon');
+  useEffect(() => {
+    const fetchCompetitions = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/competitions`);
+        if (!response.ok) throw new Error('Failed to fetch competitions');
+        const data = await response.json();
+        setCompetitions(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCompetitions();
+  }, []);
 
-  const cardCompetitions = competitions.map((c) => ({
-    id: c.id,
-    title: c.title,
-    description: c.description,
-    prizeType: c.prizeType,
-    prizeAmount: c.prizeAmount,
-    prizeDetails: {
-      currency: c.currency,
-      description: c.prizeType,
-      includes: c.prizeIncludes,
-    },
-    entryPrice: c.entryPrice,
-    totalEntries: c.totalEntries,
-    soldEntries: c.soldEntries,
-    endsIn: c.endsIn,
-    tags: c.tags,
-    profitMargin: c.profitMargin,
-    expectedWinners: c.expectedWinners,
-    status: c.status,
-  }));
+  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = e.target.value as CurrencyCode;
+    setCurrency(selected);
+    storeCurrency(selected);
+  };
+
+  const liveComps = competitions.filter((c) => c.status === 'live');
+  const comingSoonCount = competitions.filter((c) => c.status === 'coming-soon').length;
 
   return (
     <div className="home">
@@ -86,25 +81,36 @@ export default function Home() {
       {/* Hero */}
       <section className="hero">
         <div className="hero-background">
-          <div className="hero-gradient" />
+          <div className="hero-gradient"></div>
         </div>
         <div className="hero-content">
-          <span className="hero-badge">🏆 UAE Premium Competitions</span>
-          <h1 className="hero-title">Win Life-Changing Prizes</h1>
+          <span className="hero-badge">✦ TRANSPARENT · COMPLIANT · GLOBAL ✦</span>
+          <h1 className="hero-title">WIN LUXURY.<br />LIVE ELITE.</h1>
           <p className="hero-subtitle">
-            Fair draws · Cash alternatives · Transparent odds · Guaranteed winners
+            Enter elite competitions with fully transparent odds. Win luxury prizes or take the cash alternative. 
+            Compliant across UK &amp; UAE.
           </p>
           <div className="hero-badges">
-            <div className="badge"><span className="badge-icon">💰</span><span className="badge-text">Cash Alternatives</span></div>
-            <div className="badge"><span className="badge-icon">📊</span><span className="badge-text">Transparent Odds</span></div>
-            <div className="badge"><span className="badge-icon">✅</span><span className="badge-text">Guaranteed Winners</span></div>
-            <div className="badge"><span className="badge-icon">🔴</span><span className="badge-text">Live Draws</span></div>
+            <div className="badge">
+              <span className="badge-icon">🎯</span>
+              <span className="badge-text">Transparent Odds</span>
+            </div>
+            <div className="badge">
+              <span className="badge-icon">🔒</span>
+              <span className="badge-text">Secure &amp; Compliant</span>
+            </div>
+            <div className="badge">
+              <span className="badge-icon">💰</span>
+              <span className="badge-text">Cash Alternative</span>
+            </div>
+            <div className="badge">
+              <span className="badge-icon">🌍</span>
+              <span className="badge-text">Global Entry</span>
+            </div>
           </div>
-          <a href="#competitions" className="btn-cta">VIEW COMPETITIONS ↓</a>
         </div>
       </section>
 
-      {/* Stats bar */}
       <section className="dash-stats home-dash-stats">
         <div className="stat-card">
           <span className="stat-num">{competitions.length}</span>
@@ -115,8 +121,8 @@ export default function Home() {
           <span className="stat-label">Competitions Live</span>
         </div>
         <div className="stat-card">
-          <span className="stat-num">£18.4M</span>
-          <span className="stat-label">Annual Prizes</span>
+          <span className="stat-num">{comingSoonCount}</span>
+          <span className="stat-label">Coming Soon</span>
         </div>
         <div className="stat-card">
           <span className="stat-num">100%</span>
@@ -132,30 +138,44 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Competitions */}
-      <section className="competitions-section" id="competitions">
+      {/* Currency Selector */}
+      <section className="currency-bar">
         <div className="container">
-          <h2 className="section-title">🎯 LIVE COMPETITIONS</h2>
-          {loading && <p className="loading">Loading competitions...</p>}
-          {error && <p className="loading" style={{ color: '#f87171' }}>{error}</p>}
+          <div className="currency-selector-wrapper">
+            <span className="currency-selector-label">🌍 Your Currency:</span>
+            <select
+              className="currency-select"
+              value={currency}
+              onChange={handleCurrencyChange}
+            >
+              {Object.values(CURRENCIES).map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.symbol} {c.code} — {c.name}
+                </option>
+              ))}
+            </select>
+            <span className="currency-note">Prices shown in your currency (indicative rates)</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Competitions */}
+      <section className="competitions-section">
+        <div className="container">
+          <h2 className="section-title">LIVE COMPETITIONS</h2>
+          {loading && <div className="loading">Loading competitions...</div>}
+          {error && <div className="loading" style={{ color: '#e57373' }}>Error: {error}</div>}
           {!loading && !error && (
             <div className="competitions-grid">
-              {cardCompetitions.map((comp) => (
+              {competitions.map((competition) => (
                 <CompetitionCard
-                  key={comp.id}
-                  competition={comp}
-                  onEnter={(id) => {
-                    const c = competitions.find((x) => x.id === id);
-                    if (c) setSelectedComp(c);
-                  }}
+                  key={competition.id}
+                  competition={competition}
+                  currency={currency}
+                  complianceCurrency={complianceCurrency}
                 />
               ))}
             </div>
-          )}
-          {comingSoon.length > 0 && (
-            <p className="coming-soon-note">
-              ⏳ <strong>{comingSoon.length} competition{comingSoon.length > 1 ? 's' : ''} coming soon</strong> — check back shortly!
-            </p>
           )}
         </div>
       </section>
@@ -163,43 +183,45 @@ export default function Home() {
       {/* Trust Section */}
       <section className="trust-section">
         <div className="container">
-          <h2 className="section-title">WHY CHOOSE US</h2>
           <div className="trust-grid">
             <div className="trust-item">
-              <div className="trust-icon">🔒</div>
-              <h3>Secure Platform</h3>
-              <p>Bank-grade security and SSL encryption on all transactions</p>
+              <div className="trust-icon">⚖️</div>
+              <h3>UK Compliant</h3>
+              <p>Structured as "win to buy" — compliant with UK Gambling Commission guidelines</p>
             </div>
             <div className="trust-item">
-              <div className="trust-icon">📡</div>
-              <h3>Live Fair Draws</h3>
-              <p>Every draw is conducted live and verifiably fair</p>
-            </div>
-            <div className="trust-item">
-              <div className="trust-icon">💰</div>
-              <h3>Cash Alternative</h3>
-              <p>Every prize has a cash equivalent — you always have the choice</p>
+              <div className="trust-icon">🇦🇪</div>
+              <h3>UAE Compliant</h3>
+              <p>Structured as a promotional competition — aligned with UAE DFSA guidelines</p>
             </div>
             <div className="trust-item">
               <div className="trust-icon">📊</div>
               <h3>Transparent Odds</h3>
-              <p>40% house margin shown publicly. No hidden fees or surprises</p>
+              <p>Every competition shows exact odds so you always know your chances</p>
+            </div>
+            <div className="trust-item">
+              <div className="trust-icon">🏆</div>
+              <h3>Guaranteed Winner</h3>
+              <p>Every competition has a guaranteed winner via live draw</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="home-footer">
+      {/* Footer compliance */}
+      <footer className="footer-compliance">
         <div className="container">
-          <p>© {new Date().getFullYear()} UAE Competition Platform · Fair, Transparent &amp; Compliant Draws</p>
-          <Link to="/dashboard" className="footer-dash-link">📊 View Live Dashboard →</Link>
+          <p>
+            18+ UK / 21+ UAE. Please gamble responsibly.{' '}
+            <a href="https://www.begambleaware.org" target="_blank" rel="noopener noreferrer">BeGambleAware.org</a>
+            {' '}|{' '}
+            <a href="https://www.gamblingcommission.gov.uk" target="_blank" rel="noopener noreferrer">UK Gambling Commission</a>
+          </p>
+          <p>Currency conversion rates are indicative only. Prizes paid in AED unless cash alternative selected.</p>
         </div>
       </footer>
-
-      {selectedComp && (
-        <EntryModal competition={selectedComp} onClose={() => setSelectedComp(null)} />
-      )}
     </div>
   );
-}
+};
+
+export default Home;

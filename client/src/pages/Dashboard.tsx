@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EntryModal from '../components/EntryModal';
+import AdBanner from '../components/AdBanner';
+import AdSidebar from '../components/AdSidebar';
+import AffiliateWidget from '../components/AffiliateWidget';
 import { DRAW_LEGEND_ITEMS } from '../constants/drawLegend';
-import { SUPERCAR_COMPETITION_ID, SUPERCAR_TICKER, getCompetitionVisualImage } from '../constants/competitionVisuals';
-import '../styles/luxuryLayout.css';
-import '../styles/supercarTicker.css';
+import { useButtonSound } from '../hooks/useButtonSound';
 import './Dashboard.css';
 
 interface Competition {
@@ -23,6 +24,88 @@ interface Competition {
   status: 'live' | 'coming-soon';
   details?: string[];
 }
+
+interface CompetitionTheme {
+  accent: string;
+  highlight: string;
+  image: string;
+}
+
+// Keep this featured list in sync with the three-phase CSS ticker in Dashboard.css.
+const SUPERCAR_NAMES = [
+  'Porsche 911 Turbo S',
+  'Lamborghini Huracán',
+  'Ferrari 488 GTB',
+];
+
+function createSvgDataUri(svg: string) {
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+const COMPETITION_THEMES: Record<Competition['type'], CompetitionTheme> = {
+  cash: {
+    accent: 'Cash stack spotlight',
+    highlight: 'Instant cash jackpot',
+    image: createSvgDataUri(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 240">
+        <rect width="420" height="240" rx="28" fill="#0f172a"/>
+        <circle cx="335" cy="55" r="82" fill="#14532d" opacity="0.45"/>
+        <g fill="none" stroke="#86efac" stroke-width="8" stroke-linejoin="round">
+          <rect x="95" y="72" width="180" height="104" rx="18"/>
+          <rect x="125" y="52" width="180" height="104" rx="18" opacity="0.9"/>
+          <rect x="155" y="32" width="180" height="104" rx="18" opacity="0.75"/>
+        </g>
+        <circle cx="215" cy="104" r="22" fill="none" stroke="#dcfce7" stroke-width="8"/>
+        <path d="M205 104h20M215 94v20" stroke="#dcfce7" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+    `),
+  },
+  vehicle: {
+    accent: 'Supercar collection',
+    highlight: 'Supercar fleet showcase',
+    image: createSvgDataUri(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 240">
+        <rect width="420" height="240" rx="28" fill="#1f2937"/>
+        <circle cx="315" cy="55" r="90" fill="#f97316" opacity="0.35"/>
+        <path d="M74 146h34l34-42c9-11 22-17 36-17h65c18 0 33 8 43 22l18 25h38c14 0 26 10 28 24H74c0-7 6-12 12-12Z" fill="none" stroke="#fde68a" stroke-width="9" stroke-linejoin="round"/>
+        <circle cx="156" cy="163" r="24" fill="none" stroke="#fff7ed" stroke-width="9"/>
+        <circle cx="286" cy="163" r="24" fill="none" stroke="#fff7ed" stroke-width="9"/>
+        <path d="M166 104h88c15 0 28 7 36 19l9 14H132l16-21c4-8 11-12 18-12Z" fill="none" stroke="#fdba74" stroke-width="8" stroke-linejoin="round"/>
+      </svg>
+    `),
+  },
+  package: {
+    accent: 'Business lifestyle suite',
+    highlight: 'Luxury founder bundle',
+    image: createSvgDataUri(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 240">
+        <rect width="420" height="240" rx="28" fill="#1f1637"/>
+        <circle cx="322" cy="52" r="82" fill="#8b5cf6" opacity="0.35"/>
+        <g fill="none" stroke="#ddd6fe" stroke-width="8" stroke-linejoin="round" stroke-linecap="round">
+          <rect x="118" y="88" width="184" height="104" rx="18"/>
+          <path d="M168 88v-14c0-10 8-18 18-18h48c10 0 18 8 18 18v14"/>
+          <path d="M118 132h184"/>
+          <path d="M210 122h0"/>
+          <path d="M188 140h44"/>
+        </g>
+        <path d="M88 62l10 22 22 10-22 10-10 22-10-22-22-10 22-10 10-22Z" fill="#f5d0fe" opacity="0.85"/>
+      </svg>
+    `),
+  },
+  experience: {
+    accent: 'Luxury travel experience',
+    highlight: 'Exclusive lifestyle escape',
+    image: createSvgDataUri(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 240">
+        <rect width="420" height="240" rx="28" fill="#082f49"/>
+        <circle cx="320" cy="58" r="84" fill="#06b6d4" opacity="0.3"/>
+        <path d="M114 176h194" stroke="#cffafe" stroke-width="8" stroke-linecap="round"/>
+        <path d="M140 176c0-36 26-68 58-68 26 0 46 18 54 44 8-12 22-20 38-20 24 0 44 18 48 44" fill="none" stroke="#a5f3fc" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M208 74c22 0 40 18 40 40" fill="none" stroke="#ecfeff" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+    `),
+  },
+};
 
 const COMPETITIONS: Competition[] = [
   {
@@ -181,6 +264,21 @@ function CountdownTimer({ timeRemaining }: { timeRemaining: string }) {
   return <span className="countdown">{timeRemaining}</span>;
 }
 
+function SupercarTicker({ variant = 'card' }: { variant?: 'card' | 'showcase' }) {
+  return (
+    <div className={`supercar-ticker supercar-ticker--${variant}`}>
+      <span className="supercar-ticker__label">Featured prizes</span>
+      <div className="supercar-ticker__window">
+        {SUPERCAR_NAMES.map((name) => (
+          <span key={name} className="supercar-ticker__item">
+            {name}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function parsePound(str: string): number {
   const match = str.replace(/,/g, '').match(/[\d.]+/);
   return match ? parseFloat(match[0]) : 0;
@@ -188,44 +286,37 @@ function parsePound(str: string): number {
 
 function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSelect: (id: number) => void; onEnter: (id: number) => void }) {
   const [cashMode, setCashMode] = useState(false);
+  const playSound = useButtonSound();
   const drawStatus = getDrawStatus(comp.drawReadyPercent);
   const statusInfo = getStatusLabel(drawStatus);
   const typeColor = getTypeColor(comp.type);
   const remaining = comp.entriesNeeded - comp.entriesSold;
-  const visualImage = getCompetitionVisualImage(comp.id);
+  const theme = COMPETITION_THEMES[comp.type];
 
   return (
     <div
       className={`dash-card dash-card--${comp.type} ${comp.status === 'coming-soon' ? 'dash-card--dimmed' : ''}`}
       onClick={() => onSelect(comp.id)}
-      style={{ '--type-color': typeColor } as React.CSSProperties}
+      style={{
+        '--type-color': typeColor,
+        '--card-image': theme.image,
+      } as React.CSSProperties}
     >
-      {visualImage && (
-        <div
-          className="dash-card__visual"
-          style={{ backgroundImage: `url(${visualImage})` }}
-          aria-hidden="true"
-        />
-      )}
       <div className="dash-card__header">
         <span className="dash-card__icon">{comp.icon}</span>
         <span className="dash-card__type" style={{ color: typeColor }}>{comp.type.toUpperCase()}</span>
         <span className="dash-card__status" style={{ color: statusInfo.color }}>{statusInfo.label}</span>
       </div>
 
-      <h3 className="dash-card__title">{comp.title}</h3>
+      <div className="dash-card__visual">
+        <div className="dash-card__visual-badge">{theme.accent}</div>
+        {comp.type === 'vehicle' && (
+          <SupercarTicker />
+        )}
+      </div>
 
-      {comp.id === SUPERCAR_COMPETITION_ID && (
-        <div className="supercar-ticker" aria-label="Featured supercars">
-          <div className="supercar-ticker__track">
-            {[...SUPERCAR_TICKER, ...SUPERCAR_TICKER].map((name, index) => (
-              <span key={`${name}-${index}`} className="supercar-ticker__item">
-                {name}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      <h3 className="dash-card__title">{comp.title}</h3>
+      <p className="dash-card__highlight">{theme.highlight}</p>
 
       <div className="dash-card__prize">
         {cashMode ? (
@@ -275,8 +366,9 @@ function CompetitionCard({ comp, onSelect, onEnter }: { comp: Competition; onSel
       )}
 
       <button
-        className="dash-card__cta"
+        className={`dash-card__cta dash-card__cta--${comp.type} btn-interactive`}
         disabled={comp.status === 'coming-soon'}
+        onMouseDown={playSound}
         onClick={(e) => { e.stopPropagation(); onEnter(comp.id); }}
       >
         {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}
@@ -289,6 +381,7 @@ export default function Dashboard() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [entryCompId, setEntryCompId] = useState<number | null>(null);
+  const playSound = useButtonSound();
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 800);
@@ -346,14 +439,17 @@ export default function Dashboard() {
           <span className="stat-label">Coming Soon</span>
         </div>
         <div className="stat-card">
-          <span className="stat-num">£18.4M</span>
-          <span className="stat-label">Annual Profit Potential</span>
+          <span className="stat-num">2</span>
+          <span className="stat-label">Live Tournaments</span>
         </div>
         <div className="stat-card">
-          <span className="stat-num">£1.53M</span>
-          <span className="stat-label">Avg Monthly Revenue</span>
+          <span className="stat-num">8</span>
+          <span className="stat-label">Cash Alternative Draws</span>
         </div>
       </section>
+
+      {/* Ad banner between stats and grid */}
+      <AdBanner placement="DASHBOARD_TOP" />
 
       <div className="draw-legend">
         {DRAW_LEGEND_ITEMS.map((item) => (
@@ -362,6 +458,11 @@ export default function Dashboard() {
           </span>
         ))}
       </div>
+
+      <section className="dashboard-showcase" aria-label="Supercar showcase">
+        <span className="dashboard-showcase__eyebrow">Featured vehicle competition</span>
+        <SupercarTicker variant="showcase" />
+      </section>
 
       {loading ? (
         <div className="dash-grid">
@@ -406,8 +507,9 @@ export default function Dashboard() {
                 </div>
               )}
               <button
-                className="dash-card__cta detail-cta"
+                className={`dash-card__cta dash-card__cta--${comp.type} detail-cta btn-interactive`}
                 disabled={comp.status === 'coming-soon'}
+                onMouseDown={playSound}
                 onClick={() => { setSelectedId(null); setEntryCompId(comp.id); }}
               >
                 {comp.status === 'coming-soon' ? '⏳ Coming Soon' : 'ENTER NOW →'}
@@ -420,6 +522,12 @@ export default function Dashboard() {
       {entryComp && (
         <EntryModal competition={entryComp} onClose={() => setEntryCompId(null)} />
       )}
+
+      {/* Affiliate widget below dashboard */}
+      <div style={{ padding: '0 16px 32px' }}>
+        <AffiliateWidget category="cash" title="Make the Most of Your Winnings 💰" />
+        <AdBanner placement="DASHBOARD_FOOTER" />
+      </div>
     </div>
   );
 }
