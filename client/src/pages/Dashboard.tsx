@@ -4,6 +4,7 @@ import EntryModal from '../components/EntryModal';
 import AdBanner from '../components/AdBanner';
 import AdSidebar from '../components/AdSidebar';
 import AffiliateWidget from '../components/AffiliateWidget';
+import { DRAW_LEGEND_ITEMS } from '../constants/drawLegend';
 import { useButtonSound } from '../hooks/useButtonSound';
 import './Dashboard.css';
 
@@ -451,10 +452,11 @@ export default function Dashboard() {
       <AdBanner placement="DASHBOARD_TOP" />
 
       <div className="draw-legend">
-        <span className="legend-item"><span style={{ color: '#22c55e' }}>🟢</span> Draw Ready (100%)</span>
-        <span className="legend-item"><span style={{ color: '#eab308' }}>🟡</span> Almost Ready (75–99%)</span>
-        <span className="legend-item"><span style={{ color: '#3b82f6' }}>🔵</span> In Progress (50–74%)</span>
-        <span className="legend-item"><span style={{ color: '#6b7280' }}>⚪</span> Coming Soon (0–49%)</span>
+        {DRAW_LEGEND_ITEMS.map((item) => (
+          <span key={item.label} className="legend-item">
+            <span style={{ color: item.color }}>{item.icon}</span> {item.label}
+          </span>
+        ))}
       </div>
 
       <section className="dashboard-showcase" aria-label="Supercar showcase">

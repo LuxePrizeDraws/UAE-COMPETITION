@@ -396,8 +396,8 @@
   font-size: 0.9rem;
   letter-spacing: 0.5px;
   padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 12px;
+  border: 2px solid #d4af37;
+  border-radius: 999px;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
   width: 100%;
@@ -413,6 +413,7 @@
   background: #2a2a2a;
   color: #555;
   cursor: not-allowed;
+  border-color: #6f6134;
 }
 
 .dash-card__cta--cash {
@@ -520,6 +521,15 @@
   .supercar-ticker {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .supercar-ticker__item {
+      animation: none;
+      opacity: 1;
+      transform: translateY(0);
+      position: static;
+    }
   }
   .supercar-ticker__window {
     width: 100%;

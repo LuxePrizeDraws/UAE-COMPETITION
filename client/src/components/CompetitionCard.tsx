@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type * as React from 'react';
+import { SUPERCAR_COMPETITION_ID, SUPERCAR_TICKER, getCompetitionVisualImage } from '../constants/competitionVisuals';
+import '../styles/supercarTicker.css';
 import './CompetitionCard.css';
 import SuccessModal from './SuccessModal';
 import { CurrencyCode, convertFromAED, formatCurrency } from '../utils/currency';
@@ -59,6 +61,8 @@ const CompetitionCard = ({ competition, currency, complianceCurrency }: Competit
   const remainingEntries = Math.max(competition.totalEntries - competition.soldEntries, 0);
   const soldOut = remainingEntries === 0;
   const odds = soldOut ? '0.000000' : ((1 / remainingEntries) * 100).toFixed(6);
+  const isSupercarCompetition = competition.id === SUPERCAR_COMPETITION_ID;
+  const visualImage = getCompetitionVisualImage(competition.id);
 
   // Convert entry price and prize amounts to selected currency
   const entryPriceConverted = convertFromAED(competition.entryPrice, currency);
@@ -105,10 +109,29 @@ const CompetitionCard = ({ competition, currency, complianceCurrency }: Competit
   return (
     <>
       <div className="competition-card">
+        {visualImage && (
+          <div
+            className="competition-card__visual"
+            style={{ backgroundImage: `url(${visualImage})` }}
+            aria-hidden="true"
+          />
+        )}
         <div className="card-header">
           <span className="card-badge">{competition.prizeType}</span>
           <span className="currency-badge">{currency}</span>
         </div>
+
+        {isSupercarCompetition && (
+          <div className="supercar-ticker" aria-label="Featured supercars">
+            <div className="supercar-ticker__track">
+              {[...SUPERCAR_TICKER, ...SUPERCAR_TICKER].map((name, index) => (
+                <span key={index} className="supercar-ticker__item">
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="card-content">
           <div className="prize-section">

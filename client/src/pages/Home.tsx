@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import type * as React from 'react';
+import { Link } from 'react-router-dom';
 import CompetitionCard from '../components/CompetitionCard';
+import { DRAW_LEGEND_ITEMS } from '../constants/drawLegend';
 import { CurrencyCode, CURRENCIES, detectCurrency, detectJurisdictionCurrency, storeCurrency } from '../utils/currency';
 import { API_BASE } from '../config';
+import '../styles/luxuryLayout.css';
 import './Home.css';
 
 interface Competition {
@@ -23,6 +26,7 @@ interface Competition {
   tags: string[];
   profitMargin: string;
   expectedWinners: number;
+  status?: string;
 }
 
 const Home = () => {
@@ -59,8 +63,21 @@ const Home = () => {
     storeCurrency(selected);
   };
 
+  const liveComps = competitions.filter((c) => c.status === 'live');
+  const comingSoonCount = competitions.filter((c) => c.status === 'coming-soon').length;
+
   return (
     <div className="home">
+      <header className="dash-header home-page-header">
+        <div className="dash-header__inner">
+          <div>
+            <h1 className="dash-title">🏆 UAE Competition Platform</h1>
+            <p className="dash-subtitle">Luxury draws with transparent progress and premium rewards</p>
+          </div>
+          <Link to="/dashboard" className="back-link">📊 Dashboard</Link>
+        </div>
+      </header>
+
       {/* Hero */}
       <section className="hero">
         <div className="hero-background">
@@ -70,7 +87,7 @@ const Home = () => {
           <span className="hero-badge">✦ TRANSPARENT · COMPLIANT · GLOBAL ✦</span>
           <h1 className="hero-title">WIN LUXURY.<br />LIVE ELITE.</h1>
           <p className="hero-subtitle">
-            Enter elite competitions with fully transparent odds. Win luxury prizes or take the cash alternative. 
+            Enter elite competitions with fully transparent odds. Win luxury prizes or take the cash alternative.
             Compliant across UK &amp; UAE.
           </p>
           <div className="hero-badges">
@@ -93,6 +110,33 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <section className="dash-stats home-dash-stats">
+        <div className="stat-card">
+          <span className="stat-num">{competitions.length}</span>
+          <span className="stat-label">Total Competitions</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-num">{liveComps.length}</span>
+          <span className="stat-label">Competitions Live</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-num">{comingSoonCount}</span>
+          <span className="stat-label">Coming Soon</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-num">100%</span>
+          <span className="stat-label">Cash Alternative</span>
+        </div>
+      </section>
+
+      <div className="draw-legend home-draw-legend">
+        {DRAW_LEGEND_ITEMS.map((item) => (
+          <span key={item.label} className="legend-item">
+            <span style={{ color: item.color }}>{item.icon}</span> {item.label}
+          </span>
+        ))}
+      </div>
 
       {/* Currency Selector */}
       <section className="currency-bar">
